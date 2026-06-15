@@ -1,0 +1,45 @@
+# cargo-deny config for the workspace-EXCLUDED Tauri shell (`desktop/`).
+#
+# The audited core is scanned by ../deny.toml. This config scans the much larger Tauri/webview
+# dependency tree so it no longer escapes advisory review (release-readiness finding #6). The CI
+# step runs `cargo deny check advisories bans sources` from this directory.
+#
+# The gate stays STRICT — a real vulnerability, unsound, or yanked crate fails CI — with one
+# documented exception: the gtk-rs GTK3 binding family is flagged `unmaintained`
+# (RUSTSEC-2024-0411..0420). Those are NOT vulnerabilities. Tauri v2 pulls them in transitively
+# for the **Linux** WebKitGTK backend only (macOS uses WebKit, Windows uses WebView2), and there
+# is no upstream fix until Tauri migrates off GTK3. They are acknowledged here so that any *new*
+# or *security* advisory in the webview tree still fails the gate. Re-audit this list whenever
+# Tauri is upgraded.
+#
+# Licenses are intentionally NOT gated for this excluded tree (the ~400-package webview graph is
+# Tauri-controlled); the CI step scopes to advisories+bans+sources, the security-relevant checks.
+
+[advisories]
+ignore = [
+  "RUSTSEC-2024-0411", # gtk-rs GTK3 bindings family — unmaintained, Linux-only, Tauri transitive
+  "RUSTSEC-2024-0412", # gtk-rs GTK3 bindings family — unmaintained, Linux-only, Tauri transitive
+  "RUSTSEC-2024-0413", # gtk-rs GTK3 bindings family — unmaintained, Linux-only, Tauri transitive
+  "RUSTSEC-2024-0414", # gtk-rs GTK3 bindings family — unmaintained, Linux-only, Tauri transitive
+  "RUSTSEC-2024-0415", # gtk-rs GTK3 bindings family — unmaintained, Linux-only, Tauri transitive
+  "RUSTSEC-2024-0416", # gtk-rs GTK3 bindings family — unmaintained, Linux-only, Tauri transitive
+  "RUSTSEC-2024-0417", # gtk-rs GTK3 bindings family — unmaintained, Linux-only, Tauri transitive
+  "RUSTSEC-2024-0418", # gtk-rs GTK3 bindings family — unmaintained, Linux-only, Tauri transitive
+  "RUSTSEC-2024-0419", # gtk-rs GTK3 bindings family — unmaintained, Linux-only, Tauri transitive
+  "RUSTSEC-2024-0420", # gtk-rs GTK3 bindings family — unmaintained, Linux-only, Tauri transitive
+  "RUSTSEC-2024-0370", # proc-macro-error — unmaintained, transitive build-time macro helper
+  "RUSTSEC-2025-0075", # unic-char-range — unmaintained (unic Unicode family), transitive
+  "RUSTSEC-2025-0080", # unic-common — unmaintained (unic Unicode family), transitive
+  "RUSTSEC-2025-0081", # unic-char-property — unmaintained (unic Unicode family), transitive
+  "RUSTSEC-2025-0098", # unic-ucd-version — unmaintained (unic Unicode family), transitive
+  "RUSTSEC-2025-0100", # unic-ucd-ident — unmaintained (unic Unicode family), transitive
+]
+
+[bans]
+# The webview tree legitimately carries duplicate transitive crate versions; don't fail on that.
+multiple-versions = "allow"
+wildcards = "allow"
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"

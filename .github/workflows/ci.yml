@@ -1,0 +1,139 @@
+name: ci
+
+# This workflow assumes the `secure-vault/` directory is the git repository root
+# (this file lives at <repo>/.github/workflows/ci.yml).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# M0 verification gates. Everything here must be green before any milestone merges.
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-D warnings"           # escalate all warnings to errors
+
+jobs:
+  # ---- cross-platform build / test / lint matrix ----------------------------
+  check:
+    name: build+test (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+      # Install age on EVERY OS and point the e2e test at it, so the age-backed
+      # `age_backed_lifecycle_roundtrips` test actually runs on Windows/macOS — not just Linux.
+      # On Windows this is the validation for H4 (does `Command::env_clear()` break the age
+      # subprocess?): if the cleared environment breaks age-keygen/age, this test fails the
+      # Windows job. (Real GitHub-hosted Windows runner — see docs/RELEASE-READINESS.md §H4.)
+      - name: Install age + age-keygen for the sv-age e2e tests (all OSes)
+        shell: bash
+        run: |
+          go install filippo.io/age/cmd/age@v1.2.1
+          go install filippo.io/age/cmd/age-keygen@v1.2.1
+          BIN="$(go env GOPATH)/bin"
+          if [ "$RUNNER_OS" = "Windows" ]; then EXT=".exe"; else EXT=""; fi
+          echo "SV_AGE_BIN=${BIN}/age${EXT}" >> "$GITHUB_ENV"
+          echo "SV_AGE_KEYGEN_BIN=${BIN}/age-keygen${EXT}" >> "$GITHUB_ENV"
+      - name: rustfmt (check)
+        run: cargo fmt --all --check
+      - name: clippy (deny warnings)
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: build
+        run: cargo build --workspace --locked
+      - name: test
+        run: cargo test --workspace --locked
+
+  # ---- MSRV gate ------------------------------------------------------------
+  # The crates declare rust-version = "1.96"; this job enforces it (the matrix above floats on
+  # @stable, so without this the declared MSRV could silently rot).
+  msrv:
+    name: msrv (1.96)
+    runs-on: ubuntu-latest
+    # `rust-toolchain.toml` pins `channel = "stable"`, which otherwise OVERRIDES the 1.96 toolchain
+    # installed below (and would silently build on stable, defeating the MSRV gate). The env var has
+    # the highest rustup precedence, so it forces 1.96 for every cargo invocation in this job.
+    env:
+      RUSTUP_TOOLCHAIN: "1.96"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.96
+      - uses: Swatinem/rust-cache@v2
+      - name: build on the declared MSRV
+        run: cargo build --workspace --locked
+
+  # ---- desktop crate gates --------------------------------------------------
+  # The Tauri shell (`desktop/`) is workspace-excluded so the webview dep tree never enters the
+  # audited-core gates above. It still must pass fmt/clippy/test on its own and have its (much
+  # larger) dependency tree audited. Runs the OS matrix because the webview backend is per-OS.
+  desktop:
+    name: desktop build+test (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+      # Tauri's Linux backend needs the system WebKitGTK/soup headers (built in on macOS/Windows).
+      - name: Linux webview deps
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
+      - name: rustfmt (check)
+        run: cargo fmt --all --check
+      - name: clippy (deny warnings)
+        run: cargo clippy --all-targets -- -D warnings
+      - name: test (ApiError↔UI contract + commands)
+        run: cargo test --locked
+
+  # ---- supply-chain gates ---------------------------------------------------
+  supply-chain:
+    name: cargo-deny + audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-deny,cargo-audit
+      - name: cargo-deny — audited core (advisories, licenses, bans, sources)
+        run: cargo deny check
+      - name: cargo-audit — audited core (RUSTSEC)
+        run: cargo audit
+      # The desktop crate is workspace-excluded, so its ~400-package webview tree would otherwise
+      # escape advisory/audit scanning entirely. Scan it too (advisories + yanked).
+      - name: cargo-deny — desktop webview tree (advisories + bans + sources)
+        working-directory: desktop
+        run: cargo deny check advisories bans sources
+      - name: cargo-audit — desktop webview tree (RUSTSEC)
+        working-directory: desktop
+        run: cargo audit
+
+  # ---- SBOM stub ------------------------------------------------------------
+  sbom:
+    name: sbom (stub)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: bash scripts/sbom.sh sbom-stub.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbom-stub
+          path: sbom-stub.txt

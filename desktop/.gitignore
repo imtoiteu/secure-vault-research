@@ -1,0 +1,8 @@
+/target
+/gen
+# NOTE: Cargo.lock IS committed for this app crate — CI runs `cargo test --locked`, which fails on a
+# fresh checkout if the lockfile is absent. (Tauri's scaffold ignores it by default; we must not.)
+# Bundled, platform-specific age binaries (not first-party source). Keep the README.
+/binaries/age
+/binaries/age-keygen
+/binaries/*.exe

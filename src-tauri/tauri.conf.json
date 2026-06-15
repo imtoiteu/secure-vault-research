@@ -1,0 +1,6 @@
+{
+  "$comment": "STUB — not consumed in M0. The `sv-app` crate has no `tauri` dependency yet. M6 turns CommandSurface methods into #[tauri::command]s, adds the age binary as an externalBin (hash-pinned), and fills in this config (identifier, build, windows, bundle).",
+  "productName": "Secure Vault",
+  "version": "0.0.0",
+  "milestone": "wiring deferred to M6"
+}

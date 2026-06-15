@@ -1,0 +1,45 @@
+# Secure Vault — Cargo workspace (Phase 1 / Milestone M0: Foundations & Frozen Contracts)
+# This workspace holds ONLY frozen contracts and stubbed adapters. No crypto logic
+# is implemented here (that begins in M1). Build order & boundaries: see docs/M0-CONTRACTS.md
+[workspace]
+resolver = "2"
+members = [
+    "crates/sv-types",
+    "crates/sv-crypto-traits",
+    "crates/sv-crypto",
+    "crates/sv-platform",
+    "crates/sv-core",
+    "crates/sv-age",
+    "crates/sv-sys-sss",
+    "crates/sv-sys-sodium",
+    "src-tauri",
+]
+# The Tauri desktop shell is intentionally OUT of this workspace: its heavy, platform-specific
+# (webview) dependency tree must not enter the audited core's build/lock/deny gates. It is a
+# standalone crate that depends on the core via path; build it from `desktop/` with the Tauri
+# toolchain (`cargo tauri dev`). See desktop/README.md.
+exclude = ["desktop"]
+
+[workspace.package]
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.96"
+license = "MIT OR Apache-2.0"
+publish = false
+
+# Single source of truth for third-party dependency versions across all crates.
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+ciborium = "0.2"            # CBOR (RFC 8949) for the authenticated vault header
+zeroize = { version = "1", features = ["derive", "zeroize_derive"] }
+thiserror = "1"
+hex = "0.4"
+
+# Workspace-wide lints. CI additionally escalates all warnings to errors via
+# RUSTFLAGS="-D warnings" and `cargo clippy -- -D warnings`.
+[workspace.lints.rust]
+unsafe_code = "deny"       # no unsafe in M0; sys-crates will opt-out locally in M2
+missing_debug_implementations = "warn"
+
+[workspace.lints.clippy]
+todo = "allow"             # M0 deliberately ships `todo!()` stubs for M1–M6

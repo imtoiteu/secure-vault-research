@@ -1,0 +1,20 @@
+[package]
+name = "sv-crypto"
+description = "Concrete crypto adapters (stubs in M0). Re-exports sv-crypto-traits; backends (blake3/argon2/FFI) land in M1-M2."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+sv-crypto-traits = { path = "../sv-crypto-traits" }
+sv-sys-sss = { path = "../sv-sys-sss" }
+sv-sys-sodium = { path = "../sv-sys-sodium" }
+blake3 = "1"
+argon2 = "0.5"
+base64 = "0.22"
+zeroize.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,4 @@
+# Pin the toolchain so local and CI builds are reproducible (supply-chain gate).
+[toolchain]
+channel = "stable"
+components = ["clippy", "rustfmt"]

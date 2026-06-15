@@ -1,0 +1,24 @@
+[package]
+name = "sv-platform"
+description = "Vault-free crypto-services layer: file-level hash / verify / encrypt / decrypt / sign over the shared sv-crypto primitives. Consumed by the toolkit's Integrity & Cryptography modules (and, in future, by Secure Vault)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+# Stateless services over the shared primitives. Mirrors sv-core: depends on the ABI + the
+# DTO/error contract, and (unlike sv-core) injects no backend — the impls are unit structs.
+sv-crypto-traits = { path = "../sv-crypto-traits" }
+sv-crypto = { path = "../sv-crypto" }
+sv-types = { path = "../sv-types" }
+thiserror.workspace = true
+hex.workspace = true
+zeroize.workspace = true
+getrandom = "0.2"
+# Pure-Rust same-directory temp file + rename for atomic output writes (reuses the P13 pattern).
+tempfile = "3"
+
+[lints]
+workspace = true

@@ -1,0 +1,19 @@
+[package]
+name = "sv-crypto-traits"
+description = "Stable, dependency-light crypto contract layer: traits + value types + algorithm ids. No backends."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+serde.workspace = true
+zeroize.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+serde_json = "1"
+
+[lints]
+workspace = true

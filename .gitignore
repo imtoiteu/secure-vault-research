@@ -1,0 +1,14 @@
+/target
+# the workspace-excluded desktop/ app has its OWN target (multi-GB) — never commit it
+/desktop/target
+/.bin
+# bundled, hash-pinned age binaries are placed at build/release time, never committed
+/desktop/binaries/age
+/desktop/binaries/age-keygen
+**/*.rs.bk
+Cargo.lock.orig
+# SBOM / audit artifacts produced by CI
+/sbom*.txt
+/sbom*.json
+# Local env
+.DS_Store

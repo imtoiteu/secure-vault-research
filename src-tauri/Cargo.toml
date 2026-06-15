@@ -1,0 +1,32 @@
+[package]
+name = "sv-app"
+description = "Application/IPC command surface (contract). Tauri runtime wiring is added in M6; no `tauri` dep yet."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+sv-types = { path = "../crates/sv-types" }
+sv-core = { path = "../crates/sv-core" }
+# Composition root (M6): concrete crypto adapters + age subprocess are wired here, keeping
+# sv-core's production graph backend-/FFI-free.
+sv-crypto-traits = { path = "../crates/sv-crypto-traits" }
+sv-crypto = { path = "../crates/sv-crypto" }
+sv-age = { path = "../crates/sv-age" }
+# Vault-free file-level crypto services (Integrity + Cryptography modules).
+sv-platform = { path = "../crates/sv-platform" }
+serde.workspace = true
+zeroize.workspace = true
+hex.workspace = true
+getrandom = "0.2"
+# Same-directory temp staging for the Secret Sharing recover bridge (pasted Base64 pieces are
+# written to a throwaway dir, then handed to the unchanged file-based engine). RAII cleanup.
+tempfile = "3"
+
+[dev-dependencies]
+serde_json = "1"
+
+[lints]
+workspace = true

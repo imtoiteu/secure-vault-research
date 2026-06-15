@@ -1,0 +1,27 @@
+[package]
+name = "sv-core"
+description = "Vault domain: .svault container schema, key-hierarchy contracts, session API. No UI/Tauri deps."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+sv-types = { path = "../sv-types" }
+sv-crypto-traits = { path = "../sv-crypto-traits" }
+serde.workspace = true
+ciborium.workspace = true
+thiserror.workspace = true
+hex.workspace = true
+zeroize.workspace = true
+# Pure-Rust, no FFI: same-directory temp file + rename for atomic container writes.
+tempfile = "3"
+
+[dev-dependencies]
+# Concrete adapters (Argon2id + BLAKE3 + secretbox) to exercise the generic key hierarchy.
+# Test-only: production builds of sv-core stay backend-/FFI-free.
+sv-crypto = { path = "../sv-crypto" }
+
+[lints]
+workspace = true

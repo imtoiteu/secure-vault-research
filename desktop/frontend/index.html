@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Security &amp; Privacy Toolkit</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>🔒 Security &amp; Privacy Toolkit</h1>
+      <span class="grow"></span>
+      <button id="btn-about" class="linkbtn">About</button>
+    </header>
+
+    <div class="shell">
+      <!-- ===================================================================
+           SIDEBAR — goal-based navigation. Each item routes to one screen.
+           "soon" items are placeholders for not-yet-built modules.
+           =================================================================== -->
+      <aside class="sidebar">
+        <nav id="sidebar-nav">
+          <button class="navitem active" data-screen="home">🏠 Home</button>
+
+          <div class="navgroup">Vaults</div>
+          <button class="navitem" data-screen="vault">🗄️ Secure Vault</button>
+
+          <div class="navgroup">Protect a file</div>
+          <button class="navitem" data-screen="encrypt">🔐 Lock a file</button>
+          <button class="navitem" data-screen="decrypt">🔓 Unlock a file</button>
+          <button class="navitem soon" data-screen="soon-hide">🕵️ Hide data <span class="soontag">soon</span></button>
+          <button class="navitem soon" data-screen="soon-watermark">💧 Add a watermark <span class="soontag">soon</span></button>
+
+          <div class="navgroup">Prove it's authentic</div>
+          <button class="navitem" data-screen="sign">✍️ Sign a file</button>
+          <button class="navitem" data-screen="verify">✅ Check a signature</button>
+          <button class="navitem" data-screen="hash">🔢 Fingerprint a file</button>
+          <button class="navitem" data-screen="intact">🛡️ Check a file is unchanged</button>
+
+          <div class="navgroup">Back up &amp; recover</div>
+          <button class="navitem" data-screen="split-secret">🧩 Split a secret</button>
+          <button class="navitem" data-screen="split-file">🧩 Split a file</button>
+          <button class="navitem" data-screen="recover-pieces">🔗 Recover from pieces</button>
+          <button class="navitem soon" data-screen="soon-qr">📷 Secure QR transfer <span class="soontag">soon</span></button>
+
+          <div class="navgroup">Inspect &amp; clean</div>
+          <button class="navitem soon" data-screen="soon-detect">🔎 Detect hidden data <span class="soontag">soon</span></button>
+          <button class="navitem soon" data-screen="soon-metadata">🧹 Metadata tools <span class="soontag">soon</span></button>
+          <button class="navitem soon" data-screen="soon-analysis">📊 Analyze a file <span class="soontag">soon</span></button>
+        </nav>
+      </aside>
+
+      <!-- ===================================================================
+           MAIN — one screen visible at a time, chosen by the sidebar/router.
+           =================================================================== -->
+      <main id="main">
+        <!-- ============================ HOME ============================ -->
+        <section class="screen" data-screen="home">
+          <h2 class="screen-title">What would you like to do?</h2>
+
+          <p class="muted hint">Pick a task. Every tool explains what it does, what it needs, and what you get.</p>
+
+          <h3 class="group-title">Quick start</h3>
+          <div class="tiles">
+            <button class="tile" data-goto="encrypt">
+              <span class="tile-icon">🔐</span>
+              <span class="tile-title">Lock a file</span>
+              <span class="tile-desc">Password-protect a single file.</span>
+            </button>
+            <button class="tile" data-goto="intact">
+              <span class="tile-icon">🛡️</span>
+              <span class="tile-title">Check a file is unchanged</span>
+              <span class="tile-desc">Confirm a file matches the fingerprint you were given.</span>
+            </button>
+            <button class="tile" data-goto="vault">
+              <span class="tile-icon">🗄️</span>
+              <span class="tile-title">Open a vault</span>
+              <span class="tile-desc">Your password-protected box of files.</span>
+            </button>
+          </div>
+
+          <h3 class="group-title">All tools</h3>
+          <div class="tiles small">
+            <button class="tile" data-goto="encrypt"><span class="tile-icon">🔐</span><span class="tile-title">Lock a file</span></button>
+            <button class="tile" data-goto="decrypt"><span class="tile-icon">🔓</span><span class="tile-title">Unlock a file</span></button>
+            <button class="tile" data-goto="sign"><span class="tile-icon">✍️</span><span class="tile-title">Sign a file</span></button>
+            <button class="tile" data-goto="verify"><span class="tile-icon">✅</span><span class="tile-title">Check a signature</span></button>
+            <button class="tile" data-goto="hash"><span class="tile-icon">🔢</span><span class="tile-title">Fingerprint a file</span></button>
+            <button class="tile" data-goto="intact"><span class="tile-icon">🛡️</span><span class="tile-title">Check a file is unchanged</span></button>
+            <button class="tile" data-goto="vault"><span class="tile-icon">🗄️</span><span class="tile-title">Secure Vault</span></button>
+            <button class="tile" data-goto="split-secret"><span class="tile-icon">🧩</span><span class="tile-title">Split a secret</span></button>
+            <button class="tile" data-goto="split-file"><span class="tile-icon">🧩</span><span class="tile-title">Split a file</span></button>
+            <button class="tile" data-goto="recover-pieces"><span class="tile-icon">🔗</span><span class="tile-title">Recover from pieces</span></button>
+            <button class="tile soon" data-goto="soon-hide"><span class="tile-icon">🕵️</span><span class="tile-title">Hide data</span><span class="soontag">soon</span></button>
+            <button class="tile soon" data-goto="soon-metadata"><span class="tile-icon">🧹</span><span class="tile-title">Metadata tools</span><span class="soontag">soon</span></button>
+          </div>
+        </section>
+
+        <!-- ============================ VAULT ===========================
+             The entire existing Secure Vault flow, unchanged. It keeps its
+             own locked/unlocked views and internal tabs; only its home in the
+             navigation changed. The lock badge is scoped here (a vault concept).
+             ============================================================== -->
+        <section class="screen hidden" data-screen="vault">
+          <div class="row spread vault-topbar">
+            <h2 class="screen-title">🗄️ Secure Vault</h2>
+            <span id="lock-badge" class="badge locked">Locked</span>
+          </div>
+
+          <div id="vault-section">
+            <!-- LOCKED — dashboard of cards: open, create, and a collapsed "more". -->
+            <div id="locked-view">
+              <section class="card">
+                <h3>Open a vault</h3>
+                <p class="muted hint">A vault is a password-protected box that holds your files.</p>
+                <label>Vault file
+                  <div class="filefield" data-drop="vault-path">
+                    <input id="vault-path" type="text" placeholder="Choose your vault file…" autocomplete="off" />
+                    <button class="browse secondary" data-target="vault-path" data-mode="file">Browse…</button>
+                  </div>
+                </label>
+                <label>Password
+                  <input id="passphrase" type="password" placeholder="password" autocomplete="off" />
+                </label>
+                <div class="row">
+                  <button id="btn-unlock">Open vault</button>
+                </div>
+              </section>
+
+              <section class="card">
+                <h3>Create a new vault</h3>
+                <label>Save new vault as
+                  <div class="filefield" data-drop="create-path">
+                    <input id="create-path" type="text" placeholder="Choose where to save it…" autocomplete="off" />
+                    <button class="browse secondary" data-target="create-path" data-mode="save">Save As…</button>
+                  </div>
+                </label>
+                <label>Password
+                  <input id="create-pass" type="password" placeholder="password" autocomplete="off" />
+                </label>
+                <label>Confirm password
+                  <input id="create-pass-2" type="password" placeholder="repeat password" autocomplete="off" />
+                  <span class="muted hint">A typo here would lock you out permanently.</span>
+                </label>
+
+                <details class="advanced">
+                  <summary>Set up recovery (optional)</summary>
+                  <p class="muted hint">
+                    If you might lose access, you can split a backup key into pieces now and restore
+                    from them later. Decide this when creating — you make the pieces after opening.
+                  </p>
+                  <label class="check">
+                    <input id="create-recovery" type="checkbox" />
+                    Enable recovery pieces
+                  </label>
+                  <div class="row" id="create-policy-row">
+                    <label class="inline">Total pieces
+                      <input id="create-shares-total" type="number" min="2" max="255" value="5" />
+                    </label>
+                    <label class="inline">Needed to restore
+                      <input id="create-threshold" type="number" min="2" max="255" value="3" />
+                    </label>
+                  </div>
+                  <p class="muted hint">Example: 5 total, 3 needed → any 3 of the 5 pieces can restore it.</p>
+                </details>
+
+                <div class="row">
+                  <button id="btn-create">Create vault</button>
+                </div>
+                <div id="create-result" class="result hidden"></div>
+              </section>
+
+              <details class="advanced vault-more">
+                <summary>More: recover from pieces, or check a vault file</summary>
+
+                <div class="subcard">
+                  <h3>Recover a vault from pieces</h3>
+                  <p class="muted hint">
+                    If you can't open a vault the normal way, restore it from its recovery pieces.
+                    You need at least the “needed to restore” number; order doesn't matter.
+                  </p>
+                  <label>Vault file
+                    <div class="filefield" data-drop="recover-path">
+                      <input id="recover-path" type="text" placeholder="Choose the vault file…" autocomplete="off" />
+                      <button class="browse secondary" data-target="recover-path" data-mode="file">Browse…</button>
+                    </div>
+                  </label>
+                  <label>Recovery pieces
+                    <textarea id="recover-shares" rows="4" placeholder="Add your recovery piece files…"></textarea>
+                    <button class="browse secondary" data-target="recover-shares" data-mode="files">Add piece files…</button>
+                  </label>
+                  <div class="row">
+                    <button id="btn-recover">Recover &amp; open</button>
+                  </div>
+                </div>
+
+                <div class="subcard">
+                  <h3>Check a vault file is intact</h3>
+                  <p class="muted hint">Confirm a vault file isn't damaged or tampered with — without opening it.</p>
+                  <label>Vault file
+                    <div class="filefield" data-drop="integrity-path">
+                      <input id="integrity-path" type="text" placeholder="Choose the vault file…" autocomplete="off" />
+                      <button class="browse secondary" data-target="integrity-path" data-mode="file">Browse…</button>
+                    </div>
+                  </label>
+                  <div class="row">
+                    <button id="btn-integrity" class="secondary">Check it's intact</button>
+                    <button id="btn-hash" class="secondary">Show fingerprint</button>
+                  </div>
+                </div>
+
+                <div class="subcard">
+                  <h3>Check a signature (advanced)</h3>
+                  <p class="muted hint">Same as “Check a signature” in the sidebar — verify a signed file against a public key.</p>
+                  <label>Signed file
+                    <div class="filefield" data-drop="verify-file">
+                      <input id="verify-file" type="text" placeholder="Choose the signed file…" autocomplete="off" />
+                      <button class="browse secondary" data-target="verify-file" data-mode="file">Browse…</button>
+                    </div>
+                  </label>
+                  <label>Signature file
+                    <div class="filefield" data-drop="verify-sig">
+                      <input id="verify-sig" type="text" placeholder="Choose the .minisig file…" autocomplete="off" />
+                      <button class="browse secondary" data-target="verify-sig" data-mode="file">Browse…</button>
+                    </div>
+                  </label>
+                  <label>Public key file
+                    <div class="filefield" data-drop="verify-pub">
+                      <input id="verify-pub" type="text" placeholder="Choose the .pub file…" autocomplete="off" />
+                      <button class="browse secondary" data-target="verify-pub" data-mode="file">Browse…</button>
+                    </div>
+                  </label>
+                  <div class="row">
+                    <button id="btn-verify" class="secondary">Check signature</button>
+                  </div>
+                </div>
+
+                <div id="tools-result" class="result hidden"></div>
+              </details>
+            </div>
+
+            <!-- UNLOCKED — a single dashboard of stacked cards (no tabs). -->
+            <div id="unlocked-view" class="hidden">
+              <section class="card vault-banner">
+                <div class="row spread">
+                  <div>
+                    <h2 id="vault-title">Vault</h2>
+                    <div id="vault-summary" class="muted"></div>
+                  </div>
+                  <button id="btn-lock" class="secondary">Lock</button>
+                </div>
+              </section>
+
+              <!-- Files (primary) -->
+              <section class="card">
+                <div class="row spread">
+                  <h3>Files</h3>
+                  <span id="item-count" class="muted"></span>
+                </div>
+                <ul id="item-list" class="items"></ul>
+                <div class="add-row">
+                  <input id="add-source" type="text" placeholder="Choose a file to add…" autocomplete="off" />
+                  <button class="browse secondary" data-target="add-source" data-mode="file">Browse…</button>
+                  <input id="add-name" type="text" placeholder="Name in the vault" autocomplete="off" />
+                  <button id="btn-add">Add file</button>
+                </div>
+              </section>
+
+              <!-- Sign a file with the vault -->
+              <section class="card">
+                <h3>Sign a file with this vault</h3>
+                <p class="muted hint">
+                  Adds a signature proving a file came from this vault and hasn't changed. Others check
+                  it with this vault's public key (in <strong>Vault details &amp; settings</strong>).
+                </p>
+                <label>File to sign
+                  <div class="filefield" data-drop="sign-file">
+                    <input id="sign-file" type="text" placeholder="Choose a file to sign…" autocomplete="off" />
+                    <button class="browse secondary" data-target="sign-file" data-mode="file">Browse…</button>
+                  </div>
+                </label>
+                <div class="row">
+                  <button id="btn-sign">Sign file</button>
+                </div>
+                <div id="sign-result" class="result hidden"></div>
+              </section>
+
+              <!-- Recovery pieces -->
+              <section class="card">
+                <h3>Recovery pieces</h3>
+                <p class="muted hint">
+                  Split a backup key into pieces; any “needed to restore” number of them together can
+                  restore this vault. Store each piece in a separate trusted place.
+                </p>
+                <div id="shares-policy-note" class="note">
+                  Recovery only works if this vault was created with recovery enabled. Match the numbers
+                  to how the vault was set up, then store each piece separately.
+                </div>
+                <div class="row">
+                  <label class="inline">Total pieces
+                    <input id="split-shares-total" type="number" min="2" max="255" value="5" />
+                  </label>
+                  <label class="inline">Needed to restore
+                    <input id="split-threshold" type="number" min="2" max="255" value="3" />
+                  </label>
+                </div>
+                <label>Save pieces to folder
+                  <div class="filefield" data-drop="split-outdir">
+                    <input id="split-outdir" type="text" placeholder="Choose a folder…" autocomplete="off" />
+                    <button class="browse secondary" data-target="split-outdir" data-mode="folder">Browse…</button>
+                  </div>
+                </label>
+                <div class="row">
+                  <button id="btn-split">Make recovery pieces</button>
+                </div>
+                <div id="split-result" class="result hidden"></div>
+                <ul id="share-list" class="items"></ul>
+              </section>
+
+              <!-- Secondary: settings + technical details, collapsed by default -->
+              <details class="advanced vault-details">
+                <summary>Vault details &amp; settings</summary>
+
+                <div class="subcard">
+                  <h3>Change password</h3>
+                  <p class="muted hint">Changes the password you type to open this vault. Recovery pieces still work.</p>
+                  <label>New password
+                    <input id="new-passphrase" type="password" placeholder="new password" autocomplete="off" />
+                  </label>
+                  <label>Confirm new password
+                    <input id="new-passphrase-2" type="password" placeholder="repeat" autocomplete="off" />
+                  </label>
+                  <div class="row">
+                    <button id="btn-change-pass" class="secondary">Change password</button>
+                  </div>
+                </div>
+
+                <div class="subcard">
+                  <h3>Public key</h3>
+                  <p class="muted hint">
+                    Share this so others can verify files this vault signs: save it to a <code>.pub</code>
+                    file and use it in <strong>Check a signature</strong>.
+                  </p>
+                  <code id="signing-pubkey" class="keyblob muted">Click "Show public key".</code>
+                  <div class="row">
+                    <button id="btn-show-pubkey" class="secondary">Show public key</button>
+                    <button id="btn-copy-pubkey" class="secondary" disabled>Copy</button>
+                  </div>
+                </div>
+
+                <div class="subcard">
+                  <h3>Technical details</h3>
+                  <div id="vault-tech" class="muted techlist"></div>
+                  <div class="row">
+                    <button id="btn-vault-check" class="secondary">Check this vault file is intact</button>
+                  </div>
+                  <div id="vault-tech-result" class="result hidden"></div>
+                </div>
+              </details>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================= LOCK A FILE ======================== -->
+        <section class="screen hidden" data-screen="encrypt">
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">🔐 Lock a file with a password</h2>
+              <p class="task-purpose">Turn any file into a locked file only your password can open.</p>
+              <details class="when">
+                <summary>When should I use this?</summary>
+                <p class="muted hint">To send or store one sensitive file safely. Anyone with the password
+                  can open it — and there is <strong>no recovery</strong> if you forget the password.</p>
+              </details>
+            </div>
+            <div class="task-body">
+              <label>1 &nbsp;Choose the file to lock
+                <div class="filefield" data-drop="tk-enc-input">
+                  <input id="tk-enc-input" type="text" placeholder="Drop a file here, or click Browse…" autocomplete="off"
+                         data-fills="tk-enc-output" data-fillsuffix=".svenc" />
+                  <button class="browse secondary" data-target="tk-enc-input" data-mode="file">Browse…</button>
+                </div>
+              </label>
+              <label>2 &nbsp;Set a password
+                <input id="tk-enc-pass" type="password" placeholder="password" autocomplete="off" />
+              </label>
+              <label>&nbsp;&nbsp;&nbsp;Confirm password
+                <input id="tk-enc-pass2" type="password" placeholder="repeat password" autocomplete="off" />
+                <span class="muted hint">A typo here is unrecoverable — the file could never be opened.</span>
+              </label>
+              <label>3 &nbsp;Where to save the locked file
+                <div class="filefield" data-drop="tk-enc-output">
+                  <input id="tk-enc-output" type="text" placeholder="/path/to/file.svenc" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-enc-output" data-mode="save" data-from="tk-enc-input" data-suffix=".svenc">Save As…</button>
+                </div>
+                <span class="muted hint">▸ Technical details: Argon2id key derivation + secretbox (XSalsa20-Poly1305).</span>
+              </label>
+              <div class="row">
+                <button id="tk-btn-encrypt">Lock file</button>
+              </div>
+              <div id="tk-enc-result" class="note hidden"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ======================== UNLOCK A FILE ======================= -->
+        <section class="screen hidden" data-screen="decrypt">
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">🔓 Unlock a file</h2>
+              <p class="task-purpose">Open a locked (<code>.svenc</code>) file with its password.</p>
+              <details class="when">
+                <summary>When should I use this?</summary>
+                <p class="muted hint">To open a file that was locked with “Lock a file”. You need the password it was locked with.</p>
+              </details>
+            </div>
+            <div class="task-body">
+              <label>1 &nbsp;Choose the locked file
+                <div class="filefield" data-drop="tk-dec-input">
+                  <input id="tk-dec-input" type="text" placeholder="Drop a .svenc file here, or Browse…" autocomplete="off"
+                         data-fills="tk-dec-output" data-fillstrip=".svenc" data-fillsuffix=".out" />
+                  <button class="browse secondary" data-target="tk-dec-input" data-mode="file">Browse…</button>
+                </div>
+              </label>
+              <label>2 &nbsp;Password
+                <input id="tk-dec-pass" type="password" placeholder="password" autocomplete="off" />
+              </label>
+              <label>3 &nbsp;Where to save the opened file
+                <div class="filefield" data-drop="tk-dec-output">
+                  <input id="tk-dec-output" type="text" placeholder="/path/to/recovered-file" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-dec-output" data-mode="save" data-from="tk-dec-input">Save As…</button>
+                </div>
+              </label>
+              <div class="row">
+                <button id="tk-btn-decrypt">Unlock file</button>
+              </div>
+              <div id="tk-dec-result" class="note hidden"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================= SIGN A FILE ======================== -->
+        <section class="screen hidden" data-screen="sign">
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">✍️ Sign a file</h2>
+              <p class="task-purpose">Prove a file came from you and hasn't changed since.</p>
+              <details class="when">
+                <summary>When should I use this?</summary>
+                <p class="muted hint">So others can confirm a file is genuinely from you. You sign with your
+                  private key; they check with your public key. First create a signing identity below.</p>
+              </details>
+            </div>
+            <div class="task-body">
+              <div class="subcard">
+                <h3>First, your signing identity</h3>
+                <p class="muted hint">
+                  Creates a keypair: a <strong>public key</strong> (<code>.pub</code> — share it so others
+                  can check your signatures) and a <strong>private key</strong> (<code>.svkey</code> — keep
+                  it secret; it's protected by a password).
+                </p>
+                <label>Save identity to folder
+                  <div class="filefield" data-drop="tk-key-dir">
+                    <input id="tk-key-dir" type="text" placeholder="/path/to/output/dir" autocomplete="off" />
+                    <button class="browse secondary" data-target="tk-key-dir" data-mode="folder">Browse…</button>
+                  </div>
+                </label>
+                <label>Name this identity
+                  <input id="tk-key-name" type="text" placeholder="my-signing-key" autocomplete="off" />
+                </label>
+                <label>Password (protects the private key)
+                  <input id="tk-key-pass" type="password" placeholder="password" autocomplete="off" />
+                </label>
+                <label>Confirm password
+                  <input id="tk-key-pass2" type="password" placeholder="repeat password" autocomplete="off" />
+                </label>
+                <div class="row">
+                  <button id="tk-btn-genkey" class="secondary">Create signing identity</button>
+                </div>
+                <div id="tk-key-result" class="note hidden"></div>
+              </div>
+
+              <div class="subcard">
+                <h3>Sign a file</h3>
+                <p class="muted hint">Signs any file with your private key, writing <code>&lt;file&gt;.minisig</code> next to it.</p>
+                <label>File to sign
+                  <div class="filefield" data-drop="tk-sign-input">
+                    <input id="tk-sign-input" type="text" placeholder="/path/to/document.pdf" autocomplete="off" />
+                    <button class="browse secondary" data-target="tk-sign-input" data-mode="file">Browse…</button>
+                  </div>
+                </label>
+                <label>Your private key (<code>.svkey</code>)
+                  <div class="filefield" data-drop="tk-sign-key">
+                    <input id="tk-sign-key" type="text" placeholder="/path/to/my-signing-key.svkey" autocomplete="off" />
+                    <button class="browse secondary" data-target="tk-sign-key" data-mode="file">Browse…</button>
+                  </div>
+                </label>
+                <label>Password
+                  <input id="tk-sign-pass" type="password" placeholder="password" autocomplete="off" />
+                </label>
+                <div class="row">
+                  <button id="tk-btn-sign">Sign file</button>
+                </div>
+                <div id="tk-sign-result" class="note hidden"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================== CHECK A SIGNATURE ===================== -->
+        <section class="screen hidden" data-screen="verify">
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">✅ Check a signature</h2>
+              <p class="task-purpose">Confirm a file was signed by a specific person and hasn't changed.</p>
+              <details class="when">
+                <summary>When should I use this?</summary>
+                <p class="muted hint">When you received a file plus a signature and the signer's public key,
+                  and want to be sure the file is genuine and unaltered.</p>
+              </details>
+            </div>
+            <div class="task-body">
+              <label>1 &nbsp;The file
+                <div class="filefield" data-drop="tk-verify-file">
+                  <input id="tk-verify-file" type="text" placeholder="/path/to/document.pdf" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-verify-file" data-mode="file">Browse…</button>
+                </div>
+              </label>
+              <label>2 &nbsp;The signature (<code>.minisig</code>)
+                <div class="filefield" data-drop="tk-verify-sig">
+                  <input id="tk-verify-sig" type="text" placeholder="/path/to/document.pdf.minisig" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-verify-sig" data-mode="file">Browse…</button>
+                </div>
+              </label>
+              <label>3 &nbsp;Their public key (<code>.pub</code>)
+                <div class="filefield" data-drop="tk-verify-pub">
+                  <input id="tk-verify-pub" type="text" placeholder="/path/to/signer.pub" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-verify-pub" data-mode="file">Browse…</button>
+                </div>
+              </label>
+              <div class="row">
+                <button id="tk-btn-verify">Check</button>
+              </div>
+              <div id="tk-verify-result" class="result hidden"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================== FINGERPRINT A FILE ==================== -->
+        <section class="screen hidden" data-screen="hash">
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">🔢 Fingerprint a file</h2>
+              <p class="task-purpose">Get a unique ID (BLAKE3) of a file's exact contents.</p>
+              <details class="when">
+                <summary>When should I use this?</summary>
+                <p class="muted hint">To compare two copies of a file, or to record a value you can re-check
+                  later. Two files with the same fingerprint are identical.</p>
+              </details>
+            </div>
+            <div class="task-body">
+              <label>Choose a file
+                <div class="filefield" data-drop="tk-hash-path">
+                  <input id="tk-hash-path" type="text" placeholder="Drop a file here, or Browse…" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-hash-path" data-mode="file">Browse…</button>
+                </div>
+              </label>
+              <div class="row">
+                <button id="tk-btn-hash">Get fingerprint</button>
+              </div>
+              <div id="tk-hash-result" class="note hidden"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================== COMING-SOON SCREENS ==================== -->
+        <section class="screen hidden" data-screen="soon-hide">
+          <div class="soon-card">
+            <h2 class="screen-title">🕵️ Hide data inside a file <span class="soontag">Coming soon</span></h2>
+            <p><strong>What it will do:</strong> conceal a file inside an image or audio file so it looks ordinary.</p>
+            <p><strong>When you'd use it:</strong> to send something discreetly alongside a normal-looking file.</p>
+            <p class="muted">Status: under evaluation — not available yet.</p>
+          </div>
+        </section>
+        <section class="screen hidden" data-screen="soon-watermark">
+          <div class="soon-card">
+            <h2 class="screen-title">💧 Add a watermark <span class="soontag">Coming soon</span></h2>
+            <p><strong>What it will do:</strong> embed an invisible ownership mark into an image.</p>
+            <p><strong>When you'd use it:</strong> to mark images as yours and detect copies.</p>
+            <p class="muted">Status: under evaluation — not available yet.</p>
+          </div>
+        </section>
+        <section class="screen hidden" data-screen="intact">
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">🛡️ Check a file is unchanged</h2>
+              <p class="task-purpose">Confirm a file still matches a fingerprint you were given.</p>
+              <details class="when">
+                <summary>When should I use this?</summary>
+                <p class="muted hint">To check a download, backup, or shared file wasn't altered. You need
+                  the fingerprint the sender gave you (the same value <strong>Fingerprint a file</strong>
+                  produces). If you were given a signature file instead, use
+                  <strong>Check a signature</strong>.</p>
+              </details>
+            </div>
+            <div class="task-body">
+              <label>1 &nbsp;Choose the file
+                <div class="filefield" data-drop="tk-intact-file">
+                  <input id="tk-intact-file" type="text" placeholder="Drop a file here, or Browse…" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-intact-file" data-mode="file">Browse…</button>
+                </div>
+              </label>
+              <label>2 &nbsp;Paste the fingerprint you were given
+                <input id="tk-intact-hash" type="text" placeholder="e.g. ab12cd…  (64 characters)" autocomplete="off" />
+                <span class="muted hint">Spaces and capitalisation don't matter.</span>
+              </label>
+              <div class="row">
+                <button id="tk-btn-intact">Check</button>
+              </div>
+              <div id="tk-intact-result" class="result hidden"></div>
+            </div>
+          </div>
+        </section>
+        <!-- ========================= SPLIT A SECRET ===================== -->
+        <section class="screen hidden" data-screen="split-secret">
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">🧩 Split a secret</h2>
+              <p class="task-purpose">Split a password, key, or note into pieces — any chosen number of them together restore it.</p>
+              <details class="when">
+                <summary>When should I use this?</summary>
+                <p class="muted hint">To share trust across several people or places: no single piece reveals
+                  anything, but enough of them together rebuild the secret. You also get one
+                  <strong>payload file</strong> — keep it with the pieces; it's needed to recover. It's safe to
+                  copy, but don't lose it.</p>
+              </details>
+            </div>
+            <div class="task-body">
+              <label>1 &nbsp;The secret to split
+                <textarea id="tk-split-secret-text" rows="3" placeholder="Type or paste the secret (password, key, recovery phrase…)" autocomplete="off"></textarea>
+                <span class="muted hint">Stays on this device. It isn't shown again after you split it.</span>
+              </label>
+              <div class="row">
+                <label class="inline">Total pieces
+                  <input id="tk-split-secret-total" type="number" min="2" max="255" value="3" />
+                </label>
+                <label class="inline">Needed to restore
+                  <input id="tk-split-secret-needed" type="number" min="2" max="255" value="2" />
+                </label>
+              </div>
+              <label>2 &nbsp;Save the pieces to a folder
+                <div class="filefield" data-drop="tk-split-secret-outdir">
+                  <input id="tk-split-secret-outdir" type="text" placeholder="Choose a folder…" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-split-secret-outdir" data-mode="folder">Browse…</button>
+                </div>
+                <span class="muted hint">▸ Technical details: a random key is Shamir-split; the secret is sealed with secretbox (XSalsa20-Poly1305).</span>
+              </label>
+              <div class="row">
+                <button id="tk-btn-split-secret">Split into pieces</button>
+              </div>
+              <div id="tk-split-secret-result" class="result hidden"></div>
+              <ul id="tk-split-secret-pieces" class="items"></ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================== SPLIT A FILE ====================== -->
+        <section class="screen hidden" data-screen="split-file">
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">🧩 Split a file</h2>
+              <p class="task-purpose">Split a file into pieces — any chosen number of them together restore it.</p>
+              <details class="when">
+                <summary>When should I use this?</summary>
+                <p class="muted hint">To back up a sensitive file (a keyfile, wallet, or document) across several
+                  locations. You get tiny piece files plus one <strong>payload file</strong> (the encrypted file);
+                  recovery needs the payload and enough pieces.</p>
+              </details>
+            </div>
+            <div class="task-body">
+              <label>1 &nbsp;Choose the file to split
+                <div class="filefield" data-drop="tk-split-file-input">
+                  <input id="tk-split-file-input" type="text" placeholder="Drop a file here, or click Browse…" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-split-file-input" data-mode="file">Browse…</button>
+                </div>
+              </label>
+              <div class="row">
+                <label class="inline">Total pieces
+                  <input id="tk-split-file-total" type="number" min="2" max="255" value="3" />
+                </label>
+                <label class="inline">Needed to restore
+                  <input id="tk-split-file-needed" type="number" min="2" max="255" value="2" />
+                </label>
+              </div>
+              <label>2 &nbsp;Save the pieces to a folder
+                <div class="filefield" data-drop="tk-split-file-outdir">
+                  <input id="tk-split-file-outdir" type="text" placeholder="Choose a folder…" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-split-file-outdir" data-mode="folder">Browse…</button>
+                </div>
+              </label>
+              <div class="row">
+                <button id="tk-btn-split-file">Split into pieces</button>
+              </div>
+              <div id="tk-split-file-result" class="result hidden"></div>
+              <ul id="tk-split-file-list" class="items"></ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- ======================= RECOVER FROM PIECES ================== -->
+        <section class="screen hidden" data-screen="recover-pieces">
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">🔗 Recover from pieces</h2>
+              <p class="task-purpose">Rebuild a secret or file from enough of its pieces, plus the payload file.</p>
+              <details class="when">
+                <summary>When should I use this?</summary>
+                <p class="muted hint">When you have at least the “needed to restore” number of pieces — as files
+                  (<code>.svss</code>) or pasted codes — together with the payload file they were made with.</p>
+              </details>
+            </div>
+            <div class="task-body">
+              <label>1 &nbsp;Piece files
+                <textarea id="tk-recover-files" rows="3" data-drop="tk-recover-files" placeholder="Drop piece files here, or click Add piece files…"></textarea>
+                <button class="browse secondary" data-target="tk-recover-files" data-mode="files">Add piece files…</button>
+              </label>
+              <label>&nbsp;&nbsp;&nbsp;Or paste piece codes (one per line)
+                <textarea id="tk-recover-codes" rows="3" placeholder="Paste Base64 piece codes, one per line (optional if you added files above)"></textarea>
+              </label>
+              <label>2 &nbsp;The payload file
+                <div class="filefield" data-drop="tk-recover-payload">
+                  <input id="tk-recover-payload" type="text" placeholder="Choose the .payload.svss file…" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-recover-payload" data-mode="file">Browse…</button>
+                </div>
+              </label>
+              <label>3 &nbsp;Where to save the recovered result
+                <div class="filefield" data-drop="tk-recover-output">
+                  <input id="tk-recover-output" type="text" placeholder="/path/to/recovered-output" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-recover-output" data-mode="save">Save As…</button>
+                </div>
+              </label>
+              <div class="row">
+                <button id="tk-btn-recover-pieces">Recover</button>
+              </div>
+              <div id="tk-recover-result" class="result hidden"></div>
+            </div>
+          </div>
+        </section>
+        <section class="screen hidden" data-screen="soon-qr">
+          <div class="soon-card">
+            <h2 class="screen-title">📷 Secure QR transfer <span class="soontag">Coming soon</span></h2>
+            <p><strong>What it will do:</strong> move a secret between devices as encrypted QR codes.</p>
+            <p class="muted">Status: under evaluation — not available yet.</p>
+          </div>
+        </section>
+        <section class="screen hidden" data-screen="soon-detect">
+          <div class="soon-card">
+            <h2 class="screen-title">🔎 Detect hidden data <span class="soontag">Coming soon</span></h2>
+            <p><strong>What it will do:</strong> scan a file for signs of concealed data.</p>
+            <p class="muted">Status: under evaluation — not available yet.</p>
+          </div>
+        </section>
+        <section class="screen hidden" data-screen="soon-metadata">
+          <div class="soon-card">
+            <h2 class="screen-title">🧹 Metadata tools <span class="soontag">Coming soon</span></h2>
+            <p><strong>What it will do:</strong> inspect and remove hidden metadata (location, device, author).</p>
+            <p><strong>When you'd use it:</strong> before sharing a photo or document publicly.</p>
+            <p class="muted">Status: under evaluation — not available yet.</p>
+          </div>
+        </section>
+        <section class="screen hidden" data-screen="soon-analysis">
+          <div class="soon-card">
+            <h2 class="screen-title">📊 Analyze a file <span class="soontag">Coming soon</span></h2>
+            <p><strong>What it will do:</strong> summarize a file's type, structure, and notable properties.</p>
+            <p class="muted">Status: under evaluation — not available yet.</p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+
+    <!-- About panel (hosts the technical version strings, out of the main chrome). -->
+    <div id="about-panel" class="modal hidden">
+      <div class="modal-card">
+        <div class="row spread">
+          <h2>About</h2>
+          <button id="btn-about-close" class="linkbtn">Close</button>
+        </div>
+        <p class="muted">Security &amp; Privacy Toolkit — an offline desktop app that assembles vetted
+          open-source security tools.</p>
+        <p class="muted" id="about-version"></p>
+      </div>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
+</html>

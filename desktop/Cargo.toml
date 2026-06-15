@@ -1,0 +1,43 @@
+[package]
+name = "secure-vault-desktop"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.96"
+description = "Secure Vault — Tauri 2 desktop shell over the sv-app command surface"
+license = "MIT OR Apache-2.0"
+publish = false
+
+# Standalone crate: it is `exclude`d from the parent workspace so Tauri's large, platform
+# (webview) dependency tree never enters the audited core's lock/deny/build. Path deps below
+# still resolve against the core crates.
+
+[lib]
+name = "secure_vault_desktop_lib"
+# `cdylib`/`staticlib` are required for Tauri's mobile targets; `lib` lets `main.rs` call `run()`.
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+# Hash the bundled age/age-keygen at build time to embed their BLAKE3 pins.
+blake3 = "1"
+
+[dependencies]
+tauri = { version = "2", features = [] }
+# Native file/folder/save dialogs for the UI (U1). Frontend-only affordance: adds no application
+# command, IPC contract, crypto, or format — file paths remain plain strings.
+tauri-plugin-dialog = "2"
+# "Show in folder" / "Open file" affordances for result cards (U2). Same category as the dialog
+# plugin: a UI convenience that reveals/opens a path the user already produced. No app command,
+# IPC contract, crypto, or format change.
+tauri-plugin-opener = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# The audited core (path deps into the parent workspace's crates).
+sv-app = { path = "../src-tauri" }
+sv-types = { path = "../crates/sv-types" }
+sv-age = { path = "../crates/sv-age" }
+
+[features]
+# Tauri's default custom-protocol feature for release builds.
+custom-protocol = ["tauri/custom-protocol"]

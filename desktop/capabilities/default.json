@@ -1,0 +1,13 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Core webview permissions for the Secure Vault main window. The app's own #[tauri::command]s (vault_*, item_*, integrity_*, sign/verify, keys_*) are registered via the invoke handler and need no extra permission entries.",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "dialog:default",
+    "opener:default",
+    "opener:allow-open-path",
+    "opener:allow-reveal-item-in-dir"
+  ]
+}
