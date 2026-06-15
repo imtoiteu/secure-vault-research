@@ -28,6 +28,12 @@ jobs:
         with:
           components: clippy, rustfmt
       - uses: Swatinem/rust-cache@v2
+      # `go` is preinstalled on the ubuntu/windows runners but NOT on `macos-latest` (arm64),
+      # where `go install` below fails with "go: command not found". Set Go up explicitly on
+      # every OS so the age install is reproducible.
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
       # Install age on EVERY OS and point the e2e test at it, so the age-backed
       # `age_backed_lifecycle_roundtrips` test actually runs on Windows/macOS — not just Linux.
       # On Windows this is the validation for H4 (does `Command::env_clear()` break the age
