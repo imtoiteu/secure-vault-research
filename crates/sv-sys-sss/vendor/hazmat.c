@@ -283,13 +283,19 @@ gf256_inv(uint32_t r[8], uint32_t x[8])
 	assert(k <= n);
 
 	uint8_t share_idx, coeff_idx, unbitsliced_x;
-	uint32_t poly0[8], poly[k-1][8], x[8], y[8], xpow[8], tmp[8];
+	uint32_t poly0[8], x[8], y[8], xpow[8], tmp[8];
+	/* MSVC has no C99 variable-length arrays. `k` is a uint8_t, so `k-1 <= 254`; use a
+	 * fixed maximum-size buffer and touch only the first (k-1) rows below — identical to the
+	 * original `poly[k-1][8]` VLA on GCC/Clang. (Cross-platform portability fix.) */
+	uint32_t poly[255][8];
 
 	/* Put the secret in the bottom part of the polynomial */
 	bitslice(poly0, key);
 
-	/* Generate the other terms of the polynomial */
-	randombytes((void*) poly, sizeof(poly));
+	/* Generate the other terms of the polynomial. Fill exactly the (k-1) rows in use; with the
+	 * fixed-size buffer above, `(k-1)*sizeof(poly[0])` reproduces the original VLA byte count
+	 * (`sizeof(poly)` would over-fill). `randombytes` returns 0 for a zero length (k == 1). */
+	randombytes((void*) poly, (size_t) (k - 1) * sizeof(poly[0]));
 
 	for (share_idx = 0; share_idx < n; share_idx++) {
 		/* x value is in 1..n */
@@ -321,7 +327,9 @@ gf256_inv(uint32_t r[8], uint32_t x[8])
                             uint8_t k)
 {
 	size_t share_idx, idx1, idx2;
-	uint32_t xs[k][8], ys[k][8];
+	/* MSVC has no C99 VLAs; `k` is a uint8_t (<= 255). Fixed max-size buffers; only the first
+	 * `k` rows are written and read. Behaviour identical to the original VLA. (Portability fix.) */
+	uint32_t xs[255][8], ys[255][8];
 	uint32_t num[8], denom[8], tmp[8];
 	uint32_t secret[8] = {0};
 

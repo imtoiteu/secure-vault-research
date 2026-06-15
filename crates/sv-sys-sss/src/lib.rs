@@ -12,7 +12,9 @@
 //!
 //! `randombytes` (used by `hazmat.c` to pick polynomial coefficients) is provided here
 //! from Rust via [`getrandom`], exported with C ABI, so there is no platform-specific C
-//! randomness code to maintain.
+//! randomness code to maintain. It is exported as `sv_sss_randombytes` (and `hazmat.c` is
+//! compiled to call that name — see `build.rs`) so the symbol does not collide with
+//! libsodium's `randombytes`, which is also linked into the final binary.
 
 #![allow(unsafe_code)] // this is the FFI boundary crate
 
@@ -30,13 +32,18 @@ extern "C" {
     fn sss_combine_keyshares(key: *mut u8, shares: *const u8, k: u8);
 }
 
-/// C-ABI `randombytes` that `hazmat.c` links against. Fills `buf[0..n]` with OS CSPRNG
-/// bytes; returns 0 on success, -1 on failure (matching the sss/libsodium convention).
+/// C-ABI randomness shim that `hazmat.c` links against (compiled to call this name via the
+/// `randombytes` → `sv_sss_randombytes` rename in `build.rs`, avoiding a clash with libsodium's
+/// `randombytes`). Fills `buf[0..n]` with OS CSPRNG bytes; returns 0 on success, -1 on failure
+/// (matching the sss/libsodium convention).
 ///
 /// # Safety
 /// `buf` must point to at least `n` writable bytes. Called only by the vendored C.
 #[no_mangle]
-pub unsafe extern "C" fn randombytes(buf: *mut core::ffi::c_void, n: usize) -> core::ffi::c_int {
+pub unsafe extern "C" fn sv_sss_randombytes(
+    buf: *mut core::ffi::c_void,
+    n: usize,
+) -> core::ffi::c_int {
     if buf.is_null() || n == 0 {
         return 0;
     }
