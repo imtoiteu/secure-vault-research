@@ -100,7 +100,7 @@
             <button class="tile" data-goto="recover-pieces"><span class="tile-icon">🔗</span><span class="tile-title" data-i18n="home.t.recover">Recover from pieces</span></button>
             <button class="tile" data-goto="hide"><span class="tile-icon">🕵️</span><span class="tile-title" data-i18n="home.t.hide">Hide data</span></button>
             <button class="tile" data-goto="detect"><span class="tile-icon">🔎</span><span class="tile-title" data-i18n="home.t.detect">Detect hidden data</span></button>
-            <button class="tile soon" data-goto="soon-metadata"><span class="tile-icon">🧹</span><span class="tile-title" data-i18n="home.t.metadata">Metadata tools</span><span class="soontag" data-i18n="home.soon">soon</span></button>
+            <button class="tile" data-goto="metadata-inspect"><span class="tile-icon">🧹</span><span class="tile-title" data-i18n="home.t.metadata">Metadata tools</span></button>
           </div>
         </section>
 
@@ -266,8 +266,9 @@
                   <span id="item-count" class="muted"></span>
                 </div>
                 <ul id="item-list" class="items"></ul>
-                <div class="add-row">
-                  <input id="add-source" type="text" placeholder="Choose a file to add…" data-i18n-ph="vault.files.add.ph.source" autocomplete="off" />
+                <div class="add-row" data-drop="add-source">
+                  <input id="add-source" type="text" placeholder="Choose a file to add…" data-i18n-ph="vault.files.add.ph.source" autocomplete="off"
+                         data-fills="add-name" data-fillbase="1" />
                   <button class="browse secondary" data-target="add-source" data-mode="file" data-i18n="btn.browse">Browse…</button>
                   <input id="add-name" type="text" placeholder="Name in the vault" data-i18n-ph="vault.files.add.ph.name" autocomplete="off" />
                   <button id="btn-add" data-i18n="vault.btn.addFile">Add file</button>
@@ -436,7 +437,7 @@
               <label><span data-i18n="dec.step3">3 &nbsp;Where to save the opened file</span>
                 <div class="filefield" data-drop="tk-dec-output">
                   <input id="tk-dec-output" type="text" placeholder="/path/to/recovered-file" data-i18n-ph="dec.ph.output" autocomplete="off" />
-                  <button class="browse secondary" data-target="tk-dec-output" data-mode="save" data-from="tk-dec-input" data-i18n="btn.saveAs">Save As…</button>
+                  <button class="browse secondary" data-target="tk-dec-output" data-mode="save" data-from="tk-dec-input" data-strip=".svenc" data-i18n="btn.saveAs">Save As…</button>
                 </div>
               </label>
               <div class="row">
@@ -464,7 +465,7 @@
               <label><span data-i18n="hide.step1">1 &nbsp;Choose the cover image (PNG, BMP, or JPEG)</span>
                 <div class="filefield" data-drop="tk-hide-cover">
                   <input id="tk-hide-cover" type="text" placeholder="Drop a PNG/BMP/JPEG here, or Browse…" data-i18n-ph="hide.ph.cover" autocomplete="off"
-                         data-fills="tk-hide-output" data-fillsuffix=".stego.png" />
+                         data-fills="tk-hide-output" data-fillsuffix=".stego.png" data-fillmirror="image" />
                   <button class="browse secondary" data-target="tk-hide-cover" data-mode="file" data-i18n="btn.browse">Browse…</button>
                 </div>
                 <span class="muted hint" data-i18n-html="hide.cover.tech">▸ Lossless <strong>PNG/BMP</strong> are the most discreet covers. <strong>JPEG</strong>
@@ -487,7 +488,7 @@
               <label><span data-i18n="hide.step4">4 &nbsp;Where to save the image with hidden data</span>
                 <div class="filefield" data-drop="tk-hide-output">
                   <input id="tk-hide-output" type="text" placeholder="/path/to/output.png" data-i18n-ph="hide.ph.output" autocomplete="off" />
-                  <button class="browse secondary" data-target="tk-hide-output" data-mode="save" data-from="tk-hide-cover" data-suffix=".stego.png" data-i18n="btn.saveAs">Save As…</button>
+                  <button class="browse secondary" data-target="tk-hide-output" data-mode="save" data-from="tk-hide-cover" data-suffix=".stego.png" data-mirror="image" data-i18n="btn.saveAs">Save As…</button>
                 </div>
                 <span class="muted hint" data-i18n-html="hide.out.tech">▸ Saved in the cover's format. Technical details: encrypt-then-embed — Argon2id + secretbox, then LSB concealment.</span>
               </label>
@@ -517,18 +518,19 @@
               <label><span data-i18n="unhide.step1">1 &nbsp;Choose the image with hidden data</span>
                 <div class="filefield" data-drop="tk-unhide-input">
                   <input id="tk-unhide-input" type="text" placeholder="Drop the PNG/BMP/JPEG here, or Browse…" data-i18n-ph="unhide.ph.input" autocomplete="off"
-                         data-fills="tk-unhide-output" data-fillstrip=".stego.png" data-fillsuffix=".out" />
+                         data-fills="tk-unhide-output" data-filldir />
                   <button class="browse secondary" data-target="tk-unhide-input" data-mode="file" data-i18n="btn.browse">Browse…</button>
                 </div>
               </label>
               <label><span data-i18n="unhide.step2">2 &nbsp;Password</span>
                 <input id="tk-unhide-pass" type="password" placeholder="password" data-i18n-ph="vault.ph.password" autocomplete="off" />
               </label>
-              <label><span data-i18n="unhide.step3">3 &nbsp;Where to save the revealed file</span>
+              <label><span data-i18n="unhide.step3">3 &nbsp;Choose the destination folder</span>
                 <div class="filefield" data-drop="tk-unhide-output">
-                  <input id="tk-unhide-output" type="text" placeholder="/path/to/revealed-file" data-i18n-ph="unhide.ph.output" autocomplete="off" />
-                  <button class="browse secondary" data-target="tk-unhide-output" data-mode="save" data-from="tk-unhide-input" data-i18n="btn.saveAs">Save As…</button>
+                  <input id="tk-unhide-output" type="text" placeholder="/path/to/destination/folder" data-i18n-ph="unhide.ph.output" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-unhide-output" data-mode="folder" data-i18n="btn.chooseFolder">Choose folder…</button>
                 </div>
+                <p class="muted hint" data-i18n="unhide.folder.hint">The revealed file keeps its original name and extension automatically.</p>
               </label>
               <div class="row">
                 <button id="tk-btn-unhide" data-i18n="unhide.btn">Reveal data</button>
@@ -872,10 +874,10 @@
               </label>
               <div class="row">
                 <label class="inline"><span data-i18n="vault.field.totalPieces">Total pieces</span>
-                  <input id="tk-split-secret-total" type="number" min="2" max="255" value="3" />
+                  <input id="tk-split-secret-total" type="number" min="1" max="255" value="3" />
                 </label>
                 <label class="inline"><span data-i18n="vault.field.neededRestore">Needed to restore</span>
-                  <input id="tk-split-secret-needed" type="number" min="2" max="255" value="2" />
+                  <input id="tk-split-secret-needed" type="number" min="1" max="255" value="2" />
                 </label>
               </div>
               <label><span data-i18n="ss.step2">2 &nbsp;Save the pieces to a folder</span>
@@ -916,10 +918,10 @@
               </label>
               <div class="row">
                 <label class="inline"><span data-i18n="vault.field.totalPieces">Total pieces</span>
-                  <input id="tk-split-file-total" type="number" min="2" max="255" value="3" />
+                  <input id="tk-split-file-total" type="number" min="1" max="255" value="3" />
                 </label>
                 <label class="inline"><span data-i18n="vault.field.neededRestore">Needed to restore</span>
-                  <input id="tk-split-file-needed" type="number" min="2" max="255" value="2" />
+                  <input id="tk-split-file-needed" type="number" min="1" max="255" value="2" />
                 </label>
               </div>
               <label><span data-i18n="sf.step2">2 &nbsp;Save the pieces to a folder</span>
@@ -1089,7 +1091,7 @@
               <label><span data-i18n="mc.step1">1 &nbsp;Choose the file to clean</span>
                 <div class="filefield" data-drop="tk-mc-input">
                   <input id="tk-mc-input" type="text" placeholder="Drop a file here, or Browse…" data-i18n-ph="mc.ph.input" autocomplete="off"
-                         data-fills="tk-mc-output" data-fillsuffix=".clean.png" />
+                         data-fills="tk-mc-output" data-fillsuffix=".clean.png" data-fillmirror="ext" />
                   <button class="browse secondary" data-target="tk-mc-input" data-mode="file" data-i18n="btn.browse">Browse…</button>
                 </div>
                 <span class="muted hint" data-i18n-html="mc.tech1">▸ Images and WAV/AVI/MOV/MP4 are <strong>fully stripped</strong>. <strong>PDF</strong> is a
@@ -1099,7 +1101,7 @@
               <label><span data-i18n="mc.step2">2 &nbsp;Where to save the cleaned copy</span>
                 <div class="filefield" data-drop="tk-mc-output">
                   <input id="tk-mc-output" type="text" placeholder="/path/to/cleaned-file" data-i18n-ph="mc.ph.output" autocomplete="off" />
-                  <button class="browse secondary" data-target="tk-mc-output" data-mode="save" data-from="tk-mc-input" data-suffix=".clean.png" data-i18n="btn.saveAs">Save As…</button>
+                  <button class="browse secondary" data-target="tk-mc-output" data-mode="save" data-from="tk-mc-input" data-suffix=".clean.png" data-mirror="ext" data-i18n="btn.saveAs">Save As…</button>
                 </div>
                 <span class="muted hint" data-i18n-html="mc.tech2">▸ Keep the same file extension as the original so apps still open it. Technical details:
                   <code>exiftool -all=</code> writes a fresh file; the input is never modified in place.</span>

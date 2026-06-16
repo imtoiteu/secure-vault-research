@@ -76,15 +76,24 @@ function setStatus(text, kind = "info") {
 
 // Run a backend call with uniform busy/disabled handling and coded-error reporting (legacy
 // status-bar path — used where a result card isn't appropriate, e.g. lock/unlock transitions).
+// Shows the same "Working…" busy label as runTask so slow ops (Argon2id unlock/recover/change-
+// passphrase) visibly register the click instead of looking inert.
 async function withButton(btn, fn) {
-  if (btn) btn.disabled = true;
+  const label = btn ? btn.textContent : null;
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = t("btn.working");
+  }
   try {
     return await fn();
   } catch (e) {
     setStatus(describe(e), "error");
     return undefined;
   } finally {
-    if (btn) btn.disabled = false;
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = label;
+    }
   }
 }
 
@@ -96,11 +105,28 @@ const linesOf = (text) =>
     .map((s) => s.trim())
     .filter((s) => s.length > 0);
 
+// Like linesOf, but preserves intra-line whitespace — for filesystem-path textareas, where a
+// leading/trailing space can be part of a real path. Drops blank lines and a trailing CR only.
+const pathLinesOf = (text) =>
+  text
+    .split("\n")
+    .map((s) => s.replace(/\r$/, ""))
+    .filter((s) => s.trim().length > 0);
+
 const shortHash = (hex, n = 12) => (hex ? `${hex.slice(0, n)}…` : "");
 
 function baseName(p) {
   const parts = String(p).split(/[\\/]/);
   return parts[parts.length - 1] || p;
+}
+
+// Parent directory of a path (no trailing separator; keeps a leading "/" root). "" when the path has
+// no directory component. Used to default a destination-folder field to the source file's folder.
+function parentDir(p) {
+  const norm = String(p).replace(/[\\/]+$/, "");
+  const i = Math.max(norm.lastIndexOf("/"), norm.lastIndexOf("\\"));
+  if (i < 0) return "";
+  return i === 0 ? norm.slice(0, 1) : norm.slice(0, i);
 }
 
 function humanSize(bytes) {
@@ -176,6 +202,48 @@ function revealAction(path) {
 }
 function openAction(path) {
   return { label: t("action.openFile"), onClick: () => openFile(path) };
+}
+
+// Save a just-recovered file under its restored original name (writes a correctly-named copy via the
+// backend copy_file command, which refuses to overwrite). Offered when the chosen output name differs.
+function saveAsAction(srcPath, originalName) {
+  return {
+    label: t("action.saveAsName", { name: originalName }),
+    primary: true,
+    onClick: async () => {
+      const dir = srcPath.slice(0, srcPath.length - baseName(srcPath).length);
+      const dest = await pickPath("save", { defaultPath: dir + originalName });
+      if (!dest) return;
+      try {
+        const saved = await invoke("copy_file", { from: srcPath, to: dest });
+        setStatus(t("status.savedTo", { name: baseName(saved), dest: saved }), "ok");
+      } catch (e) {
+        setStatus(describe(e), "error");
+      }
+    },
+  };
+}
+
+// Result card for an operation that recovered a file to `opts.savedPath`. Surfaces the restored
+// original name when known and offers a correctly-named save if the chosen output name differs;
+// otherwise falls back to the generic extension caveat.
+function recoveredCard(opts) {
+  const rows = [{ label: t("r.label.savedTo"), value: opts.savedPath, copy: true }];
+  if (opts.bytesWritten != null) rows.push({ label: t("r.label.size"), value: humanSize(opts.bytesWritten) });
+  const actions = [revealAction(opts.savedPath), openAction(opts.savedPath)];
+  // The backend now saves under the recovered original name, so `savedPath` normally already carries
+  // it (nothing extra to show). Only when it doesn't — a legacy frame with a name but an odd path, or
+  // none at all — do we surface the name / offer a correctly-named save / fall back to the caveat.
+  if (opts.originalName && baseName(opts.savedPath) !== opts.originalName) {
+    rows.push({ label: t("r.label.originalName"), value: opts.originalName });
+    rows.push({ label: t("r.note"), value: t("r.ext.mismatch", { name: opts.originalName }) });
+    actions.push(saveAsAction(opts.savedPath, opts.originalName));
+  } else if (!opts.originalName) {
+    rows.push({ label: t("r.note"), value: t("r.ext.caveat") });
+  }
+  const card = { ok: true, title: opts.title, rows, actions };
+  if (opts.message) card.message = opts.message;
+  return card;
 }
 
 // ---- result cards --------------------------------------------------------
@@ -354,6 +422,12 @@ function showScreen(name) {
     n.classList.toggle("active", n.dataset.screen === name);
   });
   clearAllFieldErrors();
+  // The status bar is a single global element; a message left by the previous screen's task would
+  // otherwise linger under an unrelated tool. Clear it on every navigation (as a language switch does).
+  setStatus("", "info");
+  // Don't leave rendered secret share codes on screen after navigating away.
+  const pieces = $("tk-split-secret-pieces");
+  if (pieces) pieces.innerHTML = "";
 }
 
 function wireSidebar() {
@@ -396,6 +470,30 @@ async function pickPath(mode, opts = {}) {
   }
 }
 
+// Remove a known output suffix from `src` to suggest the *input's* original name. `spec` is either a
+// literal suffix (e.g. ".svenc", matched case-insensitively) or the token ".stego.*", which matches
+// the steganography carrier tail ".stego.<imgext>". Returns `src` unchanged if nothing matched.
+function stripSuffix(src, spec) {
+  if (spec === ".stego.*") return src.replace(/\.stego\.(png|jpe?g|bmp)$/i, "");
+  return src.toLowerCase().endsWith(spec.toLowerCase()) ? src.slice(0, src.length - spec.length) : src;
+}
+
+// Build an output name from a source path + a suffix template (e.g. ".clean.png"). `mirror` controls
+// how the suffix's trailing extension is treated:
+//   "image" → rewrite it to the source's extension, but only for png/jpg/bmp sources (the stego
+//             carrier must stay a supported image; JPEG cover → JPEG stego, etc.);
+//   "ext"   → rewrite it to the source's actual extension, any type (so a sanitize/clean copy keeps
+//             the original container — a .pdf stays .pdf — and still opens);
+//   else    → use the suffix verbatim (e.g. force a lossless ".marked.png" for watermarking).
+function applySuffix(src, suffix, mirror) {
+  if (mirror === "image") return src + mirrorStegoExt(src, suffix);
+  if (mirror === "ext") {
+    const m = src.match(/\.([A-Za-z0-9]+)$/);
+    return m ? src + suffix.replace(/\.[^.]+$/, "." + m[1]) : src + suffix;
+  }
+  return src + suffix;
+}
+
 // Smart default: when a source file is chosen, pre-fill a linked output path if it's empty.
 function autoFillOutputs(input) {
   const fills = input.dataset && input.dataset.fills;
@@ -404,16 +502,25 @@ function autoFillOutputs(input) {
   if (!out || out.value.trim()) return; // never clobber a user-set output
   const src = input.value.trim();
   if (!src) return;
+  // `data-fillbase`: fill with just the source basename (e.g. the vault item name) — not a path.
+  if (input.dataset.fillbase) {
+    out.value = baseName(src);
+    return;
+  }
+  // `data-filldir`: fill a destination-folder field with the source file's parent directory.
+  if (input.dataset.filldir !== undefined) {
+    out.value = parentDir(src);
+    return;
+  }
   const strip = input.dataset.fillstrip;
   const suffix = input.dataset.fillsuffix || "";
+  const mirror = input.dataset.fillmirror;
   if (strip) {
-    // Reveal: drop a ".stego.<imgext>" tail (any supported cover format) to suggest the original
-    // name; otherwise append the suffix.
-    const stripped = src.replace(/\.stego\.(png|jpe?g|bmp)$/i, "");
-    out.value = stripped !== src ? stripped : src + suffix;
+    // Suggest the original name by dropping the known output suffix; if it wasn't there, append.
+    const stripped = stripSuffix(src, strip);
+    out.value = stripped !== src ? stripped : applySuffix(src, suffix, mirror);
   } else {
-    // Hide: the stego output keeps the cover's container format — mirror its extension.
-    out.value = src + mirrorStegoExt(src, suffix);
+    out.value = applySuffix(src, suffix, mirror);
   }
 }
 
@@ -440,7 +547,14 @@ function initBrowse() {
         defaultPath = target.value.trim();
       } else {
         const from = btn.dataset.from ? ($(btn.dataset.from)?.value || "").trim() : "";
-        if (from) defaultPath = from + mirrorStegoExt(from, btn.dataset.suffix || "");
+        if (from) {
+          // Mirror autoFillOutputs: a `data-strip` button suggests the original name (drop the known
+          // output suffix); otherwise build from the suffix template honouring `data-mirror`.
+          const strip = btn.dataset.strip;
+          const stripped = strip ? stripSuffix(from, strip) : from;
+          defaultPath =
+            stripped !== from ? stripped : applySuffix(from, btn.dataset.suffix || "", btn.dataset.mirror);
+        }
       }
     }
     const res = await pickPath(mode, { defaultPath });
@@ -458,7 +572,9 @@ function initBrowse() {
 }
 
 function clearDropHighlight() {
-  document.querySelectorAll(".filefield.dropping").forEach((el) => el.classList.remove("dropping"));
+  // Any `[data-drop]` element can be highlighted (filefield, textarea, or the vault add-row), so
+  // clear the class from all of them — a `.filefield`-only selector left textarea zones stuck.
+  document.querySelectorAll(".dropping").forEach((el) => el.classList.remove("dropping"));
 }
 
 function dropZoneAt(position) {
@@ -610,7 +726,7 @@ async function extractItem(it) {
   await withButton(null, async () => {
     try {
       await invoke("item_extract", { session, itemId: it.item_id, dest });
-      setStatus(t("status.savedTo", { name: it.name, dest }), "ok");
+      setStatus(t("status.savedTo", { name: baseName(dest), dest }), "ok");
     } catch (e) {
       setStatus(describe(e), "error");
     }
@@ -661,6 +777,40 @@ window.onLangChange = function () {
   setStatus("", "info");
 };
 
+// If the Analysis (metadata) module isn't available in this build — its hash-pinned ExifTool isn't
+// bundled — disable the three metadata actions and explain why, instead of letting a click return a
+// generic internal error (C4). Banner text carries data-i18n so it re-translates on a language switch.
+async function initMetadataAvailability() {
+  let available = true;
+  try {
+    available = await invoke("metadata_available");
+  } catch (_) {
+    available = false;
+  }
+  if (available) return;
+  for (const name of ["metadata-inspect", "metadata-clean", "metadata-compare"]) {
+    const sec = document.querySelector(`#main .screen[data-screen="${name}"]`);
+    if (!sec || sec.querySelector(".meta-unavailable")) continue;
+    const banner = document.createElement("div");
+    banner.className = "result bad meta-unavailable";
+    const title = document.createElement("div");
+    title.className = "result-title";
+    title.setAttribute("data-i18n", "meta.unavailable.title");
+    title.textContent = t("meta.unavailable.title");
+    const msg = document.createElement("div");
+    msg.className = "result-msg";
+    msg.setAttribute("data-i18n", "meta.unavailable.msg");
+    msg.textContent = t("meta.unavailable.msg");
+    banner.appendChild(title);
+    banner.appendChild(msg);
+    sec.insertBefore(banner, sec.firstChild);
+  }
+  for (const id of ["tk-btn-mi", "tk-btn-mc", "tk-btn-cmp"]) {
+    const b = $(id);
+    if (b) b.disabled = true;
+  }
+}
+
 async function init() {
   window.i18n.apply(); // translate static markup up front (Vietnamese by default)
   initLang();
@@ -675,6 +825,7 @@ async function init() {
   } catch (_) {
     /* non-fatal */
   }
+  await initMetadataAvailability();
 }
 
 // ---- create / unlock -----------------------------------------------------
@@ -815,7 +966,7 @@ $("btn-recover").addEventListener("click", (e) =>
   withButton(e.target, async () => {
     const path = $("recover-path");
     const shares = $("recover-shares");
-    const sharePaths = linesOf(shares.value);
+    const sharePaths = pathLinesOf(shares.value);
     if (!validate([[path, t("v.recover.path")]])) return;
     if (sharePaths.length === 0) {
       setFieldError(shares, t("v.recover.shares"));
@@ -1204,7 +1355,10 @@ $("tk-btn-decrypt").addEventListener("click", (e) => {
       return {
         ok: true,
         title: t("r.dec.title"),
-        rows: [{ label: t("r.label.savedTo"), value: out, copy: true }],
+        rows: [
+          { label: t("r.label.savedTo"), value: out, copy: true },
+          { label: t("r.note"), value: t("r.ext.caveat") },
+        ],
         actions: [revealAction(out), openAction(out)],
       };
     },
@@ -1302,19 +1456,16 @@ $("tk-btn-unhide").addEventListener("click", (e) => {
     async () => {
       const rep = await invoke("stego_extract", {
         stegoPath: input.value,
-        outputPath: output.value,
+        outputDir: output.value,
         passphrase: p1.value,
       });
       p1.value = "";
-      return {
-        ok: true,
+      return recoveredCard({
         title: t("r.unhide.title"),
-        rows: [
-          { label: t("r.label.savedTo"), value: rep.output_path, copy: true },
-          { label: t("r.label.size"), value: humanSize(rep.bytes_written) },
-        ],
-        actions: [revealAction(rep.output_path), openAction(rep.output_path)],
-      };
+        savedPath: rep.output_path,
+        bytesWritten: rep.bytes_written,
+        originalName: rep.original_name,
+      });
     },
     (err) => {
       if (err && err.code === "SV-UNAUTHORIZED")
@@ -1322,7 +1473,12 @@ $("tk-btn-unhide").addEventListener("click", (e) => {
           title: t("r.unhide.bad.title"),
           message: t("r.unhide.bad.msg"),
         };
-      return outputExistsMap("tk-unhide-output")(err);
+      // The backend disambiguates names rather than overwriting, so OUTPUT-EXISTS is only reachable
+      // in the pathological "thousands of same-named files" case; show the message without the
+      // (now-absent) Save-As control.
+      if (err && err.code === "SV-OUTPUT-EXISTS")
+        return { title: t("r.exists.title"), message: t("r.exists.msg") };
+      return null;
     },
   );
 });
@@ -1582,11 +1738,12 @@ function renderPieceList(id, rep) {
   });
 }
 
-// Validate "2 ≤ needed ≤ total ≤ 255" for the two number inputs; returns the parsed pair or null.
+// Validate "1 ≤ needed ≤ total ≤ 255" for the two number inputs; returns the parsed pair or null.
+// (The engine's validate_policy allows 1 ≤ k ≤ n, so a 1-of-n "redundant copies" split is valid.)
 function readPolicy(totalId, neededId) {
   const total = parseInt($(totalId).value, 10);
   const needed = parseInt($(neededId).value, 10);
-  if (!(needed >= 2 && total >= needed && total <= 255)) {
+  if (!(needed >= 1 && total >= needed && total <= 255)) {
     setStatus(t("status.policyPieces"), "error");
     return null;
   }
@@ -1653,7 +1810,7 @@ $("tk-btn-recover-pieces").addEventListener("click", (e) => {
   const codes = $("tk-recover-codes");
   const payload = $("tk-recover-payload");
   const output = $("tk-recover-output");
-  const sharePaths = linesOf(files.value);
+  const sharePaths = pathLinesOf(files.value);
   const shareStrings = linesOf(codes.value);
   if (!validate([[payload, t("v.rp.payload")], [output, t("v.rp.output")]])) return;
   if (sharePaths.length + shareStrings.length === 0) {
@@ -1672,13 +1829,12 @@ $("tk-btn-recover-pieces").addEventListener("click", (e) => {
         payloadPath: payload.value,
         outPath: output.value,
       });
-      return {
-        ok: true,
+      return recoveredCard({
         title: t("r.recover.title"),
         message: t("r.recover.msg"),
-        rows: [{ label: t("r.label.savedTo"), value: rep.output_path, copy: true }],
-        actions: [revealAction(rep.output_path), openAction(rep.output_path)],
-      };
+        savedPath: rep.output_path,
+        originalName: rep.original_name,
+      });
     },
     (err) => {
       if (err && err.code === "SV-UNAUTHORIZED") {
@@ -1729,7 +1885,7 @@ $("tk-btn-qr-recover").addEventListener("click", (e) => {
   const images = $("tk-qr-images");
   const payload = $("tk-qr-payload");
   const output = $("tk-qr-out");
-  const qrPaths = linesOf(images.value);
+  const qrPaths = pathLinesOf(images.value);
   if (!validate([[payload, t("v.qr.payload")], [output, t("v.qr.output")]])) return;
   if (qrPaths.length === 0) {
     setFieldError(images, t("v.qr.images"));
@@ -1746,13 +1902,12 @@ $("tk-btn-qr-recover").addEventListener("click", (e) => {
         payloadPath: payload.value,
         outPath: output.value,
       });
-      return {
-        ok: true,
+      return recoveredCard({
         title: t("r.qrrecover.title"),
         message: t("r.qrrecover.msg"),
-        rows: [{ label: t("r.label.savedTo"), value: rep.output_path, copy: true }],
-        actions: [revealAction(rep.output_path), openAction(rep.output_path)],
-      };
+        savedPath: rep.output_path,
+        originalName: rep.original_name,
+      });
     },
     (err) => {
       if (err && err.code === "SV-UNAUTHORIZED") {

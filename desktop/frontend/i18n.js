@@ -236,8 +236,9 @@
     "unhide.step1": "1  Choose the image with hidden data",
     "unhide.ph.input": "Drop the PNG/BMP/JPEG here, or Browse…",
     "unhide.step2": "2  Password",
-    "unhide.step3": "3  Where to save the revealed file",
-    "unhide.ph.output": "/path/to/revealed-file",
+    "unhide.step3": "3  Choose the destination folder",
+    "unhide.ph.output": "/path/to/destination/folder",
+    "unhide.folder.hint": "The revealed file keeps its original name and extension automatically.",
     "unhide.btn": "Reveal data",
 
     // ---- detect hidden data ----
@@ -445,6 +446,7 @@
     // ---- shared buttons / labels ----
     "btn.browse": "Browse…",
     "btn.saveAs": "Save As…",
+    "btn.chooseFolder": "Choose folder…",
     "btn.working": "Working…",
     "btn.copy": "Copy",
     "btn.copyCode": "Copy code",
@@ -492,7 +494,7 @@
     "status.pieceCopyFailed": "Couldn't copy — open the piece file instead.",
     "status.policyRecovery": "Recovery must satisfy 2 ≤ needed ≤ total ≤ 255.",
     "status.policyShares": "Shares must satisfy 2 ≤ needed ≤ total ≤ 255.",
-    "status.policyPieces": "Pieces must satisfy 2 ≤ needed ≤ total ≤ 255.",
+    "status.policyPieces": "Pieces must satisfy 1 ≤ needed ≤ total ≤ 255.",
 
     // ---- validation (inline field errors) ----
     "v.create.path": "Choose where to save the new vault",
@@ -533,7 +535,7 @@
     "v.hide.output": "Choose where to save the image",
     "v.hide.pass": "Set a password",
     "v.unhide.input": "Choose the image with hidden data",
-    "v.unhide.output": "Choose where to save the revealed file",
+    "v.unhide.output": "Choose the destination folder",
     "v.unhide.pass": "Enter the password",
     "v.detect.input": "Choose an image to scan",
     "v.mi.file": "Choose a file to inspect",
@@ -575,6 +577,13 @@
     "r.create.msg.recovery": "Recovery is enabled — make the pieces after you open it.",
     "r.create.msg.plain": "Now open it: pick this file in “Open a vault” and enter your password.",
     "r.label.savedTo": "Saved to",
+    "r.note": "Note",
+    "r.ext.caveat": "If the saved file won’t open, rename it to add the original file’s extension (e.g. .pdf, .zip, .jpg).",
+    "r.label.originalName": "Original file",
+    "r.ext.mismatch": "Recovered as “{name}”. The name you chose differs — use “Save as …” below to keep the original name and extension.",
+    "action.saveAsName": "Save as {name}",
+    "meta.unavailable.title": "This tool isn’t available in this build",
+    "meta.unavailable.msg": "Metadata features need a bundled ExifTool component, which isn’t included in this build. Inspect, Remove, and Compare are disabled here.",
     "r.create.openNow": "Open it now",
 
     // ---- result: split (vault) ----
@@ -970,8 +979,9 @@
     "unhide.step1": "1  Chọn ảnh có dữ liệu giấu",
     "unhide.ph.input": "Kéo thả PNG/BMP/JPEG vào đây, hoặc Duyệt…",
     "unhide.step2": "2  Mật khẩu",
-    "unhide.step3": "3  Nơi lưu tệp đã hiện ra",
-    "unhide.ph.output": "/đường-dẫn/tới/tệp-hiện-ra",
+    "unhide.step3": "3  Chọn thư mục đích",
+    "unhide.ph.output": "/đường-dẫn/tới/thư-mục-đích",
+    "unhide.folder.hint": "Tệp được hiện ra sẽ tự động giữ nguyên tên và phần mở rộng gốc.",
     "unhide.btn": "Hiện dữ liệu",
 
     // ---- detect hidden data ----
@@ -1179,6 +1189,7 @@
     // ---- shared buttons / labels ----
     "btn.browse": "Duyệt…",
     "btn.saveAs": "Lưu thành…",
+    "btn.chooseFolder": "Chọn thư mục…",
     "btn.working": "Đang xử lý…",
     "btn.copy": "Sao chép",
     "btn.copyCode": "Sao chép mã",
@@ -1225,7 +1236,7 @@
     "status.pieceCopyFailed": "Không sao chép được — hãy mở tệp mảnh thay thế.",
     "status.policyRecovery": "Khôi phục phải thỏa: 2 ≤ cần ≤ tổng ≤ 255.",
     "status.policyShares": "Các mảnh phải thỏa: 2 ≤ cần ≤ tổng ≤ 255.",
-    "status.policyPieces": "Các mảnh phải thỏa: 2 ≤ cần ≤ tổng ≤ 255.",
+    "status.policyPieces": "Các mảnh phải thỏa: 1 ≤ cần ≤ tổng ≤ 255.",
 
     // ---- validation (inline field errors) ----
     "v.create.path": "Chọn nơi lưu két mới",
@@ -1266,7 +1277,7 @@
     "v.hide.output": "Chọn nơi lưu ảnh",
     "v.hide.pass": "Đặt một mật khẩu",
     "v.unhide.input": "Chọn ảnh có dữ liệu giấu",
-    "v.unhide.output": "Chọn nơi lưu tệp hiện ra",
+    "v.unhide.output": "Chọn thư mục đích",
     "v.unhide.pass": "Nhập mật khẩu",
     "v.detect.input": "Chọn một ảnh để quét",
     "v.mi.file": "Chọn một tệp để xem",
@@ -1308,6 +1319,13 @@
     "r.create.msg.recovery": "Khôi phục đã bật — hãy tạo các mảnh sau khi bạn mở nó.",
     "r.create.msg.plain": "Giờ hãy mở nó: chọn tệp này trong “Mở két” và nhập mật khẩu.",
     "r.label.savedTo": "Đã lưu vào",
+    "r.note": "Lưu ý",
+    "r.ext.caveat": "Nếu tệp đã lưu không mở được, hãy đổi tên để thêm phần mở rộng gốc của tệp (ví dụ .pdf, .zip, .jpg).",
+    "r.label.originalName": "Tệp gốc",
+    "r.ext.mismatch": "Đã khôi phục thành “{name}”. Tên bạn chọn khác — hãy dùng “Lưu thành …” bên dưới để giữ tên và phần mở rộng gốc.",
+    "action.saveAsName": "Lưu thành {name}",
+    "meta.unavailable.title": "Công cụ này không khả dụng trong bản dựng này",
+    "meta.unavailable.msg": "Các tính năng siêu dữ liệu cần thành phần ExifTool đi kèm, vốn không có trong bản dựng này. Kiểm tra, Xóa và So sánh bị vô hiệu hóa ở đây.",
     "r.create.openNow": "Mở ngay bây giờ",
 
     // ---- result: split (vault) ----
