@@ -13,12 +13,14 @@
 use std::path::PathBuf;
 
 use sv_app::{
-    AgePayloadCipher, AppVault, CommandSurface, IpcPassphrase, PlatformApp, PlatformSurface,
-    VaultBackend,
+    AgePayloadCipher, AppVault, CommandSurface, IpcPassphrase, MetaApp, MetaSurface, PlatformApp,
+    PlatformSurface, StegoApp, StegoSurface, VaultBackend, WatermarkApp, WatermarkSurface,
 };
 use sv_types::{
-    ApiError, AppInfo, IntegrityReport, ItemInfo, RecoverReport, SessionHandle, ShareExportInfo,
-    SharePolicy, ShareSplitReport, SigningKeypairInfo, VaultMeta,
+    ApiError, AppInfo, IntegrityReport, ItemInfo, MetadataDiffReport, MetadataReport,
+    QrExportReport, RecoverReport, SanitizeReport, SessionHandle, ShareExportInfo, SharePolicy,
+    ShareSplitReport, SigningKeypairInfo, StegoDetectReport, StegoExtractReport, StegoHideReport,
+    VaultMeta, VerifyIntegrityReport, WatermarkEmbedReport, WatermarkVerifyReport,
 };
 
 /// The concrete, thread-safe vault backend managed by Tauri.
@@ -26,6 +28,17 @@ type Backend = AppVault<AgePayloadCipher>;
 
 /// The vault-free Integrity + Cryptography services, a second managed state.
 type Platform = PlatformApp;
+
+/// The vault-free Steganography services (Hide / Extract / Detect), a third managed state.
+type Stego = StegoApp;
+
+/// The vault-free Analysis services (Metadata Inspect / Sanitize / Compare), a fourth managed
+/// state. Backed by a hash-pinned ExifTool subprocess; disabled (fail-closed) if absent.
+type Meta = MetaApp;
+
+/// The vault-free Watermarking services (Embed / Verify a fragile tamper-evident mark), a fifth
+/// managed state. Pure in-process Rust; needs no binary/session.
+type Watermark = WatermarkApp;
 
 // ===========================================================================
 // Commands — 1:1 with `CommandSurface`. `tauri::State<Backend>` derefs to `&Backend`.
@@ -189,6 +202,17 @@ fn integrity_verify_signature(
 }
 
 #[tauri::command]
+fn integrity_verify_integrity(
+    platform: tauri::State<'_, Platform>,
+    path: String,
+    expected_hash_hex: Option<String>,
+    signature_path: Option<String>,
+    public_key_path: Option<String>,
+) -> Result<VerifyIntegrityReport, ApiError> {
+    platform.verify_integrity(path, expected_hash_hex, signature_path, public_key_path)
+}
+
+#[tauri::command]
 fn crypto_encrypt_file(
     platform: tauri::State<'_, Platform>,
     input: String,
@@ -263,6 +287,112 @@ fn shares_recover_secret(
     platform.shares_recover_secret(share_paths, share_strings, payload_path, out_path)
 }
 
+// --- Secure QR Transfer (Secret Sharing over QR images; vault-free, session-free) ------------
+
+#[tauri::command]
+fn shares_export_qr(
+    platform: tauri::State<'_, Platform>,
+    share_b64: Vec<String>,
+    out_dir: String,
+) -> Result<QrExportReport, ApiError> {
+    platform.shares_export_qr(share_b64, out_dir)
+}
+
+#[tauri::command]
+fn shares_recover_from_qr(
+    platform: tauri::State<'_, Platform>,
+    qr_paths: Vec<String>,
+    payload_path: String,
+    out_path: String,
+) -> Result<RecoverReport, ApiError> {
+    platform.shares_recover_from_qr(qr_paths, payload_path, out_path)
+}
+
+// --- Steganography (vault-free, session-free; standalone toolkit module) -----
+// Backed by the third managed state `Stego`; additive to the vault surface.
+
+#[tauri::command]
+fn stego_hide(
+    stego: tauri::State<'_, Stego>,
+    cover_path: String,
+    payload_path: String,
+    output_path: String,
+    passphrase: IpcPassphrase,
+    randomize: bool,
+) -> Result<StegoHideReport, ApiError> {
+    stego.stego_hide(cover_path, payload_path, output_path, passphrase, randomize)
+}
+
+#[tauri::command]
+fn stego_extract(
+    stego: tauri::State<'_, Stego>,
+    stego_path: String,
+    output_path: String,
+    passphrase: IpcPassphrase,
+) -> Result<StegoExtractReport, ApiError> {
+    stego.stego_extract(stego_path, output_path, passphrase)
+}
+
+#[tauri::command]
+fn stego_detect(
+    stego: tauri::State<'_, Stego>,
+    image_path: String,
+) -> Result<StegoDetectReport, ApiError> {
+    stego.stego_detect(image_path)
+}
+
+// --- Analysis (vault-free, session-free; standalone toolkit module) ----------
+// Backed by the fourth managed state `Meta`; additive to the vault surface. No method takes a
+// passphrase or session — metadata operations move no secret across the boundary.
+
+#[tauri::command]
+fn metadata_inspect(
+    meta: tauri::State<'_, Meta>,
+    path: String,
+) -> Result<MetadataReport, ApiError> {
+    meta.metadata_inspect(path)
+}
+
+#[tauri::command]
+fn metadata_sanitize(
+    meta: tauri::State<'_, Meta>,
+    input: String,
+    output: String,
+) -> Result<SanitizeReport, ApiError> {
+    meta.metadata_sanitize(input, output)
+}
+
+#[tauri::command]
+fn metadata_diff(
+    meta: tauri::State<'_, Meta>,
+    path_a: String,
+    path_b: String,
+) -> Result<MetadataDiffReport, ApiError> {
+    meta.metadata_diff(path_a, path_b)
+}
+
+// --- Watermarking (vault-free, session-free; standalone toolkit module) -------
+// Backed by the fifth managed state `Watermark`; additive to the vault surface.
+
+#[tauri::command]
+fn watermark_embed(
+    watermark: tauri::State<'_, Watermark>,
+    input: String,
+    output: String,
+    passphrase: IpcPassphrase,
+) -> Result<WatermarkEmbedReport, ApiError> {
+    watermark.watermark_embed(input, output, passphrase)
+}
+
+#[tauri::command]
+fn watermark_verify(
+    watermark: tauri::State<'_, Watermark>,
+    input: String,
+    passphrase: IpcPassphrase,
+) -> Result<WatermarkVerifyReport, ApiError> {
+    watermark.watermark_verify(input, passphrase)
+}
+
 // ===========================================================================
 // Backend wiring — production binary pinning + bundling
 // ===========================================================================
@@ -271,6 +401,10 @@ fn shares_recover_secret(
 /// means the binary was absent at build time (dev convenience; release refuses to run unpinned).
 const AGE_PIN: &str = env!("SV_AGE_BLAKE3_PIN");
 const AGE_KEYGEN_PIN: &str = env!("SV_AGE_KEYGEN_BLAKE3_PIN");
+
+/// BLAKE3 pin of the bundled `exiftool` (Analysis module), embedded by `build.rs`.
+/// `"dev-unpinned"` means the binary was absent at build time.
+const EXIFTOOL_PIN: &str = env!("SV_EXIFTOOL_BLAKE3_PIN");
 
 /// Build the concrete backend, resolving the bundled `age` toolchain and **verifying its
 /// BLAKE3 hash against the build-time pin** (M3 tamper-evidence). `AgeCipher::new_pinned`
@@ -303,6 +437,48 @@ fn build_backend(app: &tauri::AppHandle) -> Result<Backend, String> {
     ))))
 }
 
+/// Build the Analysis surface, resolving the bundled ExifTool and **verifying its BLAKE3 hash
+/// against the build-time pin**. Unlike the vault backend, a missing/unpinned/mismatched ExifTool
+/// is **not** fatal: the Analysis module is an additive, optional toolkit module, so we manage a
+/// **disabled** [`MetaApp`] (every metadata command then fails closed with `SV-INTERNAL`) and let
+/// the rest of the toolkit run. A pin **mismatch** (tamper) and an unpinned **release** build both
+/// disable the module rather than run an unverified tool (fail-closed).
+fn build_meta(app: &tauri::AppHandle) -> Meta {
+    let bin = match resolve_binary(app, "exiftool") {
+        Ok(p) => p,
+        Err(_) => return MetaApp::disabled(), // module simply unavailable (e.g. not bundled)
+    };
+
+    if EXIFTOOL_PIN == "dev-unpinned" {
+        if !cfg!(debug_assertions) {
+            eprintln!(
+                "secure-vault: exiftool present but UNPINNED in a release build — Analysis module DISABLED (fail-closed)"
+            );
+            return MetaApp::disabled();
+        }
+        eprintln!(
+            "secure-vault: WARNING — running with an UNPINNED exiftool binary (dev build only)"
+        );
+        match sv_meta::ExifTool::new_unpinned(&bin) {
+            Ok(tool) => MetaApp::new(tool),
+            Err(e) => {
+                eprintln!("secure-vault: could not start exiftool: {e} — Analysis module disabled");
+                MetaApp::disabled()
+            }
+        }
+    } else {
+        match sv_meta::ExifTool::new_pinned(&bin, EXIFTOOL_PIN) {
+            Ok(tool) => MetaApp::new(tool),
+            Err(e) => {
+                eprintln!(
+                    "secure-vault: exiftool pin check failed ({e}) — Analysis module DISABLED (fail-closed)"
+                );
+                MetaApp::disabled()
+            }
+        }
+    }
+}
+
 /// Fail closed: an unpinned binary is tolerated only in debug builds.
 fn require_dev_build(what: &str) -> Result<(), String> {
     if cfg!(debug_assertions) {
@@ -323,6 +499,7 @@ fn resolve_binary(app: &tauri::AppHandle, stem: &str) -> Result<PathBuf, String>
     let env_key = match stem {
         "age" => "SV_AGE_BIN",
         "age-keygen" => "SV_AGE_KEYGEN_BIN",
+        "exiftool" => "SV_EXIFTOOL_BIN",
         _ => "",
     };
     if !env_key.is_empty() {
@@ -354,7 +531,7 @@ fn resolve_binary(app: &tauri::AppHandle, stem: &str) -> Result<PathBuf, String>
     }
 
     Err(format!(
-        "{name} not found (looked at SV_AGE_* env, the bundled resource dir, and next to the executable)"
+        "{name} not found (looked at the SV_* binary env override, the bundled resource dir, and next to the executable)"
     ))
 }
 
@@ -400,6 +577,12 @@ pub fn run() {
             app.manage(backend);
             // The Integrity + Cryptography services need no binary/session — manage them directly.
             app.manage(PlatformApp::new());
+            // The Steganography services likewise need no binary/session.
+            app.manage(StegoApp::new());
+            // The Analysis services drive a hash-pinned ExifTool; disabled (fail-closed) if absent.
+            app.manage(build_meta(app.handle()));
+            // The Watermarking services are pure in-process Rust — manage them directly.
+            app.manage(WatermarkApp::new());
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -421,13 +604,24 @@ pub fn run() {
             keys_recover,
             integrity_hash_file,
             integrity_verify_signature,
+            integrity_verify_integrity,
             crypto_encrypt_file,
             crypto_decrypt_file,
             crypto_generate_signing_keypair,
             crypto_sign_file,
             shares_split_secret,
             shares_split_file,
-            shares_recover_secret
+            shares_recover_secret,
+            shares_export_qr,
+            shares_recover_from_qr,
+            stego_hide,
+            stego_extract,
+            stego_detect,
+            metadata_inspect,
+            metadata_sanitize,
+            metadata_diff,
+            watermark_embed,
+            watermark_verify
         ])
         .run(tauri::generate_context!())
         .expect("error while running Secure Vault");

@@ -1,0 +1,42 @@
+[package]
+name = "sv-stego"
+description = "Steganography domain crate: image-cover (PNG/BMP LSB) hide/extract with encrypt-then-embed. A peer domain crate — NOT vault-coupled. Concealment carries no security claim; confidentiality is the reused sv-crypto stack (Argon2id + secretbox)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+# Mirrors sv-platform: depends on the ABI + the DTO/error contract, and reuses the concrete
+# sv-crypto primitives in-crate (the real Argon2id+secretbox sealer) — no new cryptographic
+# primitive, no dependency on sv-core / sv-age. The carrier layer is non-cryptographic.
+sv-crypto-traits = { path = "../sv-crypto-traits" }
+sv-crypto = { path = "../sv-crypto" }
+sv-types = { path = "../sv-types" }
+thiserror.workspace = true
+zeroize.workspace = true
+getrandom = "0.2"
+# Pure-Rust same-directory temp file + rename for atomic stego/output writes (reuses sv-platform's
+# P13 pattern); the Phase-3 file-I/O layer ([`io`]) only.
+tempfile = "3"
+# Lossless image codecs only (PNG, BMP). default-features = false keeps the dependency tree
+# minimal and deny-clean: no jpeg/gif/webp/exr codecs and no rayon are pulled into the library
+# build. (Tests add the `jpeg` feature as a *dev*-dependency to mint baseline-JPEG fixtures; under
+# resolver 2 that feature never reaches the shipped library — JPEG coefficient access is dct-io's.)
+image = { version = "0.25", default-features = false, features = ["png", "bmp"] }
+# Phase 4 — JPEG (DCT-domain) carrier. Pure-Rust, zero production dependencies, `#![forbid(unsafe)]`,
+# MIT OR Apache-2.0: exposes the *quantized* DCT coefficients (`read_coefficients`) and a lossless
+# entropy-only re-encode (`write_coefficients`) — the one in-process path that survives JPEG's lossy
+# quantization. We embed in coefficient LSBs (jsteg rule), so no spatial-LSB-in-JPEG. The carrier
+# stays non-cryptographic; confidentiality remains the reused sv-crypto sealer.
+dct-io = "0.1.1"
+
+[dev-dependencies]
+# JPEG *encoder* for test fixtures only (mint a baseline JPEG, then read its coefficients via dct-io).
+# Resolver 2 keeps this `jpeg` feature out of the non-test library build, so the shipped crate still
+# pulls no JPEG decoder of its own.
+image = { version = "0.25", default-features = false, features = ["png", "bmp", "jpeg"] }
+
+[lints]
+workspace = true

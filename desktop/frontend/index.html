@@ -28,25 +28,28 @@
           <div class="navgroup">Protect a file</div>
           <button class="navitem" data-screen="encrypt">🔐 Lock a file</button>
           <button class="navitem" data-screen="decrypt">🔓 Unlock a file</button>
-          <button class="navitem soon" data-screen="soon-hide">🕵️ Hide data <span class="soontag">soon</span></button>
-          <button class="navitem soon" data-screen="soon-watermark">💧 Add a watermark <span class="soontag">soon</span></button>
+          <button class="navitem" data-screen="hide">🕵️ Hide data in an image</button>
+          <button class="navitem" data-screen="unhide">🔓 Reveal hidden data</button>
+          <button class="navitem" data-screen="watermark">💧 Tamper-proof a file</button>
 
           <div class="navgroup">Prove it's authentic</div>
           <button class="navitem" data-screen="sign">✍️ Sign a file</button>
           <button class="navitem" data-screen="verify">✅ Check a signature</button>
           <button class="navitem" data-screen="hash">🔢 Fingerprint a file</button>
           <button class="navitem" data-screen="intact">🛡️ Check a file is unchanged</button>
+          <button class="navitem" data-screen="verify-integrity">🧾 Verify a download</button>
 
           <div class="navgroup">Back up &amp; recover</div>
           <button class="navitem" data-screen="split-secret">🧩 Split a secret</button>
           <button class="navitem" data-screen="split-file">🧩 Split a file</button>
           <button class="navitem" data-screen="recover-pieces">🔗 Recover from pieces</button>
-          <button class="navitem soon" data-screen="soon-qr">📷 Secure QR transfer <span class="soontag">soon</span></button>
+          <button class="navitem" data-screen="qr-transfer">📷 Secure QR transfer</button>
 
           <div class="navgroup">Inspect &amp; clean</div>
-          <button class="navitem soon" data-screen="soon-detect">🔎 Detect hidden data <span class="soontag">soon</span></button>
-          <button class="navitem soon" data-screen="soon-metadata">🧹 Metadata tools <span class="soontag">soon</span></button>
-          <button class="navitem soon" data-screen="soon-analysis">📊 Analyze a file <span class="soontag">soon</span></button>
+          <button class="navitem" data-screen="detect">🔎 Detect hidden data</button>
+          <button class="navitem" data-screen="metadata-inspect">🔍 Inspect metadata</button>
+          <button class="navitem" data-screen="metadata-clean">🧹 Remove metadata</button>
+          <button class="navitem" data-screen="metadata-compare">📑 Compare metadata</button>
         </nav>
       </aside>
 
@@ -91,7 +94,8 @@
             <button class="tile" data-goto="split-secret"><span class="tile-icon">🧩</span><span class="tile-title">Split a secret</span></button>
             <button class="tile" data-goto="split-file"><span class="tile-icon">🧩</span><span class="tile-title">Split a file</span></button>
             <button class="tile" data-goto="recover-pieces"><span class="tile-icon">🔗</span><span class="tile-title">Recover from pieces</span></button>
-            <button class="tile soon" data-goto="soon-hide"><span class="tile-icon">🕵️</span><span class="tile-title">Hide data</span><span class="soontag">soon</span></button>
+            <button class="tile" data-goto="hide"><span class="tile-icon">🕵️</span><span class="tile-title">Hide data</span></button>
+            <button class="tile" data-goto="detect"><span class="tile-icon">🔎</span><span class="tile-title">Detect hidden data</span></button>
             <button class="tile soon" data-goto="soon-metadata"><span class="tile-icon">🧹</span><span class="tile-title">Metadata tools</span><span class="soontag">soon</span></button>
           </div>
         </section>
@@ -439,6 +443,127 @@
           </div>
         </section>
 
+        <!-- ==================== HIDE DATA IN AN IMAGE ==================== -->
+        <section class="screen hidden" data-screen="hide">
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">🕵️ Hide data inside an image</h2>
+              <p class="task-purpose">Encrypt a file with your password, then conceal it inside a PNG, BMP, or JPEG image.</p>
+              <details class="when">
+                <summary>When should I use this?</summary>
+                <p class="muted hint">To tuck a small encrypted file inside an ordinary-looking image. The hiding place is
+                  <strong>not</strong> the protection — your <strong>password</strong> is. Concealment only makes the data
+                  less obvious; anyone who suspects it still cannot read it without the password.</p>
+              </details>
+            </div>
+            <div class="task-body">
+              <label>1 &nbsp;Choose the cover image (PNG, BMP, or JPEG)
+                <div class="filefield" data-drop="tk-hide-cover">
+                  <input id="tk-hide-cover" type="text" placeholder="Drop a PNG/BMP/JPEG here, or Browse…" autocomplete="off"
+                         data-fills="tk-hide-output" data-fillsuffix=".stego.png" />
+                  <button class="browse secondary" data-target="tk-hide-cover" data-mode="file">Browse…</button>
+                </div>
+                <span class="muted hint">▸ Lossless <strong>PNG/BMP</strong> are the most discreet covers. <strong>JPEG</strong>
+                  works too (concealed in its DCT coefficients) but is <strong>inherently more detectable</strong> by
+                  steganalysis — prefer PNG/BMP when stealth matters. The output keeps the cover's format.</span>
+              </label>
+              <label>2 &nbsp;Choose the file to hide
+                <div class="filefield" data-drop="tk-hide-payload">
+                  <input id="tk-hide-payload" type="text" placeholder="Drop the secret file here, or Browse…" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-hide-payload" data-mode="file">Browse…</button>
+                </div>
+              </label>
+              <label>3 &nbsp;Set a password
+                <input id="tk-hide-pass" type="password" placeholder="password" autocomplete="off" />
+              </label>
+              <label>&nbsp;&nbsp;&nbsp;Confirm password
+                <input id="tk-hide-pass2" type="password" placeholder="repeat password" autocomplete="off" />
+                <span class="muted hint">A typo here is unrecoverable — the hidden data could never be read.</span>
+              </label>
+              <label>4 &nbsp;Where to save the image with hidden data
+                <div class="filefield" data-drop="tk-hide-output">
+                  <input id="tk-hide-output" type="text" placeholder="/path/to/output.png" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-hide-output" data-mode="save" data-from="tk-hide-cover" data-suffix=".stego.png">Save As…</button>
+                </div>
+                <span class="muted hint">▸ Saved in the cover's format. Technical details: encrypt-then-embed — Argon2id + secretbox, then LSB concealment.</span>
+              </label>
+              <div class="row">
+                <label class="inline-check"><input id="tk-hide-randomize" type="checkbox" checked /> Scatter the data across the image (recommended)</label>
+              </div>
+              <div class="row">
+                <button id="tk-btn-hide">Hide data</button>
+              </div>
+              <div id="tk-hide-result" class="note hidden"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================== REVEAL HIDDEN DATA ======================= -->
+        <section class="screen hidden" data-screen="unhide">
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">🔓 Reveal data hidden in an image</h2>
+              <p class="task-purpose">Recover a file that was hidden with “Hide data”, using its password.</p>
+              <details class="when">
+                <summary>When should I use this?</summary>
+                <p class="muted hint">To pull back out a file you (or someone) hid inside an image. You need the password it was hidden with.</p>
+              </details>
+            </div>
+            <div class="task-body">
+              <label>1 &nbsp;Choose the image with hidden data
+                <div class="filefield" data-drop="tk-unhide-input">
+                  <input id="tk-unhide-input" type="text" placeholder="Drop the PNG/BMP/JPEG here, or Browse…" autocomplete="off"
+                         data-fills="tk-unhide-output" data-fillstrip=".stego.png" data-fillsuffix=".out" />
+                  <button class="browse secondary" data-target="tk-unhide-input" data-mode="file">Browse…</button>
+                </div>
+              </label>
+              <label>2 &nbsp;Password
+                <input id="tk-unhide-pass" type="password" placeholder="password" autocomplete="off" />
+              </label>
+              <label>3 &nbsp;Where to save the revealed file
+                <div class="filefield" data-drop="tk-unhide-output">
+                  <input id="tk-unhide-output" type="text" placeholder="/path/to/revealed-file" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-unhide-output" data-mode="save" data-from="tk-unhide-input">Save As…</button>
+                </div>
+              </label>
+              <div class="row">
+                <button id="tk-btn-unhide">Reveal data</button>
+              </div>
+              <div id="tk-unhide-result" class="note hidden"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================== DETECT HIDDEN DATA ==================== -->
+        <section class="screen hidden" data-screen="detect">
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">🔎 Detect hidden data</h2>
+              <p class="task-purpose">Scan an image for signs of hidden data. Heuristic — it can flag suspicion, never prove innocence.</p>
+              <details class="when">
+                <summary>When should I use this?</summary>
+                <p class="muted hint">For a quick, best-effort read on whether an image might carry concealed data
+                  (an appended file, LSB tampering). A low result means “nothing these tests caught” —
+                  <strong>not</strong> a guarantee the image is clean.</p>
+              </details>
+            </div>
+            <div class="task-body">
+              <label>1 &nbsp;Choose the image to scan (PNG, BMP, or JPEG)
+                <div class="filefield" data-drop="tk-detect-input">
+                  <input id="tk-detect-input" type="text" placeholder="Drop a PNG/BMP/JPEG here, or Browse…" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-detect-input" data-mode="file">Browse…</button>
+                </div>
+                <span class="muted hint">▸ For JPEG, the scan covers appended data (after the <code>EOI</code> marker) and
+                  DCT-coefficient LSB statistics; for PNG/BMP, appended data and pixel-LSB statistics.</span>
+              </label>
+              <div class="row">
+                <button id="tk-btn-detect">Scan image</button>
+              </div>
+              <div id="tk-detect-result" class="note hidden"></div>
+            </div>
+          </div>
+        </section>
+
         <!-- ========================= SIGN A FILE ======================== -->
         <section class="screen hidden" data-screen="sign">
           <div class="task">
@@ -582,12 +707,68 @@
             <p class="muted">Status: under evaluation — not available yet.</p>
           </div>
         </section>
-        <section class="screen hidden" data-screen="soon-watermark">
-          <div class="soon-card">
-            <h2 class="screen-title">💧 Add a watermark <span class="soontag">Coming soon</span></h2>
-            <p><strong>What it will do:</strong> embed an invisible ownership mark into an image.</p>
-            <p><strong>When you'd use it:</strong> to mark images as yours and detect copies.</p>
-            <p class="muted">Status: under evaluation — not available yet.</p>
+        <!-- ====================== WATERMARK (TAMPER-EVIDENCE) ========== -->
+        <section class="screen hidden" data-screen="watermark">
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">💧 Tamper-proof an image</h2>
+              <p class="task-purpose">Stamp an invisible, password-keyed mark into an image so you can later prove it hasn't been altered.</p>
+              <details class="when">
+                <summary>When should I use this?</summary>
+                <p class="muted hint">To make an image <strong>self-verifying</strong>: the mark is invisible and tied to your
+                  password. Later, “Check for tampering” tells you whether the image is unchanged, and <strong>which areas</strong>
+                  were altered if not. The mark is <strong>fragile by design</strong> — re-saving as JPEG, resizing, or any edit
+                  breaks it. Works on <strong>PNG/BMP</strong> only. This proves <em>integrity</em>, not authorship.</p>
+              </details>
+            </div>
+            <div class="task-body">
+              <label>1 &nbsp;Choose the image to mark (PNG or BMP)
+                <div class="filefield" data-drop="tk-wm-input">
+                  <input id="tk-wm-input" type="text" placeholder="Drop a PNG/BMP here, or Browse…" autocomplete="off"
+                         data-fills="tk-wm-output" data-fillsuffix=".marked.png" />
+                  <button class="browse secondary" data-target="tk-wm-input" data-mode="file">Browse…</button>
+                </div>
+              </label>
+              <label>2 &nbsp;Set a password (the key for the mark)
+                <input id="tk-wm-pass" type="password" placeholder="password" autocomplete="off" />
+                <span class="muted hint">▸ You'll need the same password to check for tampering later. Use a strong one — the mark's
+                  forgery-resistance depends on it.</span>
+              </label>
+              <label>3 &nbsp;Where to save the marked image (PNG or BMP)
+                <div class="filefield" data-drop="tk-wm-output">
+                  <input id="tk-wm-output" type="text" placeholder="/path/to/marked.png" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-wm-output" data-mode="save" data-from="tk-wm-input" data-suffix=".marked.png">Save As…</button>
+                </div>
+                <span class="muted hint">▸ Saved losslessly. Technical details: a per-block BLAKE3 keyed-MAC of the image content,
+                  keyed by Argon2id, embedded in the pixel LSBs. Your original is never changed.</span>
+              </label>
+              <div class="row">
+                <button id="tk-btn-wm-embed">Add tamper-proof mark</button>
+              </div>
+              <div id="tk-wm-embed-result" class="result hidden"></div>
+            </div>
+          </div>
+
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">🔍 Check for tampering</h2>
+              <p class="task-purpose">Verify a marked image against your password.</p>
+            </div>
+            <div class="task-body">
+              <label>1 &nbsp;Choose the marked image (PNG or BMP)
+                <div class="filefield" data-drop="tk-wmv-input">
+                  <input id="tk-wmv-input" type="text" placeholder="Drop the marked PNG/BMP here, or Browse…" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-wmv-input" data-mode="file">Browse…</button>
+                </div>
+              </label>
+              <label>2 &nbsp;Password
+                <input id="tk-wmv-pass" type="password" placeholder="password" autocomplete="off" />
+              </label>
+              <div class="row">
+                <button id="tk-btn-wm-verify">Check for tampering</button>
+              </div>
+              <div id="tk-wmv-result" class="result hidden"></div>
+            </div>
           </div>
         </section>
         <section class="screen hidden" data-screen="intact">
@@ -618,6 +799,51 @@
                 <button id="tk-btn-intact">Check</button>
               </div>
               <div id="tk-intact-result" class="result hidden"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============= VERIFY A DOWNLOAD (hash and/or signature) ====== -->
+        <section class="screen hidden" data-screen="verify-integrity">
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">🧾 Verify a download</h2>
+              <p class="task-purpose">Check a file against its published fingerprint and/or signature — in one step.</p>
+              <details class="when">
+                <summary>When should I use this?</summary>
+                <p class="muted hint">When a file was published with a <strong>fingerprint</strong> (BLAKE3), a
+                  <strong>signature</strong> + the signer's public key, or both, and you want a single PASS/FAIL.
+                  Provide whichever you were given — at least one. (To check only one, <strong>Check a file is
+                  unchanged</strong> and <strong>Check a signature</strong> are the focused tools.)</p>
+              </details>
+            </div>
+            <div class="task-body">
+              <label>1 &nbsp;Choose the file
+                <div class="filefield" data-drop="tk-vi-file">
+                  <input id="tk-vi-file" type="text" placeholder="Drop a file here, or Browse…" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-vi-file" data-mode="file">Browse…</button>
+                </div>
+              </label>
+              <label>2 &nbsp;Expected fingerprint <span class="muted hint">(optional)</span>
+                <input id="tk-vi-hash" type="text" placeholder="e.g. ab12cd…  (64 characters)" autocomplete="off" />
+                <span class="muted hint">Spaces and capitalisation don't matter.</span>
+              </label>
+              <label>3 &nbsp;Signature <span class="muted hint">(optional, <code>.minisig</code>)</span>
+                <div class="filefield" data-drop="tk-vi-sig">
+                  <input id="tk-vi-sig" type="text" placeholder="/path/to/file.minisig" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-vi-sig" data-mode="file">Browse…</button>
+                </div>
+              </label>
+              <label>4 &nbsp;Signer's public key <span class="muted hint">(needed with a signature, <code>.pub</code>)</span>
+                <div class="filefield" data-drop="tk-vi-pub">
+                  <input id="tk-vi-pub" type="text" placeholder="/path/to/signer.pub" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-vi-pub" data-mode="file">Browse…</button>
+                </div>
+              </label>
+              <div class="row">
+                <button id="tk-btn-verify-integrity">Verify</button>
+              </div>
+              <div id="tk-vi-result" class="result hidden"></div>
             </div>
           </div>
         </section>
@@ -746,11 +972,66 @@
             </div>
           </div>
         </section>
-        <section class="screen hidden" data-screen="soon-qr">
-          <div class="soon-card">
-            <h2 class="screen-title">📷 Secure QR transfer <span class="soontag">Coming soon</span></h2>
-            <p><strong>What it will do:</strong> move a secret between devices as encrypted QR codes.</p>
-            <p class="muted">Status: under evaluation — not available yet.</p>
+        <!-- ====================== SECURE QR TRANSFER =================== -->
+        <section class="screen hidden" data-screen="qr-transfer">
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">📷 Secure QR transfer</h2>
+              <p class="task-purpose">Move Secret Sharing pieces between devices as QR codes — turn pieces into QR images, and recover from scanned/saved QR images.</p>
+              <details class="when">
+                <summary>When should I use this?</summary>
+                <p class="muted hint">After <strong>Split a secret</strong>, to carry the pieces by phone camera or
+                  print instead of copy-paste. Each QR holds <strong>one piece</strong> — non-secret on its own; a
+                  threshold of them <strong>plus the payload file</strong> rebuilds the secret. The payload file is
+                  <strong>not</strong> in the QR codes; move it alongside them.</p>
+              </details>
+            </div>
+            <div class="task-body">
+              <label>1 &nbsp;Paste piece codes to turn into QR images (one per line)
+                <textarea id="tk-qr-codes" rows="4" placeholder="Paste the Base64 piece codes from “Split a secret”, one per line" autocomplete="off"></textarea>
+                <span class="muted hint">▸ These are the same copy-paste codes shown after splitting a secret. Each line becomes one QR PNG.</span>
+              </label>
+              <label>2 &nbsp;Save the QR images to a folder
+                <div class="filefield" data-drop="tk-qr-outdir">
+                  <input id="tk-qr-outdir" type="text" placeholder="Choose a folder…" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-qr-outdir" data-mode="folder">Browse…</button>
+                </div>
+              </label>
+              <div class="row">
+                <button id="tk-btn-qr-make">Make QR images</button>
+              </div>
+              <div id="tk-qr-make-result" class="result hidden"></div>
+            </div>
+          </div>
+
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">🔗 Recover from QR images</h2>
+              <p class="task-purpose">Rebuild a secret from enough QR images, plus the payload file.</p>
+            </div>
+            <div class="task-body">
+              <label>1 &nbsp;QR image files (PNG/JPEG)
+                <textarea id="tk-qr-images" rows="3" data-drop="tk-qr-images" placeholder="Drop QR images here, or click Add QR images…"></textarea>
+                <button class="browse secondary" data-target="tk-qr-images" data-mode="files">Add QR images…</button>
+                <span class="muted hint">▸ Add at least the “needed to restore” number of pieces.</span>
+              </label>
+              <label>2 &nbsp;The payload file
+                <div class="filefield" data-drop="tk-qr-payload">
+                  <input id="tk-qr-payload" type="text" placeholder="Choose the .payload.svss file…" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-qr-payload" data-mode="file">Browse…</button>
+                </div>
+              </label>
+              <label>3 &nbsp;Where to save the recovered result
+                <div class="filefield" data-drop="tk-qr-out">
+                  <input id="tk-qr-out" type="text" placeholder="/path/to/recovered-output" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-qr-out" data-mode="save">Save As…</button>
+                </div>
+              </label>
+              <div class="row">
+                <button id="tk-btn-qr-recover">Recover from QR</button>
+              </div>
+              <div id="tk-qr-recover-result" class="result hidden"></div>
+            </div>
           </div>
         </section>
         <section class="screen hidden" data-screen="soon-detect">
@@ -760,19 +1041,104 @@
             <p class="muted">Status: under evaluation — not available yet.</p>
           </div>
         </section>
-        <section class="screen hidden" data-screen="soon-metadata">
-          <div class="soon-card">
-            <h2 class="screen-title">🧹 Metadata tools <span class="soontag">Coming soon</span></h2>
-            <p><strong>What it will do:</strong> inspect and remove hidden metadata (location, device, author).</p>
-            <p><strong>When you'd use it:</strong> before sharing a photo or document publicly.</p>
-            <p class="muted">Status: under evaluation — not available yet.</p>
+        <!-- ====================== INSPECT METADATA ===================== -->
+        <section class="screen hidden" data-screen="metadata-inspect">
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">🔍 Inspect metadata</h2>
+              <p class="task-purpose">See the hidden metadata a file carries — camera, location, author, software, timestamps.</p>
+              <details class="when">
+                <summary>When should I use this?</summary>
+                <p class="muted hint">Before sharing a photo or document, to see what it quietly reveals about you —
+                  GPS coordinates, your name, the device, edit history. Reading is safe and never changes the file.</p>
+              </details>
+            </div>
+            <div class="task-body">
+              <label>1 &nbsp;Choose the file to inspect
+                <div class="filefield" data-drop="tk-mi-file">
+                  <input id="tk-mi-file" type="text" placeholder="Drop any file here, or Browse…" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-mi-file" data-mode="file">Browse…</button>
+                </div>
+                <span class="muted hint">▸ Works for images, PDFs, Office documents, audio, video, and more. Read-only.</span>
+              </label>
+              <div class="row">
+                <button id="tk-btn-mi">Inspect</button>
+              </div>
+              <div id="tk-mi-result" class="result hidden"></div>
+            </div>
           </div>
         </section>
-        <section class="screen hidden" data-screen="soon-analysis">
-          <div class="soon-card">
-            <h2 class="screen-title">📊 Analyze a file <span class="soontag">Coming soon</span></h2>
-            <p><strong>What it will do:</strong> summarize a file's type, structure, and notable properties.</p>
-            <p class="muted">Status: under evaluation — not available yet.</p>
+
+        <!-- ====================== REMOVE METADATA ====================== -->
+        <section class="screen hidden" data-screen="metadata-clean">
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">🧹 Remove metadata</h2>
+              <p class="task-purpose">Write a clean copy of a file with its embedded metadata stripped out.</p>
+              <details class="when">
+                <summary>When should I use this?</summary>
+                <p class="muted hint">Before publishing a photo or document, to scrub identifying metadata (GPS, device,
+                  author, software). Your original is never touched — a new, cleaned copy is written.</p>
+              </details>
+            </div>
+            <div class="task-body">
+              <label>1 &nbsp;Choose the file to clean
+                <div class="filefield" data-drop="tk-mc-input">
+                  <input id="tk-mc-input" type="text" placeholder="Drop a file here, or Browse…" autocomplete="off"
+                         data-fills="tk-mc-output" data-fillsuffix=".clean.png" />
+                  <button class="browse secondary" data-target="tk-mc-input" data-mode="file">Browse…</button>
+                </div>
+                <span class="muted hint">▸ Images and WAV/AVI/MOV/MP4 are <strong>fully stripped</strong>. <strong>PDF</strong> is a
+                  best-effort scrub (the old metadata can still be recovered). Office documents, archives, and
+                  MP3/FLAC/MKV are <strong>inspect-only</strong> and will be refused here.</span>
+              </label>
+              <label>2 &nbsp;Where to save the cleaned copy
+                <div class="filefield" data-drop="tk-mc-output">
+                  <input id="tk-mc-output" type="text" placeholder="/path/to/cleaned-file" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-mc-output" data-mode="save" data-from="tk-mc-input" data-suffix=".clean.png">Save As…</button>
+                </div>
+                <span class="muted hint">▸ Keep the same file extension as the original so apps still open it. Technical details:
+                  <code>exiftool -all=</code> writes a fresh file; the input is never modified in place.</span>
+              </label>
+              <div class="row">
+                <button id="tk-btn-mc">Remove metadata</button>
+              </div>
+              <div id="tk-mc-result" class="result hidden"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================== COMPARE METADATA ===================== -->
+        <section class="screen hidden" data-screen="metadata-compare">
+          <div class="task">
+            <div class="task-head">
+              <h2 class="screen-title">📑 Compare metadata</h2>
+              <p class="task-purpose">See how two files' embedded metadata differs — what's added, removed, or changed.</p>
+              <details class="when">
+                <summary>When should I use this?</summary>
+                <p class="muted hint">To confirm a cleaning step worked (compare original vs cleaned), or to see exactly
+                  what metadata two versions of a file carry. File names, sizes, and timestamps are ignored — only the
+                  real embedded metadata is compared.</p>
+              </details>
+            </div>
+            <div class="task-body">
+              <label>1 &nbsp;First file (A)
+                <div class="filefield" data-drop="tk-cmp-a">
+                  <input id="tk-cmp-a" type="text" placeholder="Drop a file here, or Browse…" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-cmp-a" data-mode="file">Browse…</button>
+                </div>
+              </label>
+              <label>2 &nbsp;Second file (B)
+                <div class="filefield" data-drop="tk-cmp-b">
+                  <input id="tk-cmp-b" type="text" placeholder="Drop a file here, or Browse…" autocomplete="off" />
+                  <button class="browse secondary" data-target="tk-cmp-b" data-mode="file">Browse…</button>
+                </div>
+              </label>
+              <div class="row">
+                <button id="tk-btn-cmp">Compare</button>
+              </div>
+              <div id="tk-cmp-result" class="result hidden"></div>
+            </div>
           </div>
         </section>
       </main>

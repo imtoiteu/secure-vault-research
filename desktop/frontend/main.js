@@ -392,7 +392,25 @@ function autoFillOutputs(input) {
   if (!src) return;
   const strip = input.dataset.fillstrip;
   const suffix = input.dataset.fillsuffix || "";
-  out.value = strip && src.endsWith(strip) ? src.slice(0, -strip.length) : src + suffix;
+  if (strip) {
+    // Reveal: drop a ".stego.<imgext>" tail (any supported cover format) to suggest the original
+    // name; otherwise append the suffix.
+    const stripped = src.replace(/\.stego\.(png|jpe?g|bmp)$/i, "");
+    out.value = stripped !== src ? stripped : src + suffix;
+  } else {
+    // Hide: the stego output keeps the cover's container format — mirror its extension.
+    out.value = src + mirrorStegoExt(src, suffix);
+  }
+}
+
+// Adjust a default stego suffix (e.g. ".stego.png") so its trailing image extension matches the
+// cover's: a JPEG cover produces a JPEG stego file, a BMP cover a BMP, etc. (the carrier re-encodes
+// in the cover's own format). Leaves the suffix unchanged for an unrecognized cover extension.
+function mirrorStegoExt(src, suffix) {
+  const m = src.toLowerCase().match(/\.(jpe?g|bmp|png)$/);
+  if (!m) return suffix;
+  const ext = m[1] === "jpeg" ? "jpg" : m[1];
+  return suffix.replace(/\.(png|jpe?g|bmp)$/i, "." + ext);
 }
 
 function initBrowse() {
@@ -408,7 +426,7 @@ function initBrowse() {
         defaultPath = target.value.trim();
       } else {
         const from = btn.dataset.from ? ($(btn.dataset.from)?.value || "").trim() : "";
-        if (from) defaultPath = from + (btn.dataset.suffix || "");
+        if (from) defaultPath = from + mirrorStegoExt(from, btn.dataset.suffix || "");
       }
     }
     const res = await pickPath(mode, { defaultPath });
@@ -984,6 +1002,65 @@ $("tk-btn-intact").addEventListener("click", (e) => {
   });
 });
 
+// ---- Verify a download (Verify Integrity = hash and/or signature) ---------
+//
+// The composed Cryptography primitive: ONE backend call (`integrity_verify_integrity`) checks the
+// file against an expected BLAKE3 fingerprint and/or a detached signature + public key, returning a
+// single verdict. A mismatch / invalid signature is a normal {verified:false} result, not an error;
+// a bad fingerprint / missing file surfaces as the usual coded error card.
+
+$("tk-btn-verify-integrity").addEventListener("click", (e) => {
+  const file = $("tk-vi-file");
+  const hash = $("tk-vi-hash");
+  const sig = $("tk-vi-sig");
+  const pub = $("tk-vi-pub");
+  [hash, sig, pub].forEach(clearFieldError);
+  if (!validate([[file, "Choose the file"]])) return;
+
+  const wantHash = hash.value.trim() !== "";
+  const sigSet = sig.value.trim() !== "";
+  const pubSet = pub.value.trim() !== "";
+  // A signature check needs BOTH the signature and the public key.
+  if (sigSet !== pubSet) {
+    setFieldError(pubSet ? sig : pub, "A signature check needs both the signature and the public key.");
+    return;
+  }
+  const wantSig = sigSet && pubSet;
+  if (!wantHash && !wantSig) {
+    setFieldError(hash, "Paste a fingerprint, or add a signature + public key.");
+    return;
+  }
+
+  runTask(e.target, "tk-vi-result", async () => {
+    const report = await invoke("integrity_verify_integrity", {
+      path: file.value,
+      expectedHashHex: wantHash ? hash.value : null,
+      signaturePath: wantSig ? sig.value : null,
+      publicKeyPath: wantSig ? pub.value : null,
+    });
+    const rows = [{ label: "Fingerprint", value: report.computed_hash_hex, copy: true }];
+    if (report.hash_checked) {
+      rows.push({ label: "Fingerprint match", value: report.hash_matched ? "yes" : "NO" });
+    }
+    if (report.signature_checked) {
+      rows.push({ label: "Signature", value: report.signature_valid ? "valid" : "INVALID" });
+    }
+    return report.verified
+      ? {
+          ok: true,
+          title: "Verified",
+          message: "Every check you asked for passed — this file is exactly what was published.",
+          rows,
+        }
+      : {
+          ok: false,
+          title: "Does NOT verify",
+          message: "At least one check failed — the file may have changed, or an input is wrong.",
+          rows,
+        };
+  });
+});
+
 // ---- Lock a file (encrypt) -----------------------------------------------
 
 $("tk-btn-encrypt").addEventListener("click", (e) => {
@@ -1069,6 +1146,256 @@ $("tk-btn-decrypt").addEventListener("click", (e) => {
       return outputExistsMap("tk-dec-output")(err);
     },
   );
+});
+
+// ---- Hide data in an image (steganography) -------------------------------
+
+$("tk-btn-hide").addEventListener("click", (e) => {
+  const cover = $("tk-hide-cover");
+  const payload = $("tk-hide-payload");
+  const output = $("tk-hide-output");
+  const p1 = $("tk-hide-pass");
+  const p2 = $("tk-hide-pass2");
+  const randomize = $("tk-hide-randomize");
+  if (
+    !validate([
+      [cover, "Choose a cover image"],
+      [payload, "Choose the file to hide"],
+      [output, "Choose where to save the image"],
+      [p1, "Set a password"],
+    ])
+  )
+    return;
+  if (p1.value !== p2.value) {
+    setFieldError(p2, "Passwords don't match. A typo here is unrecoverable.");
+    p2.focus();
+    return;
+  }
+  clearFieldError(p2);
+  runTask(
+    e.target,
+    "tk-hide-result",
+    async () => {
+      const rep = await invoke("stego_hide", {
+        coverPath: cover.value,
+        payloadPath: payload.value,
+        outputPath: output.value,
+        passphrase: p1.value,
+        randomize: randomize.checked,
+      });
+      p1.value = "";
+      p2.value = "";
+      return {
+        ok: true,
+        title: "Data hidden",
+        message: "Keep your password safe — it's the only way to reveal this data.",
+        rows: [
+          { label: "Saved to", value: rep.output_path, copy: true },
+          { label: "Hidden file size", value: humanSize(rep.payload_bytes) },
+          {
+            label: "Capacity used",
+            value: rep.utilization_pct.toFixed(1) + "% of " + humanSize(rep.capacity_bytes),
+          },
+        ],
+        actions: [revealAction(rep.output_path)],
+      };
+    },
+    (err) => {
+      if (err && err.code === "SV-TOO-LARGE")
+        return {
+          title: "File too big to hide",
+          message: "The file you're hiding is larger than this image can hold. Use a bigger cover image, or hide a smaller file.",
+        };
+      if (err && err.code === "SV-MALFORMED")
+        return { title: "Unsupported image", message: "The cover must be a PNG or BMP image." };
+      return outputExistsMap("tk-hide-output")(err);
+    },
+  );
+});
+
+// ---- Reveal hidden data --------------------------------------------------
+
+$("tk-btn-unhide").addEventListener("click", (e) => {
+  const input = $("tk-unhide-input");
+  const output = $("tk-unhide-output");
+  const p1 = $("tk-unhide-pass");
+  if (
+    !validate([
+      [input, "Choose the image with hidden data"],
+      [output, "Choose where to save the revealed file"],
+      [p1, "Enter the password"],
+    ])
+  )
+    return;
+  runTask(
+    e.target,
+    "tk-unhide-result",
+    async () => {
+      const rep = await invoke("stego_extract", {
+        stegoPath: input.value,
+        outputPath: output.value,
+        passphrase: p1.value,
+      });
+      p1.value = "";
+      return {
+        ok: true,
+        title: "Data revealed",
+        rows: [
+          { label: "Saved to", value: rep.output_path, copy: true },
+          { label: "Size", value: humanSize(rep.bytes_written) },
+        ],
+        actions: [revealAction(rep.output_path), openAction(rep.output_path)],
+      };
+    },
+    (err) => {
+      if (err && err.code === "SV-UNAUTHORIZED")
+        return {
+          title: "Couldn't reveal any data",
+          message: "The password is wrong, this image carries no hidden data, or it was altered — these are indistinguishable by design.",
+        };
+      return outputExistsMap("tk-unhide-output")(err);
+    },
+  );
+});
+
+// ---- Detect hidden data (heuristic steganalysis) -------------------------
+
+$("tk-btn-detect").addEventListener("click", (e) => {
+  const input = $("tk-detect-input");
+  if (!validate([[input, "Choose an image to scan"]])) return;
+  const VERDICT = {
+    NotObserved: "Nothing detected by these tests",
+    Low: "Low suspicion",
+    Elevated: "Elevated suspicion",
+    High: "High suspicion",
+  };
+  runTask(
+    e.target,
+    "tk-detect-result",
+    async () => {
+      const rep = await invoke("stego_detect", { imagePath: input.value });
+      const elevated = rep.suspicion === "High" || rep.suspicion === "Elevated";
+      const rows = [{ label: "Verdict", value: VERDICT[rep.suspicion] || rep.suspicion }];
+      for (const s of rep.signals)
+        rows.push({ label: s.name, value: Math.round(s.score * 100) + "% — " + s.detail });
+      rows.push({ label: "Note", value: rep.caveat });
+      return {
+        ok: !elevated,
+        title: "Scan complete",
+        message: elevated
+          ? "This image shows signs that may indicate hidden data — treat it with suspicion."
+          : "No strong signs of hidden data were found. This is not a guarantee the image is clean.",
+        rows,
+      };
+    },
+    (err) => {
+      if (err && err.code === "SV-MALFORMED")
+        return { title: "Unsupported image", message: "The image must be a PNG or BMP." };
+      return null;
+    },
+  );
+});
+
+// ---- Inspect metadata -----------------------------------------------------
+
+$("tk-btn-mi").addEventListener("click", (e) => {
+  const file = $("tk-mi-file");
+  if (!validate([[file, "Choose a file to inspect"]])) return;
+  runTask(e.target, "tk-mi-result", async () => {
+    const rep = await invoke("metadata_inspect", { path: file.value });
+    const rows = [];
+    for (const g of rep.groups) {
+      for (const t of g.tags) {
+        rows.push({ label: `${g.group}:${t.name}`, value: t.value });
+      }
+    }
+    const summary = [rep.format || "unknown type"];
+    if (rep.mime_type) summary.push(rep.mime_type);
+    summary.push(`${rep.tag_count} field${rep.tag_count === 1 ? "" : "s"}`);
+    return {
+      ok: true,
+      title: "Metadata read",
+      message: summary.join(" · ") + ". This includes file-system facts; embedded metadata is what travels with the file.",
+      rows,
+    };
+  });
+});
+
+// ---- Remove metadata ------------------------------------------------------
+
+$("tk-btn-mc").addEventListener("click", (e) => {
+  const input = $("tk-mc-input");
+  const output = $("tk-mc-output");
+  if (
+    !validate([
+      [input, "Choose a file to clean"],
+      [output, "Choose where to save the cleaned copy"],
+    ])
+  )
+    return;
+  runTask(
+    e.target,
+    "tk-mc-result",
+    async () => {
+      const rep = await invoke("metadata_sanitize", { input: input.value, output: output.value });
+      const removed = Math.max(0, rep.tags_before - rep.tags_after);
+      const rows = [
+        { label: "Saved to", value: rep.output_path, copy: true },
+        { label: "Format", value: rep.format },
+        { label: "Metadata fields before", value: String(rep.tags_before) },
+        { label: "Metadata fields after", value: String(rep.tags_after) },
+        { label: "Fields removed", value: String(removed) },
+      ];
+      return rep.guaranteed
+        ? {
+            ok: true,
+            title: "Cleaned copy written",
+            message: "All embedded metadata was removed. Your original file was not changed.",
+            rows,
+            actions: [revealAction(rep.output_path)],
+          }
+        : {
+            ok: true,
+            title: "Best-effort scrub written",
+            message:
+              "This is a PDF: metadata was removed by an incremental update, so the previous values may still be recoverable from the file. For a guaranteed scrub, re-export the PDF from its source. Your original was not changed.",
+            rows,
+            actions: [revealAction(rep.output_path)],
+          };
+    },
+    outputExistsMap("tk-mc-output"),
+  );
+});
+
+// ---- Compare metadata -----------------------------------------------------
+
+$("tk-btn-cmp").addEventListener("click", (e) => {
+  const a = $("tk-cmp-a");
+  const b = $("tk-cmp-b");
+  if (
+    !validate([
+      [a, "Choose the first file"],
+      [b, "Choose the second file"],
+    ])
+  )
+    return;
+  runTask(e.target, "tk-cmp-result", async () => {
+    const d = await invoke("metadata_diff", { pathA: a.value, pathB: b.value });
+    const rows = [];
+    for (const c of d.changed) rows.push({ label: `changed · ${c.key}`, value: `${c.value_a}  →  ${c.value_b}` });
+    for (const o of d.only_in_a) rows.push({ label: `only in A · ${o.name}`, value: o.value });
+    for (const o of d.only_in_b) rows.push({ label: `only in B · ${o.name}`, value: o.value });
+    const total = d.changed.length + d.only_in_a.length + d.only_in_b.length;
+    return {
+      ok: true,
+      title: total === 0 ? "Identical embedded metadata" : "Differences found",
+      message:
+        total === 0
+          ? "Both files carry the same embedded metadata. (File names, sizes, and timestamps are ignored.)"
+          : `${total} difference${total === 1 ? "" : "s"} in embedded metadata. (File names, sizes, and timestamps are ignored.)`,
+      rows,
+    };
+  });
 });
 
 // ---- Generate signing keypair --------------------------------------------
@@ -1302,6 +1629,167 @@ $("tk-btn-recover-pieces").addEventListener("click", (e) => {
       return outputExistsMap("tk-recover-output")(err);
     },
   );
+});
+
+// ---- Secure QR transfer: make QR images from piece codes ------------------
+
+$("tk-btn-qr-make").addEventListener("click", (e) => {
+  const codes = $("tk-qr-codes");
+  const outDir = $("tk-qr-outdir");
+  const shareB64 = linesOf(codes.value);
+  if (!validate([[outDir, "Choose a folder for the QR images"]])) return;
+  if (shareB64.length === 0) {
+    setFieldError(codes, "Paste at least one piece code (one per line).");
+    codes.focus();
+    return;
+  }
+  clearFieldError(codes);
+  runTask(
+    e.target,
+    "tk-qr-make-result",
+    async () => {
+      const rep = await invoke("shares_export_qr", { shareB64, outDir: outDir.value });
+      const rows = rep.image_paths.map((p, i) => ({ label: `Piece ${i + 1}`, value: p, copy: true }));
+      return {
+        ok: true,
+        title: `Made ${rep.image_paths.length} QR image${rep.image_paths.length === 1 ? "" : "s"}`,
+        message: "Each QR holds one piece. Move a threshold of them — plus the payload file — to recover.",
+        rows,
+        actions: rep.image_paths.length ? [revealAction(rep.image_paths[0])] : [],
+      };
+    },
+    outputExistsMap("tk-qr-outdir"),
+  );
+});
+
+// ---- Secure QR transfer: recover from QR images ---------------------------
+
+$("tk-btn-qr-recover").addEventListener("click", (e) => {
+  const images = $("tk-qr-images");
+  const payload = $("tk-qr-payload");
+  const output = $("tk-qr-out");
+  const qrPaths = linesOf(images.value);
+  if (!validate([[payload, "Choose the payload file"], [output, "Choose where to save the result"]])) return;
+  if (qrPaths.length === 0) {
+    setFieldError(images, "Add at least one QR image.");
+    images.focus();
+    return;
+  }
+  clearFieldError(images);
+  runTask(
+    e.target,
+    "tk-qr-recover-result",
+    async () => {
+      const rep = await invoke("shares_recover_from_qr", {
+        qrPaths,
+        payloadPath: payload.value,
+        outPath: output.value,
+      });
+      return {
+        ok: true,
+        title: "Recovered",
+        message: "The QR pieces matched and the secret was rebuilt.",
+        rows: [{ label: "Saved to", value: rep.output_path, copy: true }],
+        actions: [revealAction(rep.output_path), openAction(rep.output_path)],
+      };
+    },
+    (err) => {
+      if (err && err.code === "SV-UNAUTHORIZED") {
+        return {
+          title: "Couldn't recover",
+          message: "These pieces don't match, are from a different split, or the payload is wrong or damaged.",
+        };
+      }
+      if (err && err.code === "SV-MALFORMED") {
+        return {
+          title: "Couldn't read a QR image",
+          message: "One of the images has no readable QR code. Re-capture it (sharper, well-lit, the whole code in frame) and try again.",
+        };
+      }
+      return outputExistsMap("tk-qr-out")(err);
+    },
+  );
+});
+
+// ---- Watermark: embed a fragile tamper-evident mark -----------------------
+
+$("tk-btn-wm-embed").addEventListener("click", (e) => {
+  const input = $("tk-wm-input");
+  const output = $("tk-wm-output");
+  const pass = $("tk-wm-pass");
+  if (
+    !validate([
+      [input, "Choose an image to mark"],
+      [output, "Choose where to save the marked image"],
+      [pass, "Set a password"],
+    ])
+  )
+    return;
+  runTask(
+    e.target,
+    "tk-wm-embed-result",
+    async () => {
+      const rep = await invoke("watermark_embed", {
+        input: input.value,
+        output: output.value,
+        passphrase: pass.value,
+      });
+      pass.value = "";
+      return {
+        ok: true,
+        title: "Tamper-proof mark added",
+        message:
+          "This image is now self-verifying with your password. Any later edit — including re-saving as JPEG or resizing — will show up as tampering.",
+        rows: [
+          { label: "Saved to", value: rep.output_path, copy: true },
+          { label: "Size", value: `${rep.width} × ${rep.height}` },
+          { label: "Check regions", value: String(rep.blocks) },
+        ],
+        actions: [revealAction(rep.output_path)],
+      };
+    },
+    (err) => {
+      if (err && err.code === "SV-INVALID-INPUT") return { title: "Couldn't mark this image", message: describe(err) };
+      return outputExistsMap("tk-wm-output")(err);
+    },
+  );
+});
+
+// ---- Watermark: verify / detect tampering ---------------------------------
+
+$("tk-btn-wm-verify").addEventListener("click", (e) => {
+  const input = $("tk-wmv-input");
+  const pass = $("tk-wmv-pass");
+  if (!validate([[input, "Choose the marked image"], [pass, "Enter the password"]])) return;
+  runTask(e.target, "tk-wmv-result", async () => {
+    const rep = await invoke("watermark_verify", { input: input.value, passphrase: pass.value });
+    pass.value = "";
+    if (rep.verdict === "Intact") {
+      return {
+        ok: true,
+        title: "Intact",
+        message: "Every region checks out — this image is unchanged since it was marked with this password.",
+        rows: [{ label: "Regions checked", value: String(rep.total_blocks) }],
+      };
+    }
+    if (rep.verdict === "Tampered") {
+      return {
+        ok: false,
+        title: "Tampered",
+        message: `This image was altered after marking. ${rep.tampered_blocks} of ${rep.total_blocks} regions changed.`,
+        rows: [
+          { label: "Altered regions", value: `${rep.tampered_blocks} of ${rep.total_blocks}` },
+        ],
+      };
+    }
+    return {
+      ok: false,
+      title: "No valid mark",
+      message:
+        "No watermark was found for this password. The image may be unmarked, marked with a different password, re-saved as JPEG/resized (which destroys the mark), or entirely replaced.",
+      rows: [{ label: "Regions checked", value: String(rep.total_blocks) }],
+    };
+  });
 });
 
 init();

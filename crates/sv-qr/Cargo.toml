@@ -1,0 +1,28 @@
+[package]
+name = "sv-qr"
+description = "Secure QR Transfer codec: a generic, pure-Rust QR encoder/decoder (text ⇄ QR PNG). Transport-only — knows nothing of secret sharing; the Secret Sharing module composes it to move piece strings as QR images."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+sv-types = { path = "../sv-types" }
+thiserror.workspace = true
+# Encode: pure-Rust, MIT OR Apache-2.0; renders into an `image::Luma<u8>` over `image ^0.25`
+# (the same `image` the steganography module already uses). `image` feature = the raster renderer.
+qrcode = { version = "0.14", default-features = false, features = ["image"] }
+# Decode: pure-Rust quirc reimplementation (no FFI), (MIT OR Apache-2.0) AND ISC. Its `img` feature
+# (default) consumes an `image::GrayImage`; its `image` requirement includes 0.25 → one shared dep.
+rqrr = "0.10"
+# Load QR photos/screenshots (PNG/JPEG/BMP) and save the generated QR as PNG. Lossless + the common
+# capture codecs only; default-features = false keeps the tree minimal and deny-clean.
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "bmp"] }
+
+[dev-dependencies]
+# Throwaway dirs for the round-trip codec tests.
+tempfile = "3"
+
+[lints]
+workspace = true

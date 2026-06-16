@@ -37,6 +37,8 @@ serde_json = "1"
 sv-app = { path = "../src-tauri" }
 sv-types = { path = "../crates/sv-types" }
 sv-age = { path = "../crates/sv-age" }
+# Analysis module: the composition root resolves + hash-pins the bundled ExifTool (build_meta).
+sv-meta = { path = "../crates/sv-meta" }
 
 [features]
 # Tauri's default custom-protocol feature for release builds.

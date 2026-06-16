@@ -14,6 +14,9 @@ fn main() {
         "SV_AGE_KEYGEN_BLAKE3_PIN",
         "SV_AGE_KEYGEN_BIN_SRC",
     );
+    // Analysis module: the bundled, hash-pinned ExifTool. Absent at build time → dev-unpinned
+    // sentinel (the runtime then disables the Analysis module in release; fail-closed).
+    emit_pin("exiftool", "SV_EXIFTOOL_BLAKE3_PIN", "SV_EXIFTOOL_BIN_SRC");
     tauri_build::build();
 }
 

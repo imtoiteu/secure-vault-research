@@ -101,6 +101,100 @@ pub struct IntegrityReport {
     pub computed_hash_hex: String,
 }
 
+/// Outcome of a generic **Verify Integrity** check over an arbitrary file (Cryptography module).
+/// Composes Hash File (BLAKE3) and Verify Signature (minisign) without a vault or session.
+///
+/// Each check is **opt-in**: a caller may verify a hash, a signature, or both. A check that was not
+/// requested has its `*_checked` flag `false` and its result flag `false` — absence is never a pass.
+/// Unlike [`IntegrityReport`] (which collapses both halves into one verdict), the two checks are
+/// reported independently so the UI can say "hash matched, no signature supplied" and similar.
+///
+/// Non-secret: only the (public) computed hash and booleans appear. A mismatch / invalid signature
+/// is reported here as `verified: false` — it is **not** an error (mirrors Verify Signature, where a
+/// failed check is `Ok(valid: false)`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct VerifyIntegrityReport {
+    /// A BLAKE3 hash comparison was requested (an expected hex hash was supplied).
+    pub hash_checked: bool,
+    /// The computed BLAKE3 matched the supplied expected hash. `false` if unchecked or mismatched.
+    pub hash_matched: bool,
+    /// A minisign signature verification was requested (a signature + public key were supplied).
+    pub signature_checked: bool,
+    /// The detached signature verified against the public key. `false` if unchecked or invalid.
+    pub signature_valid: bool,
+    /// Lowercase hex BLAKE3 of the file (always computed, for transparency/display).
+    pub computed_hash_hex: String,
+    /// Overall verdict: every requested check passed (and at least one check was requested).
+    pub verified: bool,
+}
+
+/// One metadata tag (Analysis module). For an inspect report `name` is the tag name within its
+/// group; for a diff entry `name` is the full `"Group:Tag"` key. Non-secret display values only.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct MetadataEntry {
+    pub name: String,
+    pub value: String,
+}
+
+/// A group of metadata tags (e.g. `EXIF`, `XMP`, `File`) in an inspect report.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct MetadataGroup {
+    pub group: String,
+    pub tags: Vec<MetadataEntry>,
+}
+
+/// **Metadata Inspection** result over an arbitrary file (Analysis module). Read-only; structured by
+/// group. Carries only the (non-secret) metadata ExifTool extracted — no file contents.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct MetadataReport {
+    /// Detected file type (ExifTool `File:FileType`, e.g. `"JPEG"`), or empty if unknown.
+    pub format: String,
+    /// MIME type (`File:MIMEType`), or empty if unknown.
+    pub mime_type: String,
+    /// Total tags shown (excludes the synthetic `SourceFile`).
+    pub tag_count: u32,
+    pub groups: Vec<MetadataGroup>,
+}
+
+/// **Metadata Sanitization** result. The cleaned file is written to `output_path` (a new file).
+///
+/// `guaranteed` is the honest scrub verdict: `true` only for formats ExifTool natively rewrites
+/// (images + WAV/AVI/MOV/MP4). For PDF it is **`false`** — ExifTool writes an incremental update and
+/// the prior metadata remains recoverable. Read-only formats are refused before reaching this report.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct SanitizeReport {
+    pub output_path: String,
+    pub format: String,
+    /// Embedded metadata tags before (excludes file-system/composite pseudo-tags).
+    pub tags_before: u32,
+    /// Embedded metadata tags remaining in the output.
+    pub tags_after: u32,
+    /// `true` ⇒ a guaranteed strip; `false` ⇒ incremental/best-effort (e.g. PDF) — prior metadata
+    /// may remain recoverable. The UI must surface this distinction.
+    pub guaranteed: bool,
+}
+
+/// One changed tag in a metadata diff: present in both files with different values.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct MetadataValueChange {
+    /// Full `"Group:Tag"` key.
+    pub key: String,
+    pub value_a: String,
+    pub value_b: String,
+}
+
+/// **Metadata Comparison** result between two files — embedded-metadata differences only
+/// (file-system pseudo-tags like name/size/dates are excluded).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct MetadataDiffReport {
+    /// Embedded tags present only in the first file.
+    pub only_in_a: Vec<MetadataEntry>,
+    /// Embedded tags present only in the second file.
+    pub only_in_b: Vec<MetadataEntry>,
+    /// Tags present in both with differing values.
+    pub changed: Vec<MetadataValueChange>,
+}
+
 /// Descriptor returned after exporting a recovery share. The secret share bytes are
 /// written to a separate share artifact (file/QR in Phase 2) and are **never** placed
 /// in this DTO.
@@ -154,6 +248,111 @@ pub struct ShareSplitReport {
 /// bytes**: the plaintext is written to `output_path`; only the path and byte count appear here.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RecoverReport {
+    pub output_path: String,
+    pub bytes_written: u64,
+}
+
+/// Result of exporting Secret Sharing pieces as QR images (**Secure QR Transfer**). Carries only
+/// the written image paths — a QR of a Shamir *piece* is non-secret ciphertext (identical in
+/// sensitivity to the piece file/string the module already writes), so no secret enters this DTO.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct QrExportReport {
+    /// One QR PNG per piece string, in piece order.
+    pub image_paths: Vec<String>,
+}
+
+/// Result of embedding an invisible, fragile tamper-evident watermark (**Watermarking** module).
+/// The watermark is non-secret; this DTO carries only the output path and grid facts.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct WatermarkEmbedReport {
+    /// The new, watermarked image (PNG/BMP; the input is never modified in place).
+    pub output_path: String,
+    pub width: u32,
+    pub height: u32,
+    /// Number of `16×16` tamper-check blocks the image was divided into.
+    pub blocks: u32,
+}
+
+/// Verdict of verifying a fragile watermark. **Deliberately no "Authentic"/"Genuine" variant** — the
+/// strongest positive is [`WatermarkVerdict::Intact`] ("unchanged since it was marked *with this key*"),
+/// which is tamper-evidence, **not** a proof of origin. [`WatermarkVerdict::NotWatermarked`] covers a
+/// clean unmarked image, a wrong key, or a wholly replaced one (indistinguishable, by design).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum WatermarkVerdict {
+    /// Every block matched: the image is unchanged since it was watermarked with this key.
+    Intact,
+    /// Some blocks matched and some did not: the image was altered after watermarking (localized).
+    Tampered,
+    /// No block matched: not watermarked, wrong key, or wholly replaced.
+    NotWatermarked,
+}
+
+/// Result of verifying a fragile watermark (**Watermarking** module). Counts are non-secret.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct WatermarkVerifyReport {
+    pub verdict: WatermarkVerdict,
+    pub total_blocks: u32,
+    /// How many `16×16` blocks failed their tamper check (0 when `Intact`; all when `NotWatermarked`).
+    pub tampered_blocks: u32,
+}
+
+/// Heuristic suspicion level from steganalysis (**Steganography** module). **There is deliberately
+/// no `Clean`/`Safe` variant** — the lowest level is [`Suspicion::NotObserved`] ("no hidden data
+/// detected *by these tests*"), never a guarantee of absence. The type system enforces that the
+/// product cannot assert an image is clean.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Suspicion {
+    /// No tested signal was raised. **Not** a clean bill of health.
+    NotObserved,
+    Low,
+    Elevated,
+    High,
+}
+
+/// One detector's contribution to a steganalysis verdict. Non-secret: scores and descriptions,
+/// never payload bytes.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct StegoSignal {
+    /// Detector name (e.g. `"appended-data"`, `"chi-square"`, `"rs-analysis"`).
+    pub name: String,
+    /// Heuristic score in `[0.0, 1.0]`; higher = more suspicious. **Not** a probability of guilt.
+    pub score: f32,
+    /// Human-readable, non-secret explanation of what the detector observed.
+    pub detail: String,
+}
+
+/// Outcome of a steganalysis scan (**Steganography** module). Heuristic only — it reports a
+/// [`Suspicion`] level and the per-detector [`StegoSignal`]s, and **never** asserts an image is
+/// clean. `score`-bearing fields make this non-`Eq`.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct StegoDetectReport {
+    pub suspicion: Suspicion,
+    pub signals: Vec<StegoSignal>,
+    /// Fixed caveat reminding the UI that absence of a signal is not proof of absence.
+    pub caveat: String,
+}
+
+/// Result of hiding a payload in a cover image (**Steganography** module → *Hide*). **No secret
+/// bytes**: the stego image is written to `output_path`; the payload and key never appear here.
+/// `utilization_pct` makes this non-`Eq`.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct StegoHideReport {
+    /// Where the stego image was written (same container format as the cover).
+    pub output_path: String,
+    /// Cover container format (`"png"` / `"bmp"`).
+    pub cover_format: String,
+    /// Size of the hidden payload, in bytes.
+    pub payload_bytes: u64,
+    /// Maximum payload the cover could hold, in bytes.
+    pub capacity_bytes: u64,
+    /// `payload_bytes / capacity_bytes`, as a percentage (0.0–100.0).
+    pub utilization_pct: f32,
+}
+
+/// Result of extracting a payload from a stego image (**Steganography** module → *Extract*). **No
+/// recovered bytes**: the plaintext is written to `output_path`; only the path and count appear here.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct StegoExtractReport {
     pub output_path: String,
     pub bytes_written: u64,
 }
@@ -298,6 +497,117 @@ mod tests {
         };
         let s = serde_json::to_string(&err).unwrap();
         assert_eq!(err, serde_json::from_str::<ApiError>(&s).unwrap());
+
+        // Verify Integrity report: independent opt-in checks, snake_case fields, round-trips.
+        let vi = VerifyIntegrityReport {
+            hash_checked: true,
+            hash_matched: true,
+            signature_checked: true,
+            signature_valid: false,
+            computed_hash_hex: "ab".repeat(32),
+            verified: false,
+        };
+        let s = serde_json::to_string(&vi).unwrap();
+        assert_eq!(
+            vi,
+            serde_json::from_str::<VerifyIntegrityReport>(&s).unwrap()
+        );
+        assert!(s.contains("\"hash_matched\"") && s.contains("\"signature_valid\""));
+
+        // Analysis module DTOs: structured, snake_case, round-trip.
+        let report = MetadataReport {
+            format: "JPEG".into(),
+            mime_type: "image/jpeg".into(),
+            tag_count: 1,
+            groups: vec![MetadataGroup {
+                group: "EXIF".into(),
+                tags: vec![MetadataEntry {
+                    name: "Make".into(),
+                    value: "Canon".into(),
+                }],
+            }],
+        };
+        let s = serde_json::to_string(&report).unwrap();
+        assert_eq!(report, serde_json::from_str(&s).unwrap());
+
+        let san = SanitizeReport {
+            output_path: "/tmp/clean.jpg".into(),
+            format: "JPEG".into(),
+            tags_before: 12,
+            tags_after: 0,
+            guaranteed: true,
+        };
+        let s = serde_json::to_string(&san).unwrap();
+        assert_eq!(san, serde_json::from_str(&s).unwrap());
+        assert!(s.contains("\"guaranteed\""));
+
+        let diff = MetadataDiffReport {
+            only_in_a: vec![],
+            only_in_b: vec![],
+            changed: vec![MetadataValueChange {
+                key: "EXIF:Make".into(),
+                value_a: "Canon".into(),
+                value_b: "Nikon".into(),
+            }],
+        };
+        let s = serde_json::to_string(&diff).unwrap();
+        assert_eq!(diff, serde_json::from_str(&s).unwrap());
+
+        // Secure QR Transfer: the export report (paths only) round-trips.
+        let qr = QrExportReport {
+            image_paths: vec!["/tmp/piece-1.png".into(), "/tmp/piece-2.png".into()],
+        };
+        let s = serde_json::to_string(&qr).unwrap();
+        assert_eq!(qr, serde_json::from_str::<QrExportReport>(&s).unwrap());
+        assert!(s.contains("\"image_paths\""));
+
+        // Watermarking: embed + verify reports round-trip; verdict has no "Authentic" variant.
+        let wm = WatermarkEmbedReport {
+            output_path: "/tmp/marked.png".into(),
+            width: 640,
+            height: 480,
+            blocks: 1200,
+        };
+        let s = serde_json::to_string(&wm).unwrap();
+        assert_eq!(
+            wm,
+            serde_json::from_str::<WatermarkEmbedReport>(&s).unwrap()
+        );
+
+        let wv = WatermarkVerifyReport {
+            verdict: WatermarkVerdict::Tampered,
+            total_blocks: 1200,
+            tampered_blocks: 7,
+        };
+        let s = serde_json::to_string(&wv).unwrap();
+        assert_eq!(
+            wv,
+            serde_json::from_str::<WatermarkVerifyReport>(&s).unwrap()
+        );
+        assert!(s.contains("\"Tampered\""));
+    }
+
+    #[test]
+    fn stego_detect_report_round_trips_and_has_no_clean_variant() {
+        let report = StegoDetectReport {
+            suspicion: Suspicion::Elevated,
+            signals: vec![StegoSignal {
+                name: "chi-square".into(),
+                score: 0.82,
+                detail: "p(embedding)=0.82 over the green channel".into(),
+            }],
+            caveat: "heuristic — absence of a signal is not proof of absence".into(),
+        };
+        let s = serde_json::to_string(&report).unwrap();
+        assert_eq!(
+            report,
+            serde_json::from_str::<StegoDetectReport>(&s).unwrap()
+        );
+        // The wire form of the lowest level is "NotObserved", never "Clean"/"Safe".
+        let lowest = serde_json::to_string(&Suspicion::NotObserved).unwrap();
+        assert_eq!(lowest, "\"NotObserved\"");
+        assert!(!lowest.to_lowercase().contains("clean"));
+        assert!(!lowest.to_lowercase().contains("safe"));
     }
 
     #[test]

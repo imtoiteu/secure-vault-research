@@ -8,8 +8,13 @@
 
 use std::path::{Path, PathBuf};
 
-use sv_platform::{decode_share_string, PlatformCrypto, ShareSplitOutput, SignatureCheck};
-use sv_types::{ApiError, IntegrityReport, RecoverReport, ShareSplitReport, SigningKeypairInfo};
+use sv_platform::{
+    decode_share_string, IntegrityVerification, PlatformCrypto, ShareSplitOutput, SignatureCheck,
+};
+use sv_types::{
+    ApiError, IntegrityReport, QrExportReport, RecoverReport, ShareSplitReport, SigningKeypairInfo,
+    VerifyIntegrityReport,
+};
 
 use crate::passphrase::IpcPassphrase;
 
@@ -27,6 +32,18 @@ pub trait PlatformSurface {
         signature_path: String,
         public_key_path: String,
     ) -> Result<IntegrityReport, ApiError>;
+
+    /// **Verify Integrity** — check `path` against an expected BLAKE3 hash **and/or** a detached
+    /// signature + public key (composes Hash File + Verify Signature). At least one check must be
+    /// supplied. A hash mismatch or invalid signature is reported as `verified: false` (not an
+    /// error); only missing/oversized/malformed inputs are errors.
+    fn verify_integrity(
+        &self,
+        path: String,
+        expected_hash_hex: Option<String>,
+        signature_path: Option<String>,
+        public_key_path: Option<String>,
+    ) -> Result<VerifyIntegrityReport, ApiError>;
 
     /// **Encrypt File** — passphrase (Argon2id + secretbox) → `.svenc`; returns the output path.
     fn encrypt_file(
@@ -91,6 +108,26 @@ pub trait PlatformSurface {
         payload_path: String,
         out_path: String,
     ) -> Result<RecoverReport, ApiError>;
+
+    /// **Secure QR Transfer — export** — render each existing piece string (`share_b64`) as a QR
+    /// **PNG** in `out_dir` (`piece-1.png`, …). Pure transport of an already-produced, non-secret
+    /// piece; no re-split, no new crypto. Returns the written image paths. Session-free.
+    fn shares_export_qr(
+        &self,
+        share_b64: Vec<String>,
+        out_dir: String,
+    ) -> Result<QrExportReport, ApiError>;
+
+    /// **Secure QR Transfer — recover** — decode a QR code from each image in `qr_paths` to a piece
+    /// string, then recover through the **unchanged** Secret Sharing engine (same `payload_path`
+    /// requirement, same oracle-safe errors). Wrong/tampered pieces still merge to
+    /// `SV-UNAUTHORIZED`; an unreadable image / absent QR is `SV-MALFORMED`. Session-free.
+    fn shares_recover_from_qr(
+        &self,
+        qr_paths: Vec<String>,
+        payload_path: String,
+        out_path: String,
+    ) -> Result<RecoverReport, ApiError>;
 }
 
 /// Project the engine's [`ShareSplitOutput`] onto the IPC [`ShareSplitReport`] DTO (field-for-field;
@@ -150,6 +187,41 @@ impl PlatformSurface for PlatformApp {
             blake3_ok: valid,
             signature_ok: valid,
             computed_hash_hex: file_blake3_hex,
+        })
+    }
+
+    fn verify_integrity(
+        &self,
+        path: String,
+        expected_hash_hex: Option<String>,
+        signature_path: Option<String>,
+        public_key_path: Option<String>,
+    ) -> Result<VerifyIntegrityReport, ApiError> {
+        let signature_path = signature_path.as_deref().map(Path::new);
+        let public_key_path = public_key_path.as_deref().map(Path::new);
+        let IntegrityVerification {
+            hash_checked,
+            hash_matched,
+            signature_checked,
+            signature_valid,
+            computed_hash_hex,
+            verified,
+        } = self
+            .crypto
+            .verify_integrity(
+                Path::new(&path),
+                expected_hash_hex.as_deref(),
+                signature_path,
+                public_key_path,
+            )
+            .map_err(ApiError::from)?;
+        Ok(VerifyIntegrityReport {
+            hash_checked,
+            hash_matched,
+            signature_checked,
+            signature_valid,
+            computed_hash_hex,
+            verified,
         })
     }
 
@@ -304,6 +376,49 @@ impl PlatformSurface for PlatformApp {
             bytes_written: rep.bytes_written,
         })
     }
+
+    fn shares_export_qr(
+        &self,
+        share_b64: Vec<String>,
+        out_dir: String,
+    ) -> Result<QrExportReport, ApiError> {
+        if share_b64.is_empty() {
+            return Err(ApiError::InvalidInput {
+                detail: "no pieces were provided to export".into(),
+            });
+        }
+        let dir = Path::new(&out_dir);
+        let mut image_paths = Vec::with_capacity(share_b64.len());
+        for (i, piece) in share_b64.iter().enumerate() {
+            let out = dir.join(format!("piece-{}.png", i + 1));
+            // sv_qr refuses to overwrite (OutputExists) and never trusts the content (transport only).
+            let written = sv_qr::encode_text_to_png(piece, &out).map_err(ApiError::from)?;
+            image_paths.push(written.to_string_lossy().into_owned());
+        }
+        Ok(QrExportReport { image_paths })
+    }
+
+    fn shares_recover_from_qr(
+        &self,
+        qr_paths: Vec<String>,
+        payload_path: String,
+        out_path: String,
+    ) -> Result<RecoverReport, ApiError> {
+        if qr_paths.is_empty() {
+            return Err(ApiError::InvalidInput {
+                detail: "no QR images were provided".into(),
+            });
+        }
+        // Decode each QR image to its piece string (fail-closed: a bad image / absent QR is
+        // SV-MALFORMED), then route the strings through the UNCHANGED recover bridge — identical
+        // staging, identical oracle-safe error semantics as the pasted-codes path.
+        let mut share_strings = Vec::with_capacity(qr_paths.len());
+        for p in &qr_paths {
+            let text = sv_qr::decode_png(Path::new(p)).map_err(ApiError::from)?;
+            share_strings.push(text);
+        }
+        self.shares_recover_secret(Vec::new(), share_strings, payload_path, out_path)
+    }
 }
 
 #[cfg(test)]
@@ -365,6 +480,61 @@ mod tests {
         )
         .unwrap();
         assert_eq!(std::fs::read(&dec).unwrap(), b"hash me");
+    }
+
+    #[test]
+    fn verify_integrity_surface_hash_and_signature() {
+        let dir = tmp();
+        let app = PlatformApp::new();
+        let f = dir.path().join("f.txt");
+        std::fs::write(&f, b"verify integrity over IPC").unwrap();
+        let hash = app.hash_file(s(&f)).unwrap();
+
+        // Mint a keypair + sign the file for the signature half (closed loop, no vault).
+        let kp = app
+            .generate_signing_keypair(s(dir.path()), "id".into(), IpcPassphrase::new("pw".into()))
+            .unwrap();
+        let sig = app
+            .sign_file(
+                s(&f),
+                kp.secret_key_path.clone(),
+                IpcPassphrase::new("pw".into()),
+            )
+            .unwrap();
+
+        // Both checks requested and both pass.
+        let r = app
+            .verify_integrity(
+                s(&f),
+                Some(hash.clone()),
+                Some(sig.clone()),
+                Some(kp.public_key_path.clone()),
+            )
+            .unwrap();
+        assert!(r.hash_checked && r.hash_matched);
+        assert!(r.signature_checked && r.signature_valid);
+        assert!(r.verified && r.computed_hash_hex == hash);
+
+        // Wrong expected hash → a `verified: false` verdict, NOT an error.
+        let r = app
+            .verify_integrity(s(&f), Some("00".repeat(32)), None, None)
+            .unwrap();
+        assert!(r.hash_checked && !r.hash_matched && !r.verified && !r.signature_checked);
+
+        // Neither check requested → SV-INVALID-INPUT (a coded error, no oracle).
+        let err = app.verify_integrity(s(&f), None, None, None).unwrap_err();
+        assert_eq!(err.code(), "SV-INVALID-INPUT");
+
+        // Missing file → SV-NOT-FOUND.
+        let err = app
+            .verify_integrity(
+                s(&dir.path().join("nope")),
+                Some("ab".repeat(32)),
+                None,
+                None,
+            )
+            .unwrap_err();
+        assert_eq!(err, ApiError::NotFound);
     }
 
     #[test]
@@ -550,6 +720,93 @@ mod tests {
             .unwrap_err();
         // "pieces from different splits" is a non-secret SV-INVALID-INPUT (matches the engine).
         assert_eq!(err.code(), "SV-INVALID-INPUT");
+        assert!(!out.exists());
+    }
+
+    #[test]
+    fn shares_split_export_qr_then_recover_from_qr() {
+        let dir = tmp();
+        let app = PlatformApp::new();
+        // Split a secret → existing piece strings.
+        let rep = app
+            .shares_split_secret(
+                IpcPassphrase::new("transfer me by QR".into()),
+                4,
+                2,
+                s(dir.path()),
+            )
+            .unwrap();
+
+        // Export the existing piece strings as QR PNGs (no re-split).
+        let qr_dir = dir.path().join("qr");
+        std::fs::create_dir(&qr_dir).unwrap();
+        let qr = app
+            .shares_export_qr(rep.share_b64.clone(), s(&qr_dir))
+            .unwrap();
+        assert_eq!(qr.image_paths.len(), 4);
+        assert!(qr
+            .image_paths
+            .iter()
+            .all(|p| std::path::Path::new(p).exists()));
+
+        // Recover from 2 of the 4 QR images + the payload file → original secret.
+        let out = dir.path().join("from-qr.txt");
+        let two = qr.image_paths[0..2].to_vec();
+        let rr = app
+            .shares_recover_from_qr(two, rep.payload_path.clone(), s(&out))
+            .unwrap();
+        assert_eq!(rr.bytes_written, 17);
+        assert_eq!(std::fs::read(&out).unwrap(), b"transfer me by QR");
+    }
+
+    #[test]
+    fn shares_recover_from_qr_too_few_is_insufficient_shares() {
+        let dir = tmp();
+        let app = PlatformApp::new();
+        let rep = app
+            .shares_split_secret(IpcPassphrase::new("need two".into()), 3, 2, s(dir.path()))
+            .unwrap();
+        let qr_dir = dir.path().join("qr");
+        std::fs::create_dir(&qr_dir).unwrap();
+        let qr = app
+            .shares_export_qr(rep.share_b64.clone(), s(&qr_dir))
+            .unwrap();
+
+        // Only one QR (< threshold) → the EXISTING insufficient-shares semantics, surfaced via QR.
+        let out = dir.path().join("nope.txt");
+        let err = app
+            .shares_recover_from_qr(
+                vec![qr.image_paths[0].clone()],
+                rep.payload_path.clone(),
+                s(&out),
+            )
+            .unwrap_err();
+        assert_eq!(err, ApiError::InsufficientShares { got: 1, need: 2 });
+        assert!(!out.exists());
+    }
+
+    #[test]
+    fn shares_export_qr_rejects_empty_and_recover_rejects_non_qr_image() {
+        let dir = tmp();
+        let app = PlatformApp::new();
+        // Empty export → coded SV-INVALID-INPUT (no silent success).
+        let err = app.shares_export_qr(vec![], s(dir.path())).unwrap_err();
+        assert_eq!(err.code(), "SV-INVALID-INPUT");
+
+        // A non-QR image in the recover set → fail-closed SV-MALFORMED (never a wrong recovery).
+        let blank = dir.path().join("blank.png");
+        image::GrayImage::from_pixel(48, 48, image::Luma([255u8]))
+            .save(&blank)
+            .unwrap();
+        let out = dir.path().join("x.txt");
+        let err = app
+            .shares_recover_from_qr(
+                vec![s(&blank)],
+                s(&dir.path().join("p.payload.svss")),
+                s(&out),
+            )
+            .unwrap_err();
+        assert_eq!(err, ApiError::Malformed);
         assert!(!out.exists());
     }
 }

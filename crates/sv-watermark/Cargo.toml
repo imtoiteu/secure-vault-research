@@ -1,0 +1,27 @@
+[package]
+name = "sv-watermark"
+description = "Watermarking domain crate: invisible, keyed, fragile (tamper-evident) image watermark. Embeds a per-block BLAKE3 keyed-MAC of the image's content bits into the LSB plane; Verify reports Intact / Tampered (localized) / NotWatermarked. Pure-Rust, lossless covers only; reuses Argon2id (sv-crypto) + BLAKE3 — no new primitive."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+# The ABI + the DTO/error contract; key derivation reuses the toolkit's Argon2id (no new primitive).
+sv-crypto-traits = { path = "../sv-crypto-traits" }
+sv-crypto = { path = "../sv-crypto" }
+sv-types = { path = "../sv-types" }
+thiserror.workspace = true
+zeroize.workspace = true
+# Per-block keyed MAC (tamper tag). BLAKE3 is already in the workspace tree (sv-crypto, sv-meta).
+blake3 = "1"
+# Lossless image codecs only (PNG, BMP) — a fragile LSB watermark cannot survive lossy JPEG, so the
+# carrier and output are restricted to lossless formats. Mirrors sv-stego's dependency.
+image = { version = "0.25", default-features = false, features = ["png", "bmp"] }
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

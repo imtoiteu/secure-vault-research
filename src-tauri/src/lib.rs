@@ -14,15 +14,21 @@
 
 #![forbid(unsafe_code)]
 
+mod meta;
 mod passphrase;
 mod payload;
 mod platform;
 mod service;
+mod stego;
+mod watermark;
 
+pub use meta::{MetaApp, MetaSurface};
 pub use passphrase::IpcPassphrase;
 pub use payload::{AgePayloadCipher, PayloadCipher};
 pub use platform::{PlatformApp, PlatformSurface};
 pub use service::VaultBackend;
+pub use stego::{StegoApp, StegoSurface};
+pub use watermark::{WatermarkApp, WatermarkSurface};
 
 use sv_core::{VaultService, FORMAT_VERSION, SUITE_VERSION};
 use sv_types::{

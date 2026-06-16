@@ -17,6 +17,14 @@ sv-crypto = { path = "../crates/sv-crypto" }
 sv-age = { path = "../crates/sv-age" }
 # Vault-free file-level crypto services (Integrity + Cryptography modules).
 sv-platform = { path = "../crates/sv-platform" }
+# Steganography module (Hide / Extract / Detect over image covers; encrypt-then-embed).
+sv-stego = { path = "../crates/sv-stego" }
+# Analysis module (Metadata Inspect / Sanitize / Compare via a hardened, hash-pinned ExifTool).
+sv-meta = { path = "../crates/sv-meta" }
+# Secure QR Transfer codec (text ⇄ QR PNG); composed with Secret Sharing to move piece strings.
+sv-qr = { path = "../crates/sv-qr" }
+# Watermarking module (invisible, keyed, fragile tamper-evident image watermark; embed / verify).
+sv-watermark = { path = "../crates/sv-watermark" }
 serde.workspace = true
 zeroize.workspace = true
 hex.workspace = true
@@ -27,6 +35,8 @@ tempfile = "3"
 
 [dev-dependencies]
 serde_json = "1"
+# Synthesize PNG covers in the stego command tests (already in the workspace tree via sv-stego).
+image = { version = "0.25", default-features = false, features = ["png"] }
 
 [lints]
 workspace = true

@@ -54,6 +54,27 @@ pub struct SignatureCheck {
     pub file_blake3_hex: String,
 }
 
+/// Outcome of [`PlatformCrypto::verify_integrity`] — a generic file check composing Hash File and
+/// Verify Signature. Each half is opt-in; a half that was not requested is `*_checked: false` and its
+/// result `false`. A mismatch / invalid signature is a `false` verdict (not an error). Engine-side
+/// type; the IPC surface projects it onto `sv_types::VerifyIntegrityReport` (mirrors
+/// [`SignatureCheck`] → `sv_types::IntegrityReport`).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct IntegrityVerification {
+    /// An expected hash was supplied and compared.
+    pub hash_checked: bool,
+    /// The computed BLAKE3 equalled the supplied expected hash.
+    pub hash_matched: bool,
+    /// A signature + public key were supplied and verified.
+    pub signature_checked: bool,
+    /// The detached signature verified against the public key.
+    pub signature_valid: bool,
+    /// Lowercase hex BLAKE3 of the file (always computed).
+    pub computed_hash_hex: String,
+    /// Every requested check passed (and at least one was requested).
+    pub verified: bool,
+}
+
 /// Paths + public key produced by [`PlatformCrypto::generate_signing_keypair`]. **No secret**:
 /// the secret key is written, encrypted at rest, to `secret_key_path`.
 #[derive(Debug, Clone, PartialEq, Eq)]

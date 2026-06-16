@@ -1,0 +1,20 @@
+[package]
+name = "sv-meta"
+description = "Analysis module: drives a bundled, hash-pinned ExifTool CLI as a hardened subprocess (metadata inspect / sanitize / diff)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+sv-types = { path = "../sv-types" }
+thiserror.workspace = true
+blake3 = "1"
+tempfile = "3"
+# Parse ExifTool's `-j` (JSON) output. serde_json is MIT OR Apache-2.0 (deny-clean) and already in the
+# resolved graph via the dev/test tree; no new license surface.
+serde_json = "1"
+
+[lints]
+workspace = true

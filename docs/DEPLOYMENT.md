@@ -30,6 +30,17 @@ and is **not** applied to the committed defaults — the default state keeps `ca
      `age-keygen`) before first use.
   4. **fail-closed in release** — an unpinned binary is tolerated only in `debug_assertions`
      builds; a release build refuses to start unpinned.
+- **ExifTool** (the **Analysis** module's engine) is an external dependency wired **identically**:
+  `build.rs` hashes `binaries/exiftool` (or the `SV_EXIFTOOL_BIN_SRC` override) into the
+  `SV_EXIFTOOL_BLAKE3_PIN` compile-time pin; it is bundled via `bundle.resources`; and
+  [`desktop/src/lib.rs`](../desktop/src/lib.rs) `build_meta` resolves it (env `SV_EXIFTOOL_BIN` →
+  resource dir → next to the executable) and verifies it via `sv_meta::ExifTool::new_pinned`. The
+  hardened runner adds `-config ""` (disables ExifTool's executable-Perl config — the one
+  attacker-controllable RCE surface), a throwaway cwd, `env_clear`, and a wall-clock timeout. **One
+  deliberate difference from `age`:** ExifTool is an *optional* module, so a missing / unpinned (in
+  release) / hash-mismatched binary **disables the Analysis module** (every `metadata_*` command then
+  returns the fail-closed `SV-INTERNAL`) rather than aborting startup — the rest of the toolkit runs.
+  See [metadata/EVALUATION.md](../../metadata/EVALUATION.md) §1.5 (security) and §4 (architecture).
 - The frontend is dependency-free static files (`app.withGlobalTauri: true`), so **no Node/npm
   bundler step** is part of the build.
 
