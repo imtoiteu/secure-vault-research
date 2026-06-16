@@ -350,6 +350,21 @@ textarea.dropping {
   width: 90%;
 }
 
+/* Header language selector */
+.lang-pick {
+  background: #0e1015;
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.lang-pick:hover {
+  border-color: var(--accent);
+}
+
 .linkbtn {
   background: transparent;
   border: 0;

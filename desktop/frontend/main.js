@@ -8,6 +8,11 @@
 
 const { invoke } = window.__TAURI__.core;
 
+// Localization. `i18n.js` is loaded first (see index.html) and exposes `window.i18n`. `t(key, params)`
+// resolves a string in the active locale (Vietnamese by default), so every user-facing message below
+// flows through it. This changes presentation only — no IPC, crypto, or format behavior.
+const t = window.i18n.t;
+
 let session = null; // opaque SessionHandle from the core; never holds key material.
 let currentVaultPath = null; // path of the open vault, for display only.
 
@@ -15,21 +20,23 @@ const $ = (id) => document.getElementById(id);
 
 // ---- error rendering -----------------------------------------------------
 
-// Map stable error codes → human strings. The backend never distinguishes wrong-passphrase
-// from wrong-share (both → SV-UNAUTHORIZED), preserving the oracle-safe contract.
+// Map stable error codes → i18n keys. The backend never distinguishes wrong-passphrase from
+// wrong-share (both → SV-UNAUTHORIZED), preserving the oracle-safe contract. The keys here MUST stay
+// the exact `SV-…` set the backend can emit — the desktop `ui_contract` test parses this very block
+// and asserts it matches `ApiError::ALL_CODES` 1:1. The values are i18n keys resolved via `t()`.
 const MESSAGES = {
-  "SV-NOT-FOUND": "That file could not be found.",
-  "SV-MALFORMED": "That file is not the expected type.",
-  "SV-INCOMPATIBLE-VERSION": "This file needs a newer version of the app.",
-  "SV-CORRUPTED": "This file is damaged or has been tampered with.",
-  "SV-UNAUTHORIZED": "Wrong password, recovery shares, or tampered data.",
-  "SV-INSUFFICIENT-SHARES": "Not enough recovery shares.",
-  "SV-INVALID-INPUT": "Something about the input wasn't valid.",
-  "SV-IO": "A file could not be read or written.",
-  "SV-TOO-LARGE": "That file is too large.",
-  "SV-TIMEOUT": "The operation took too long and was stopped.",
-  "SV-OUTPUT-EXISTS": "A file already exists at that location.",
-  "SV-INTERNAL": "Something went wrong inside the app.",
+  "SV-NOT-FOUND": "err.notFound",
+  "SV-MALFORMED": "err.malformed",
+  "SV-INCOMPATIBLE-VERSION": "err.incompatibleVersion",
+  "SV-CORRUPTED": "err.corrupted",
+  "SV-UNAUTHORIZED": "err.unauthorized",
+  "SV-INSUFFICIENT-SHARES": "err.insufficientShares",
+  "SV-INVALID-INPUT": "err.invalidInput",
+  "SV-IO": "err.io",
+  "SV-TOO-LARGE": "err.tooLarge",
+  "SV-TIMEOUT": "err.timeout",
+  "SV-OUTPUT-EXISTS": "err.outputExists",
+  "SV-INTERNAL": "err.internal",
 };
 
 function mib(bytes) {
@@ -39,24 +46,24 @@ function mib(bytes) {
 function describe(err) {
   // ApiError is serialized as `{ code: "SV-…", ...fields }`.
   const code = err && err.code ? err.code : "SV-INTERNAL";
-  let msg = MESSAGES[code] || code;
+  let msg = MESSAGES[code] ? t(MESSAGES[code]) : code;
   if (code === "SV-INSUFFICIENT-SHARES" && err.got != null) {
-    msg = `Not enough recovery shares: you added ${err.got}, but ${err.need} are needed.`;
+    msg = t("err.insufficientShares.detail", { got: err.got, need: err.need });
   }
   if (code === "SV-INCOMPATIBLE-VERSION" && err.found != null) {
-    msg = `This file is version ${err.found}; this app supports version ${err.supported}.`;
+    msg = t("err.incompatibleVersion.detail", { found: err.found, supported: err.supported });
   }
   if (code === "SV-INVALID-INPUT" && err.detail) {
-    msg = err.detail;
+    msg = err.detail; // backend-supplied detail (already specific); not localizable on the frontend
   }
   if (code === "SV-TOO-LARGE" && err.actual_bytes != null) {
-    msg = `That file is ${mib(err.actual_bytes)}, over the ${mib(err.limit_bytes)} limit.`;
+    msg = t("err.tooLarge.detail", { actual: mib(err.actual_bytes), limit: mib(err.limit_bytes) });
   }
   if (code === "SV-IO" && err.detail) {
-    msg = err.detail;
+    msg = err.detail; // backend-supplied detail; not localizable on the frontend
   }
   if (code === "SV-OUTPUT-EXISTS") {
-    msg = "A file already exists at that path — choose a different name so nothing is overwritten.";
+    msg = t("err.outputExists.detail");
   }
   return msg;
 }
@@ -115,6 +122,12 @@ function escapeHtml(s) {
   );
 }
 
+// Pick a singular/plural i18n form by count and interpolate `{n}`. English inflects (the `.plural`
+// key carries the "s" form); Vietnamese has no plural marker, so both keys hold the same template.
+function plural(n, baseKey) {
+  return t(n === 1 ? baseKey : baseKey + ".plural", { n });
+}
+
 // ---- clipboard + reveal/open (graceful fallback to copy) -----------------
 
 async function copyText(text) {
@@ -139,7 +152,7 @@ async function revealInFolder(path) {
     }
   }
   const ok = await copyText(path);
-  setStatus(ok ? "Couldn't open the folder here — path copied to clipboard." : "Couldn't open the folder.", "info");
+  setStatus(ok ? t("status.folderOpenCopied") : t("status.folderOpenFailed"), "info");
 }
 
 async function openFile(path) {
@@ -153,15 +166,16 @@ async function openFile(path) {
     }
   }
   const ok = await copyText(path);
-  setStatus(ok ? "Couldn't open the file here — path copied to clipboard." : "Couldn't open the file.", "info");
+  setStatus(ok ? t("status.fileOpenCopied") : t("status.fileOpenFailed"), "info");
 }
 
-// Common result-card actions.
+// Common result-card actions. Labels resolve at call time, so each rendered card matches the
+// language active when the action was built.
 function revealAction(path) {
-  return { label: "Show in folder", onClick: () => revealInFolder(path) };
+  return { label: t("action.showInFolder"), onClick: () => revealInFolder(path) };
 }
 function openAction(path) {
-  return { label: "Open file", onClick: () => openFile(path) };
+  return { label: t("action.openFile"), onClick: () => openFile(path) };
 }
 
 // ---- result cards --------------------------------------------------------
@@ -177,7 +191,7 @@ function renderResult(id, opts) {
 
   const title = document.createElement("div");
   title.className = "result-title";
-  title.textContent = (opts.ok ? "✅ " : "❌ ") + opts.title;
+  title.textContent = (opts.ok ? t("res.ok.prefix") : t("res.bad.prefix")) + opts.title;
   el.appendChild(title);
 
   if (opts.message) {
@@ -204,10 +218,10 @@ function renderResult(id, opts) {
       if (r.copy) {
         const cp = document.createElement("button");
         cp.className = "secondary btn-mini";
-        cp.textContent = "Copy";
+        cp.textContent = t("btn.copy");
         cp.addEventListener("click", async () => {
           const ok = await copyText(r.value);
-          setStatus(ok ? "Copied to clipboard." : "Couldn't copy — select the text manually.", ok ? "ok" : "error");
+          setStatus(ok ? t("status.copied") : t("status.copyFailed"), ok ? "ok" : "error");
         });
         row.appendChild(cp);
       }
@@ -242,7 +256,7 @@ async function runTask(btn, resultId, fn, errMap) {
   const label = btn ? btn.textContent : null;
   if (btn) {
     btn.disabled = true;
-    btn.textContent = "Working…";
+    btn.textContent = t("btn.working");
   }
   try {
     const res = await fn();
@@ -310,9 +324,9 @@ function outputExistsMap(outputId) {
   return (e) =>
     e && e.code === "SV-OUTPUT-EXISTS"
       ? {
-          title: "A file already exists there",
-          message: "Nothing was overwritten. Choose a different name and try again.",
-          actions: [{ label: "Pick a new name…", primary: true, onClick: () => clickSaveFor(outputId) }],
+          title: t("r.exists.title"),
+          message: t("r.exists.msg"),
+          actions: [{ label: t("r.exists.pickNew"), primary: true, onClick: () => clickSaveFor(outputId) }],
         }
       : null;
 }
@@ -323,7 +337,7 @@ function showUnlocked(show) {
   $("unlocked-view").classList.toggle("hidden", !show);
   $("locked-view").classList.toggle("hidden", show);
   const badge = $("lock-badge");
-  badge.textContent = show ? "Unlocked" : "Locked";
+  badge.textContent = show ? t("vault.badge.unlocked") : t("vault.badge.locked");
   badge.className = `badge ${show ? "unlocked" : "locked"}`;
 }
 
@@ -369,7 +383,7 @@ const dialog = () => (window.__TAURI__ && window.__TAURI__.dialog) || null;
 async function pickPath(mode, opts = {}) {
   const d = dialog();
   if (!d) {
-    setStatus("File picker isn't available here — type the path instead.", "info");
+    setStatus(t("status.pickerUnavailable"), "info");
     return null;
   }
   try {
@@ -478,7 +492,7 @@ function initDragDrop() {
       clearFieldError(input);
       autoFillOutputs(input);
     }
-    setStatus("File added.", "ok");
+    setStatus(t("status.fileAdded"), "ok");
   }).catch(() => {});
 }
 
@@ -496,22 +510,26 @@ let currentMeta = null;
 function renderMeta(meta) {
   currentMeta = meta;
   // Plain-language banner: the filename + a short, jargon-free summary.
-  $("vault-title").textContent = currentVaultPath ? baseName(currentVaultPath) : "Vault";
+  $("vault-title").textContent = currentVaultPath ? baseName(currentVaultPath) : t("vault.banner.default");
   const summary = [];
   const tech = [];
   if (meta) {
-    summary.push(`${meta.item_count} file${meta.item_count === 1 ? "" : "s"}`);
+    summary.push(plural(meta.item_count, "vault.summary.files")); // file count, localized
     summary.push(
       meta.share_policy
-        ? `recovery: any ${meta.share_policy.threshold} of ${meta.share_policy.shares_total}`
-        : "no recovery set up",
+        ? t("vault.summary.recovery", { threshold: meta.share_policy.threshold, total: meta.share_policy.shares_total })
+        : t("vault.summary.noRecovery"),
     );
     // Technical details live in the collapsed "Vault details" panel, not the banner.
-    tech.push(`Vault ID: ${meta.vault_uuid}`);
-    tech.push(`File format: version ${meta.format_version}`);
+    tech.push(t("vault.tech.vaultId", { id: meta.vault_uuid }));
+    tech.push(t("vault.tech.format", { version: meta.format_version }));
     if (meta.kdf) {
       tech.push(
-        `Password protection: ${meta.kdf.algorithm}, ${Math.round(meta.kdf.mem_kib / 1024)} MiB, ${meta.kdf.time_cost} passes`,
+        t("vault.tech.kdf", {
+          alg: meta.kdf.algorithm,
+          mem: Math.round(meta.kdf.mem_kib / 1024),
+          passes: meta.kdf.time_cost,
+        }),
       );
     }
   }
@@ -534,10 +552,12 @@ function reflectPolicy(meta) {
   if (meta && meta.share_policy) {
     $("split-shares-total").value = meta.share_policy.shares_total;
     $("split-threshold").value = meta.share_policy.threshold;
-    note.textContent = `This vault is set up for recovery: any ${meta.share_policy.threshold} of ${meta.share_policy.shares_total} pieces can restore it. Make the pieces below and keep each one separate.`;
+    note.textContent = t("vault.note.recoveryReady", {
+      threshold: meta.share_policy.threshold,
+      total: meta.share_policy.shares_total,
+    });
   } else if (meta) {
-    note.textContent =
-      "This vault has no recovery set up, so pieces made here can't restore it. To use recovery, create a new vault with recovery enabled.";
+    note.textContent = t("vault.note.noRecovery");
   }
 }
 
@@ -557,13 +577,16 @@ async function refreshItems() {
   const list = $("item-list");
   list.innerHTML = "";
   const items = await invoke("item_list", { session });
-  $("item-count").textContent = `${items.length} item${items.length === 1 ? "" : "s"}`;
+  $("item-count").textContent = plural(items.length, "vault.itemCount");
   if (currentMeta) {
     currentMeta.item_count = items.length;
     renderMeta(currentMeta);
   }
   if (items.length === 0) {
-    list.innerHTML = '<li class="muted empty">No items yet. Add a file below.</li>';
+    const empty = document.createElement("li");
+    empty.className = "muted empty";
+    empty.textContent = t("vault.files.empty");
+    list.appendChild(empty);
     return;
   }
   for (const it of items) {
@@ -571,7 +594,8 @@ async function refreshItems() {
     li.innerHTML = `
       <span class="item-name"></span>
       <span class="muted">${humanSize(it.size_bytes)} · ${shortHash(it.content_hash_hex)}</span>
-      <button class="extract secondary btn-mini">Save a copy…</button>`;
+      <button class="extract secondary btn-mini"></button>`;
+    li.querySelector("button.extract").textContent = t("vault.files.saveCopy");
     li.querySelector(".item-name").textContent = it.name; // textContent → no HTML injection
     li.querySelector("button.extract").addEventListener("click", () => extractItem(it));
     list.appendChild(li);
@@ -586,7 +610,7 @@ async function extractItem(it) {
   await withButton(null, async () => {
     try {
       await invoke("item_extract", { session, itemId: it.item_id, dest });
-      setStatus(`Saved “${it.name}” to ${dest}`, "ok");
+      setStatus(t("status.savedTo", { name: it.name, dest }), "ok");
     } catch (e) {
       setStatus(describe(e), "error");
     }
@@ -597,15 +621,57 @@ async function extractItem(it) {
 // Wiring
 // ===========================================================================
 
+let appInfo = null; // cached app_info, so the About line can be re-rendered on a language switch.
+
+// Rebuild the localized About version line from the cached app_info.
+function updateAboutVersion() {
+  if (!appInfo) return;
+  $("about-version").textContent = t("about.version", {
+    app: appInfo.app_version,
+    fmt: appInfo.max_format_version,
+    suite: appInfo.suite_version,
+    contract: appInfo.contract_version,
+  });
+}
+
+// Wire the header language selector and persist/apply the choice.
+function initLang() {
+  const sel = $("lang-select");
+  if (!sel) return;
+  sel.value = window.i18n.getLang();
+  sel.addEventListener("change", () => window.i18n.setLang(sel.value));
+}
+
+// Called by i18n.setLang after the static markup is re-translated. Re-render the dynamic, language-
+// dependent UI so nothing is left in the previous language. Transient result cards and the status
+// line are cleared (a language switch is a deliberate settings action, not mid-task).
+window.onLangChange = function () {
+  const sel = $("lang-select");
+  if (sel) sel.value = window.i18n.getLang();
+  updateAboutVersion();
+  const badge = $("lock-badge");
+  if (badge) badge.textContent = session ? t("vault.badge.unlocked") : t("vault.badge.locked");
+  if (session) {
+    if (currentMeta) renderMeta(currentMeta);
+    refreshItems();
+  } else {
+    resetPubkey();
+  }
+  hideAllResults();
+  setStatus("", "info");
+};
+
 async function init() {
+  window.i18n.apply(); // translate static markup up front (Vietnamese by default)
+  initLang();
   wireSidebar();
   initTiles();
   initAbout();
   initBrowse();
   initDragDrop();
   try {
-    const info = await invoke("app_info");
-    $("about-version").textContent = `Version ${info.app_version} · vault format v${info.max_format_version} · suite v${info.suite_version} · contract v${info.contract_version}`;
+    appInfo = await invoke("app_info");
+    updateAboutVersion();
   } catch (_) {
     /* non-fatal */
   }
@@ -617,9 +683,9 @@ $("btn-create").addEventListener("click", (e) => {
   const path = $("create-path");
   const p1 = $("create-pass");
   const p2 = $("create-pass-2");
-  if (!validate([[path, "Choose where to save the new vault"], [p1, "Set a password"]])) return;
+  if (!validate([[path, t("v.create.path")], [p1, t("v.create.pass")]])) return;
   if (p1.value !== p2.value) {
-    setFieldError(p2, "Passwords don't match. A typo here would lock you out permanently.");
+    setFieldError(p2, t("v.create.mismatch"));
     p2.focus();
     return;
   }
@@ -630,7 +696,7 @@ $("btn-create").addEventListener("click", (e) => {
     const sharesTotal = parseInt($("create-shares-total").value, 10);
     const threshold = parseInt($("create-threshold").value, 10);
     if (!(threshold >= 2 && sharesTotal >= threshold && sharesTotal <= 255)) {
-      setStatus("Recovery must satisfy 2 ≤ needed ≤ total ≤ 255.", "error");
+      setStatus(t("status.policyRecovery"), "error");
       return;
     }
     policy = { shares_total: sharesTotal, threshold };
@@ -642,15 +708,13 @@ $("btn-create").addEventListener("click", (e) => {
     p2.value = "";
     return {
       ok: true,
-      title: "Vault created",
-      message: policy
-        ? "Recovery is enabled — make the pieces after you open it."
-        : "Now open it: pick this file in “Open a vault” and enter your password.",
-      rows: [{ label: "Saved to", value: path.value, copy: true }],
+      title: t("r.create.title"),
+      message: policy ? t("r.create.msg.recovery") : t("r.create.msg.plain"),
+      rows: [{ label: t("r.label.savedTo"), value: path.value, copy: true }],
       actions: [
         revealAction(path.value),
         {
-          label: "Open it now",
+          label: t("r.create.openNow"),
           primary: true,
           onClick: () => {
             $("vault-path").value = path.value;
@@ -666,14 +730,14 @@ $("btn-unlock").addEventListener("click", (e) =>
   withButton(e.target, async () => {
     const path = $("vault-path");
     const p1 = $("passphrase");
-    if (!validate([[path, "Choose the vault file"], [p1, "Enter your password"]])) return;
+    if (!validate([[path, t("v.unlock.path")], [p1, t("v.unlock.pass")]])) return;
 
     session = await invoke("vault_unlock", { path: path.value, passphrase: p1.value });
     p1.value = "";
     currentVaultPath = path.value;
     hideAllResults();
     showUnlocked(true);
-    setStatus("Vault opened.", "ok");
+    setStatus(t("status.vaultOpened"), "ok");
     await loadVault();
   }),
 );
@@ -691,7 +755,7 @@ $("btn-lock").addEventListener("click", async (e) => {
   hideAllResults();
   resetPubkey();
   showUnlocked(false);
-  setStatus("Locked.", "info");
+  setStatus(t("status.locked"), "info");
 });
 
 // ---- add item ------------------------------------------------------------
@@ -700,11 +764,11 @@ $("btn-add").addEventListener("click", (e) =>
   withButton(e.target, async () => {
     const source = $("add-source");
     const name = $("add-name");
-    if (!validate([[source, "Choose a file to add"], [name, "Give it a name in the vault"]])) return;
+    if (!validate([[source, t("v.add.source")], [name, t("v.add.name")]])) return;
     await invoke("item_add", { session, source: source.value, name: name.value });
     source.value = "";
     name.value = "";
-    setStatus("Item added.", "ok");
+    setStatus(t("status.itemAdded"), "ok");
     await refreshItems();
   }),
 );
@@ -713,11 +777,11 @@ $("btn-add").addEventListener("click", (e) =>
 
 $("btn-split").addEventListener("click", (e) => {
   const outDir = $("split-outdir");
-  if (!validate([[outDir, "Choose a folder for the share files"]])) return;
+  if (!validate([[outDir, t("v.split.outdir")]])) return;
   const sharesTotal = parseInt($("split-shares-total").value, 10);
   const threshold = parseInt($("split-threshold").value, 10);
   if (!(threshold >= 2 && sharesTotal >= threshold && sharesTotal <= 255)) {
-    setStatus("Shares must satisfy 2 ≤ needed ≤ total ≤ 255.", "error");
+    setStatus(t("status.policyShares"), "error");
     return;
   }
   runTask(e.target, "split-result", async () => {
@@ -726,15 +790,20 @@ $("btn-split").addEventListener("click", (e) => {
     list.innerHTML = "";
     for (const info of infos) {
       const li = document.createElement("li");
-      li.innerHTML = `<span class="item-name">Share ${info.share_index} / ${info.shares_total}</span>
-        <span class="muted path"></span>`;
-      li.querySelector(".path").textContent = info.output_path;
+      const name = document.createElement("span");
+      name.className = "item-name";
+      name.textContent = t("r.share.label", { index: info.share_index, total: info.shares_total });
+      const p = document.createElement("span");
+      p.className = "muted path";
+      p.textContent = info.output_path;
+      li.appendChild(name);
+      li.appendChild(p);
       list.appendChild(li);
     }
     return {
       ok: true,
-      title: `Created ${infos.length} recovery piece${infos.length === 1 ? "" : "s"}`,
-      message: `Any ${threshold} of them together can restore this vault. Store each in a separate trusted place.`,
+      title: plural(infos.length, "r.split.title"),
+      message: t("r.split.msg", { threshold }),
       actions: [revealAction(outDir.value)],
     };
   });
@@ -747,9 +816,9 @@ $("btn-recover").addEventListener("click", (e) =>
     const path = $("recover-path");
     const shares = $("recover-shares");
     const sharePaths = linesOf(shares.value);
-    if (!validate([[path, "Choose the vault file"]])) return;
+    if (!validate([[path, t("v.recover.path")]])) return;
     if (sharePaths.length === 0) {
-      setFieldError(shares, "Add at least one recovery share file.");
+      setFieldError(shares, t("v.recover.shares"));
       shares.focus();
       return;
     }
@@ -758,7 +827,7 @@ $("btn-recover").addEventListener("click", (e) =>
     currentVaultPath = path.value;
     hideAllResults();
     showUnlocked(true);
-    setStatus("Recovered and opened.", "ok");
+    setStatus(t("status.recoveredOpened"), "ok");
     await loadVault();
   }),
 );
@@ -767,13 +836,13 @@ $("btn-recover").addEventListener("click", (e) =>
 
 $("btn-sign").addEventListener("click", (e) => {
   const file = $("sign-file");
-  if (!validate([[file, "Choose a file to sign"]])) return;
+  if (!validate([[file, t("v.sign.file")]])) return;
   runTask(e.target, "sign-result", async () => {
     const sigPath = await invoke("sign_file", { session, path: file.value });
     return {
       ok: true,
-      title: "File signed with the vault key",
-      rows: [{ label: "Signature", value: sigPath, copy: true }],
+      title: t("r.sign.title"),
+      rows: [{ label: t("r.label.signature"), value: sigPath, copy: true }],
       actions: [revealAction(sigPath), openAction(sigPath)],
     };
   });
@@ -787,9 +856,9 @@ $("btn-verify").addEventListener("click", (e) => {
   const pub = $("verify-pub");
   if (
     !validate([
-      [file, "Choose the signed file"],
-      [sig, "Choose the signature file"],
-      [pub, "Choose the public key file"],
+      [file, t("v.verify.file")],
+      [sig, t("v.verify.sig")],
+      [pub, t("v.verify.pub")],
     ])
   )
     return;
@@ -802,40 +871,40 @@ $("btn-verify").addEventListener("click", (e) => {
     return report.signature_ok
       ? {
           ok: true,
-          title: "Signature is valid",
-          message: "Signed with this key, and the file is unchanged.",
-          rows: [{ label: "Fingerprint", value: report.computed_hash_hex, copy: true }],
+          title: t("r.verify.ok.title"),
+          message: t("r.verify.ok.msg"),
+          rows: [{ label: t("r.label.fingerprint"), value: report.computed_hash_hex, copy: true }],
         }
       : {
           ok: false,
-          title: "Signature does NOT match",
-          message: "The file, signature, or public key is wrong, or the file changed.",
+          title: t("r.verify.bad.title"),
+          message: t("r.verify.bad.msg"),
         };
   });
 });
 
 $("btn-integrity").addEventListener("click", (e) => {
   const path = $("integrity-path");
-  if (!validate([[path, "Choose the vault file"]])) return;
+  if (!validate([[path, t("v.integrity.path")]])) return;
   runTask(e.target, "tools-result", async () => {
     const report = await invoke("integrity_check", { path: path.value });
     return report.signature_ok
       ? {
           ok: true,
-          title: "Vault is intact",
-          message: "Its signature and contents check out.",
-          rows: [{ label: "Fingerprint", value: report.computed_hash_hex, copy: true }],
+          title: t("r.integrity.ok.title"),
+          message: t("r.integrity.ok.msg"),
+          rows: [{ label: t("r.label.fingerprint"), value: report.computed_hash_hex, copy: true }],
         }
-      : { ok: false, title: "Integrity check failed", message: "This vault is damaged or has been tampered with." };
+      : { ok: false, title: t("r.integrity.bad.title"), message: t("r.integrity.bad.msg") };
   });
 });
 
 $("btn-hash").addEventListener("click", (e) => {
   const path = $("integrity-path");
-  if (!validate([[path, "Choose the vault file"]])) return;
+  if (!validate([[path, t("v.integrity.path")]])) return;
   runTask(e.target, "tools-result", async () => {
     const hash = await invoke("integrity_hash", { path: path.value });
-    return { ok: true, title: "Vault fingerprint", rows: [{ label: "BLAKE3", value: hash, copy: true }] };
+    return { ok: true, title: t("r.vaultHash.title"), rows: [{ label: t("r.label.blake3"), value: hash, copy: true }] };
   });
 });
 
@@ -845,9 +914,9 @@ $("btn-change-pass").addEventListener("click", (e) =>
   withButton(e.target, async () => {
     const a = $("new-passphrase");
     const b = $("new-passphrase-2");
-    if (!validate([[a, "Enter a new password"]])) return;
+    if (!validate([[a, t("v.changePass.new")]])) return;
     if (a.value !== b.value) {
-      setFieldError(b, "Passwords don't match.");
+      setFieldError(b, t("v.changePass.mismatch"));
       b.focus();
       return;
     }
@@ -855,7 +924,7 @@ $("btn-change-pass").addEventListener("click", (e) =>
     await invoke("vault_change_passphrase", { session, newPassphrase: a.value });
     a.value = "";
     b.value = "";
-    setStatus("Password changed.", "ok");
+    setStatus(t("status.passwordChanged"), "ok");
   }),
 );
 
@@ -865,7 +934,7 @@ let pubkeyHex = null;
 
 function resetPubkey() {
   pubkeyHex = null;
-  $("signing-pubkey").textContent = 'Click "Show public key".';
+  $("signing-pubkey").textContent = t("vault.pubkey.placeholder");
   $("signing-pubkey").classList.add("muted");
   $("btn-copy-pubkey").disabled = true;
 }
@@ -877,7 +946,7 @@ $("btn-show-pubkey").addEventListener("click", (e) =>
     el.textContent = pubkeyHex;
     el.classList.remove("muted");
     $("btn-copy-pubkey").disabled = false;
-    setStatus("Public key loaded. Save it to a .pub file to let others verify your signatures.", "ok");
+    setStatus(t("status.pubkeyLoaded"), "ok");
   }),
 );
 
@@ -885,7 +954,7 @@ $("btn-copy-pubkey").addEventListener("click", async () => {
   if (!pubkeyHex) return;
   const ok = await copyText(pubkeyHex);
   if (ok) {
-    setStatus("Public key copied to clipboard.", "ok");
+    setStatus(t("status.pubkeyCopied"), "ok");
   } else {
     const el = $("signing-pubkey");
     const range = document.createRange();
@@ -893,7 +962,7 @@ $("btn-copy-pubkey").addEventListener("click", async () => {
     const sel = window.getSelection();
     sel.removeAllRanges();
     sel.addRange(range);
-    setStatus("Select-all applied — press ⌘/Ctrl-C to copy.", "info");
+    setStatus(t("status.pubkeySelectAll"), "info");
   }
 });
 
@@ -906,10 +975,10 @@ $("btn-vault-check").addEventListener("click", (e) => {
     return report.signature_ok
       ? {
           ok: true,
-          title: "This vault file is intact",
-          rows: [{ label: "Fingerprint", value: report.computed_hash_hex, copy: true }],
+          title: t("r.vaultCheck.ok.title"),
+          rows: [{ label: t("r.label.fingerprint"), value: report.computed_hash_hex, copy: true }],
         }
-      : { ok: false, title: "This vault file failed the check", message: "It may be damaged or tampered with." };
+      : { ok: false, title: t("r.vaultCheck.bad.title"), message: t("r.vaultCheck.bad.msg") };
   });
 });
 
@@ -921,14 +990,14 @@ $("btn-vault-check").addEventListener("click", (e) => {
 
 $("tk-btn-hash").addEventListener("click", (e) => {
   const path = $("tk-hash-path");
-  if (!validate([[path, "Choose a file"]])) return;
+  if (!validate([[path, t("v.hash.file")]])) return;
   runTask(e.target, "tk-hash-result", async () => {
     const hash = await invoke("integrity_hash_file", { path: path.value });
     return {
       ok: true,
-      title: "Fingerprint ready",
-      message: "Two files with the same fingerprint are identical.",
-      rows: [{ label: "BLAKE3", value: hash, copy: true }],
+      title: t("r.hash.title"),
+      message: t("r.hash.msg"),
+      rows: [{ label: t("r.label.blake3"), value: hash, copy: true }],
     };
   });
 });
@@ -941,9 +1010,9 @@ $("tk-btn-verify").addEventListener("click", (e) => {
   const pub = $("tk-verify-pub");
   if (
     !validate([
-      [file, "Choose the file"],
-      [sig, "Choose the signature file"],
-      [pub, "Choose the public key file"],
+      [file, t("v.tkverify.file")],
+      [sig, t("v.tkverify.sig")],
+      [pub, t("v.tkverify.pub")],
     ])
   )
     return;
@@ -956,14 +1025,14 @@ $("tk-btn-verify").addEventListener("click", (e) => {
     return report.signature_ok
       ? {
           ok: true,
-          title: "Genuine",
-          message: "Signed with this key, and the file is unchanged.",
-          rows: [{ label: "Fingerprint", value: report.computed_hash_hex, copy: true }],
+          title: t("r.tkverify.ok.title"),
+          message: t("r.tkverify.ok.msg"),
+          rows: [{ label: t("r.label.fingerprint"), value: report.computed_hash_hex, copy: true }],
         }
       : {
           ok: false,
-          title: "Does NOT match",
-          message: "The file, signature, or public key is wrong, or the file changed.",
+          title: t("r.tkverify.bad.title"),
+          message: t("r.tkverify.bad.msg"),
         };
   });
 });
@@ -977,7 +1046,7 @@ $("tk-btn-verify").addEventListener("click", (e) => {
 $("tk-btn-intact").addEventListener("click", (e) => {
   const file = $("tk-intact-file");
   const expected = $("tk-intact-hash");
-  if (!validate([[file, "Choose a file"], [expected, "Paste the fingerprint you were given"]])) return;
+  if (!validate([[file, t("v.intact.file")], [expected, t("v.intact.hash")]])) return;
   runTask(e.target, "tk-intact-result", async () => {
     const actual = await invoke("integrity_hash_file", { path: file.value });
     const norm = (s) => s.trim().toLowerCase().replace(/\s+/g, "");
@@ -986,17 +1055,17 @@ $("tk-btn-intact").addEventListener("click", (e) => {
     return match
       ? {
           ok: true,
-          title: "Unchanged",
-          message: "This file matches the fingerprint — it hasn't been altered.",
-          rows: [{ label: "Fingerprint", value: actual, copy: true }],
+          title: t("r.intact.ok.title"),
+          message: t("r.intact.ok.msg"),
+          rows: [{ label: t("r.label.fingerprint"), value: actual, copy: true }],
         }
       : {
           ok: false,
-          title: "Does NOT match",
-          message: "This file doesn't match the fingerprint you provided — it may have changed, or be a different file.",
+          title: t("r.intact.bad.title"),
+          message: t("r.intact.bad.msg"),
           rows: [
-            { label: "This file", value: actual, copy: true },
-            { label: "Expected", value: want || "(empty)" },
+            { label: t("r.intact.thisFile"), value: actual, copy: true },
+            { label: t("r.intact.expected"), value: want || t("r.intact.empty") },
           ],
         };
   });
@@ -1015,19 +1084,19 @@ $("tk-btn-verify-integrity").addEventListener("click", (e) => {
   const sig = $("tk-vi-sig");
   const pub = $("tk-vi-pub");
   [hash, sig, pub].forEach(clearFieldError);
-  if (!validate([[file, "Choose the file"]])) return;
+  if (!validate([[file, t("v.vi.file")]])) return;
 
   const wantHash = hash.value.trim() !== "";
   const sigSet = sig.value.trim() !== "";
   const pubSet = pub.value.trim() !== "";
   // A signature check needs BOTH the signature and the public key.
   if (sigSet !== pubSet) {
-    setFieldError(pubSet ? sig : pub, "A signature check needs both the signature and the public key.");
+    setFieldError(pubSet ? sig : pub, t("v.vi.bothSig"));
     return;
   }
   const wantSig = sigSet && pubSet;
   if (!wantHash && !wantSig) {
-    setFieldError(hash, "Paste a fingerprint, or add a signature + public key.");
+    setFieldError(hash, t("v.vi.need"));
     return;
   }
 
@@ -1038,24 +1107,24 @@ $("tk-btn-verify-integrity").addEventListener("click", (e) => {
       signaturePath: wantSig ? sig.value : null,
       publicKeyPath: wantSig ? pub.value : null,
     });
-    const rows = [{ label: "Fingerprint", value: report.computed_hash_hex, copy: true }];
+    const rows = [{ label: t("r.label.fingerprint"), value: report.computed_hash_hex, copy: true }];
     if (report.hash_checked) {
-      rows.push({ label: "Fingerprint match", value: report.hash_matched ? "yes" : "NO" });
+      rows.push({ label: t("r.vi.fpMatch"), value: report.hash_matched ? t("r.vi.yes") : t("r.vi.no") });
     }
     if (report.signature_checked) {
-      rows.push({ label: "Signature", value: report.signature_valid ? "valid" : "INVALID" });
+      rows.push({ label: t("r.vi.sig"), value: report.signature_valid ? t("r.vi.valid") : t("r.vi.invalid") });
     }
     return report.verified
       ? {
           ok: true,
-          title: "Verified",
-          message: "Every check you asked for passed — this file is exactly what was published.",
+          title: t("r.vi.ok.title"),
+          message: t("r.vi.ok.msg"),
           rows,
         }
       : {
           ok: false,
-          title: "Does NOT verify",
-          message: "At least one check failed — the file may have changed, or an input is wrong.",
+          title: t("r.vi.bad.title"),
+          message: t("r.vi.bad.msg"),
           rows,
         };
   });
@@ -1070,14 +1139,14 @@ $("tk-btn-encrypt").addEventListener("click", (e) => {
   const p2 = $("tk-enc-pass2");
   if (
     !validate([
-      [input, "Choose a file to lock"],
-      [output, "Choose where to save the locked file"],
-      [p1, "Set a password"],
+      [input, t("v.enc.input")],
+      [output, t("v.enc.output")],
+      [p1, t("v.enc.pass")],
     ])
   )
     return;
   if (p1.value !== p2.value) {
-    setFieldError(p2, "Passwords don't match. A typo here is unrecoverable.");
+    setFieldError(p2, t("v.enc.mismatch"));
     p2.focus();
     return;
   }
@@ -1091,13 +1160,13 @@ $("tk-btn-encrypt").addEventListener("click", (e) => {
       p2.value = "";
       return {
         ok: true,
-        title: "File locked",
-        message: "Keep your password safe — it's the only way to open this file.",
-        rows: [{ label: "Saved to", value: out, copy: true }],
+        title: t("r.enc.title"),
+        message: t("r.enc.msg"),
+        rows: [{ label: t("r.label.savedTo"), value: out, copy: true }],
         actions: [
           revealAction(out),
           {
-            label: "Lock another file",
+            label: t("r.enc.another"),
             onClick: () => {
               input.value = "";
               output.value = "";
@@ -1120,9 +1189,9 @@ $("tk-btn-decrypt").addEventListener("click", (e) => {
   const p1 = $("tk-dec-pass");
   if (
     !validate([
-      [input, "Choose the locked file"],
-      [output, "Choose where to save the opened file"],
-      [p1, "Enter the password"],
+      [input, t("v.dec.input")],
+      [output, t("v.dec.output")],
+      [p1, t("v.dec.pass")],
     ])
   )
     return;
@@ -1134,14 +1203,14 @@ $("tk-btn-decrypt").addEventListener("click", (e) => {
       p1.value = "";
       return {
         ok: true,
-        title: "File unlocked",
-        rows: [{ label: "Saved to", value: out, copy: true }],
+        title: t("r.dec.title"),
+        rows: [{ label: t("r.label.savedTo"), value: out, copy: true }],
         actions: [revealAction(out), openAction(out)],
       };
     },
     (err) => {
       if (err && err.code === "SV-UNAUTHORIZED") {
-        return { title: "Couldn't unlock this file", message: "The password is wrong, or this isn't a valid locked file." };
+        return { title: t("r.dec.bad.title"), message: t("r.dec.bad.msg") };
       }
       return outputExistsMap("tk-dec-output")(err);
     },
@@ -1159,15 +1228,15 @@ $("tk-btn-hide").addEventListener("click", (e) => {
   const randomize = $("tk-hide-randomize");
   if (
     !validate([
-      [cover, "Choose a cover image"],
-      [payload, "Choose the file to hide"],
-      [output, "Choose where to save the image"],
-      [p1, "Set a password"],
+      [cover, t("v.hide.cover")],
+      [payload, t("v.hide.payload")],
+      [output, t("v.hide.output")],
+      [p1, t("v.hide.pass")],
     ])
   )
     return;
   if (p1.value !== p2.value) {
-    setFieldError(p2, "Passwords don't match. A typo here is unrecoverable.");
+    setFieldError(p2, t("v.enc.mismatch"));
     p2.focus();
     return;
   }
@@ -1187,14 +1256,14 @@ $("tk-btn-hide").addEventListener("click", (e) => {
       p2.value = "";
       return {
         ok: true,
-        title: "Data hidden",
-        message: "Keep your password safe — it's the only way to reveal this data.",
+        title: t("r.hide.title"),
+        message: t("r.hide.msg"),
         rows: [
-          { label: "Saved to", value: rep.output_path, copy: true },
-          { label: "Hidden file size", value: humanSize(rep.payload_bytes) },
+          { label: t("r.label.savedTo"), value: rep.output_path, copy: true },
+          { label: t("r.hide.size"), value: humanSize(rep.payload_bytes) },
           {
-            label: "Capacity used",
-            value: rep.utilization_pct.toFixed(1) + "% of " + humanSize(rep.capacity_bytes),
+            label: t("r.hide.capacity"),
+            value: t("r.hide.capacityVal", { pct: rep.utilization_pct.toFixed(1), capacity: humanSize(rep.capacity_bytes) }),
           },
         ],
         actions: [revealAction(rep.output_path)],
@@ -1203,11 +1272,11 @@ $("tk-btn-hide").addEventListener("click", (e) => {
     (err) => {
       if (err && err.code === "SV-TOO-LARGE")
         return {
-          title: "File too big to hide",
-          message: "The file you're hiding is larger than this image can hold. Use a bigger cover image, or hide a smaller file.",
+          title: t("r.hide.tooBig.title"),
+          message: t("r.hide.tooBig.msg"),
         };
       if (err && err.code === "SV-MALFORMED")
-        return { title: "Unsupported image", message: "The cover must be a PNG or BMP image." };
+        return { title: t("r.hide.unsupported.title"), message: t("r.hide.unsupported.msg") };
       return outputExistsMap("tk-hide-output")(err);
     },
   );
@@ -1221,9 +1290,9 @@ $("tk-btn-unhide").addEventListener("click", (e) => {
   const p1 = $("tk-unhide-pass");
   if (
     !validate([
-      [input, "Choose the image with hidden data"],
-      [output, "Choose where to save the revealed file"],
-      [p1, "Enter the password"],
+      [input, t("v.unhide.input")],
+      [output, t("v.unhide.output")],
+      [p1, t("v.unhide.pass")],
     ])
   )
     return;
@@ -1239,10 +1308,10 @@ $("tk-btn-unhide").addEventListener("click", (e) => {
       p1.value = "";
       return {
         ok: true,
-        title: "Data revealed",
+        title: t("r.unhide.title"),
         rows: [
-          { label: "Saved to", value: rep.output_path, copy: true },
-          { label: "Size", value: humanSize(rep.bytes_written) },
+          { label: t("r.label.savedTo"), value: rep.output_path, copy: true },
+          { label: t("r.label.size"), value: humanSize(rep.bytes_written) },
         ],
         actions: [revealAction(rep.output_path), openAction(rep.output_path)],
       };
@@ -1250,8 +1319,8 @@ $("tk-btn-unhide").addEventListener("click", (e) => {
     (err) => {
       if (err && err.code === "SV-UNAUTHORIZED")
         return {
-          title: "Couldn't reveal any data",
-          message: "The password is wrong, this image carries no hidden data, or it was altered — these are indistinguishable by design.",
+          title: t("r.unhide.bad.title"),
+          message: t("r.unhide.bad.msg"),
         };
       return outputExistsMap("tk-unhide-output")(err);
     },
@@ -1262,35 +1331,30 @@ $("tk-btn-unhide").addEventListener("click", (e) => {
 
 $("tk-btn-detect").addEventListener("click", (e) => {
   const input = $("tk-detect-input");
-  if (!validate([[input, "Choose an image to scan"]])) return;
-  const VERDICT = {
-    NotObserved: "Nothing detected by these tests",
-    Low: "Low suspicion",
-    Elevated: "Elevated suspicion",
-    High: "High suspicion",
-  };
+  if (!validate([[input, t("v.detect.input")]])) return;
   runTask(
     e.target,
     "tk-detect-result",
     async () => {
       const rep = await invoke("stego_detect", { imagePath: input.value });
       const elevated = rep.suspicion === "High" || rep.suspicion === "Elevated";
-      const rows = [{ label: "Verdict", value: VERDICT[rep.suspicion] || rep.suspicion }];
+      // Backend `suspicion` is a stable enum (NotObserved/Low/Elevated/High); localize via key.
+      const verdictKey = "detect.verdict." + rep.suspicion;
+      const verdict = t(verdictKey);
+      const rows = [{ label: t("r.detect.verdict"), value: verdict === verdictKey ? rep.suspicion : verdict }];
       for (const s of rep.signals)
         rows.push({ label: s.name, value: Math.round(s.score * 100) + "% — " + s.detail });
-      rows.push({ label: "Note", value: rep.caveat });
+      rows.push({ label: t("r.detect.note"), value: rep.caveat });
       return {
         ok: !elevated,
-        title: "Scan complete",
-        message: elevated
-          ? "This image shows signs that may indicate hidden data — treat it with suspicion."
-          : "No strong signs of hidden data were found. This is not a guarantee the image is clean.",
+        title: t("r.detect.title"),
+        message: elevated ? t("r.detect.msg.elevated") : t("r.detect.msg.clean"),
         rows,
       };
     },
     (err) => {
       if (err && err.code === "SV-MALFORMED")
-        return { title: "Unsupported image", message: "The image must be a PNG or BMP." };
+        return { title: t("r.detect.unsupported.title"), message: t("r.detect.unsupported.msg") };
       return null;
     },
   );
@@ -1300,22 +1364,22 @@ $("tk-btn-detect").addEventListener("click", (e) => {
 
 $("tk-btn-mi").addEventListener("click", (e) => {
   const file = $("tk-mi-file");
-  if (!validate([[file, "Choose a file to inspect"]])) return;
+  if (!validate([[file, t("v.mi.file")]])) return;
   runTask(e.target, "tk-mi-result", async () => {
     const rep = await invoke("metadata_inspect", { path: file.value });
     const rows = [];
     for (const g of rep.groups) {
-      for (const t of g.tags) {
-        rows.push({ label: `${g.group}:${t.name}`, value: t.value });
+      for (const tag of g.tags) {
+        rows.push({ label: `${g.group}:${tag.name}`, value: tag.value });
       }
     }
-    const summary = [rep.format || "unknown type"];
+    const summary = [rep.format || t("r.mi.unknownType")];
     if (rep.mime_type) summary.push(rep.mime_type);
-    summary.push(`${rep.tag_count} field${rep.tag_count === 1 ? "" : "s"}`);
+    summary.push(plural(rep.tag_count, "r.mi.fieldCount"));
     return {
       ok: true,
-      title: "Metadata read",
-      message: summary.join(" · ") + ". This includes file-system facts; embedded metadata is what travels with the file.",
+      title: t("r.mi.title"),
+      message: t("r.mi.msg", { summary: summary.join(" · ") }),
       rows,
     };
   });
@@ -1328,8 +1392,8 @@ $("tk-btn-mc").addEventListener("click", (e) => {
   const output = $("tk-mc-output");
   if (
     !validate([
-      [input, "Choose a file to clean"],
-      [output, "Choose where to save the cleaned copy"],
+      [input, t("v.mc.input")],
+      [output, t("v.mc.output")],
     ])
   )
     return;
@@ -1340,25 +1404,24 @@ $("tk-btn-mc").addEventListener("click", (e) => {
       const rep = await invoke("metadata_sanitize", { input: input.value, output: output.value });
       const removed = Math.max(0, rep.tags_before - rep.tags_after);
       const rows = [
-        { label: "Saved to", value: rep.output_path, copy: true },
-        { label: "Format", value: rep.format },
-        { label: "Metadata fields before", value: String(rep.tags_before) },
-        { label: "Metadata fields after", value: String(rep.tags_after) },
-        { label: "Fields removed", value: String(removed) },
+        { label: t("r.label.savedTo"), value: rep.output_path, copy: true },
+        { label: t("r.mc.format"), value: rep.format },
+        { label: t("r.mc.before"), value: String(rep.tags_before) },
+        { label: t("r.mc.after"), value: String(rep.tags_after) },
+        { label: t("r.mc.removed"), value: String(removed) },
       ];
       return rep.guaranteed
         ? {
             ok: true,
-            title: "Cleaned copy written",
-            message: "All embedded metadata was removed. Your original file was not changed.",
+            title: t("r.mc.ok.title"),
+            message: t("r.mc.ok.msg"),
             rows,
             actions: [revealAction(rep.output_path)],
           }
         : {
             ok: true,
-            title: "Best-effort scrub written",
-            message:
-              "This is a PDF: metadata was removed by an incremental update, so the previous values may still be recoverable from the file. For a guaranteed scrub, re-export the PDF from its source. Your original was not changed.",
+            title: t("r.mc.best.title"),
+            message: t("r.mc.best.msg"),
             rows,
             actions: [revealAction(rep.output_path)],
           };
@@ -1374,25 +1437,23 @@ $("tk-btn-cmp").addEventListener("click", (e) => {
   const b = $("tk-cmp-b");
   if (
     !validate([
-      [a, "Choose the first file"],
-      [b, "Choose the second file"],
+      [a, t("v.cmp.a")],
+      [b, t("v.cmp.b")],
     ])
   )
     return;
   runTask(e.target, "tk-cmp-result", async () => {
     const d = await invoke("metadata_diff", { pathA: a.value, pathB: b.value });
     const rows = [];
-    for (const c of d.changed) rows.push({ label: `changed · ${c.key}`, value: `${c.value_a}  →  ${c.value_b}` });
-    for (const o of d.only_in_a) rows.push({ label: `only in A · ${o.name}`, value: o.value });
-    for (const o of d.only_in_b) rows.push({ label: `only in B · ${o.name}`, value: o.value });
+    for (const c of d.changed)
+      rows.push({ label: t("r.cmp.changed", { key: c.key }), value: t("r.cmp.arrow", { a: c.value_a, b: c.value_b }) });
+    for (const o of d.only_in_a) rows.push({ label: t("r.cmp.onlyA", { name: o.name }), value: o.value });
+    for (const o of d.only_in_b) rows.push({ label: t("r.cmp.onlyB", { name: o.name }), value: o.value });
     const total = d.changed.length + d.only_in_a.length + d.only_in_b.length;
     return {
       ok: true,
-      title: total === 0 ? "Identical embedded metadata" : "Differences found",
-      message:
-        total === 0
-          ? "Both files carry the same embedded metadata. (File names, sizes, and timestamps are ignored.)"
-          : `${total} difference${total === 1 ? "" : "s"} in embedded metadata. (File names, sizes, and timestamps are ignored.)`,
+      title: total === 0 ? t("r.cmp.same.title") : t("r.cmp.diff.title"),
+      message: total === 0 ? t("r.cmp.same.msg") : plural(total, "r.cmp.diff.msg"),
       rows,
     };
   });
@@ -1409,14 +1470,14 @@ $("tk-btn-genkey").addEventListener("click", (e) => {
   const p2 = $("tk-key-pass2");
   if (
     !validate([
-      [outDir, "Choose a folder for the identity"],
-      [name, "Name this identity"],
-      [p1, "Set a password"],
+      [outDir, t("v.genkey.dir")],
+      [name, t("v.genkey.name")],
+      [p1, t("v.genkey.pass")],
     ])
   )
     return;
   if (p1.value !== p2.value) {
-    setFieldError(p2, "Passwords don't match.");
+    setFieldError(p2, t("v.genkey.mismatch"));
     p2.focus();
     return;
   }
@@ -1429,12 +1490,12 @@ $("tk-btn-genkey").addEventListener("click", (e) => {
     lastSignPubPath = info.public_key_path;
     return {
       ok: true,
-      title: "Signing identity created",
-      message: "Keep the private key (.svkey) and its password safe. Share the public key so others can verify.",
+      title: t("r.genkey.title"),
+      message: t("r.genkey.msg"),
       rows: [
-        { label: "Public key", value: info.public_key_path, copy: true },
-        { label: "Private key", value: info.secret_key_path, copy: true },
-        { label: "Public (hex)", value: info.public_key_hex, copy: true },
+        { label: t("r.genkey.pub"), value: info.public_key_path, copy: true },
+        { label: t("r.genkey.priv"), value: info.secret_key_path, copy: true },
+        { label: t("r.genkey.pubHex"), value: info.public_key_hex, copy: true },
       ],
       actions: [revealAction(info.public_key_path)],
     };
@@ -1449,9 +1510,9 @@ $("tk-btn-sign").addEventListener("click", (e) => {
   const p1 = $("tk-sign-pass");
   if (
     !validate([
-      [input, "Choose a file to sign"],
-      [key, "Choose your private key (.svkey)"],
-      [p1, "Enter the key's password"],
+      [input, t("v.sign2.input")],
+      [key, t("v.sign2.key")],
+      [p1, t("v.sign2.pass")],
     ])
   )
     return;
@@ -1463,12 +1524,12 @@ $("tk-btn-sign").addEventListener("click", (e) => {
       p1.value = "";
       return {
         ok: true,
-        title: "File signed",
-        rows: [{ label: "Signature", value: sigPath, copy: true }],
+        title: t("r.sign2.title"),
+        rows: [{ label: t("r.label.signature"), value: sigPath, copy: true }],
         actions: [
           revealAction(sigPath),
           {
-            label: "Check this signature",
+            label: t("r.sign2.checkSig"),
             onClick: () => {
               $("tk-verify-file").value = input.value;
               $("tk-verify-sig").value = sigPath;
@@ -1481,7 +1542,7 @@ $("tk-btn-sign").addEventListener("click", (e) => {
     },
     (err) =>
       err && err.code === "SV-UNAUTHORIZED"
-        ? { title: "Couldn't sign", message: "The password for this signing key is wrong." }
+        ? { title: t("r.sign2.bad.title"), message: t("r.sign2.bad.msg") }
         : null,
   );
 });
@@ -1500,7 +1561,7 @@ function renderPieceList(id, rep) {
     const li = document.createElement("li");
     const name = document.createElement("span");
     name.className = "item-name";
-    name.textContent = `Piece ${i + 1} / ${rep.shares_total}`;
+    name.textContent = t("r.piece.label", { index: i + 1, total: rep.shares_total });
     const path = document.createElement("span");
     path.className = "muted path";
     path.textContent = p;
@@ -1510,10 +1571,10 @@ function renderPieceList(id, rep) {
     if (code) {
       const cp = document.createElement("button");
       cp.className = "secondary btn-mini";
-      cp.textContent = "Copy code";
+      cp.textContent = t("btn.copyCode");
       cp.addEventListener("click", async () => {
         const ok = await copyText(code);
-        setStatus(ok ? "Piece code copied — keep it secret." : "Couldn't copy — open the piece file instead.", ok ? "ok" : "error");
+        setStatus(ok ? t("status.pieceCopied") : t("status.pieceCopyFailed"), ok ? "ok" : "error");
       });
       li.appendChild(cp);
     }
@@ -1526,7 +1587,7 @@ function readPolicy(totalId, neededId) {
   const total = parseInt($(totalId).value, 10);
   const needed = parseInt($(neededId).value, 10);
   if (!(needed >= 2 && total >= needed && total <= 255)) {
-    setStatus("Pieces must satisfy 2 ≤ needed ≤ total ≤ 255.", "error");
+    setStatus(t("status.policyPieces"), "error");
     return null;
   }
   return { total, needed };
@@ -1537,7 +1598,7 @@ function readPolicy(totalId, neededId) {
 $("tk-btn-split-secret").addEventListener("click", (e) => {
   const text = $("tk-split-secret-text");
   const outDir = $("tk-split-secret-outdir");
-  if (!validate([[text, "Type the secret to split"], [outDir, "Choose a folder for the pieces"]])) return;
+  if (!validate([[text, t("v.ss.text")], [outDir, t("v.ss.outdir")]])) return;
   const pol = readPolicy("tk-split-secret-total", "tk-split-secret-needed");
   if (!pol) return;
   runTask(e.target, "tk-split-secret-result", async () => {
@@ -1551,9 +1612,9 @@ $("tk-btn-split-secret").addEventListener("click", (e) => {
     renderPieceList("tk-split-secret-pieces", rep);
     return {
       ok: true,
-      title: `Made ${rep.shares_total} pieces`,
-      message: `Any ${rep.threshold} together restore the secret. Keep the payload file with them — it's needed to recover. Each code below is secret; store the pieces separately.`,
-      rows: [{ label: "Payload file", value: rep.payload_path, copy: true }],
+      title: t("r.ss.title", { n: rep.shares_total }),
+      message: t("r.ss.msg", { threshold: rep.threshold }),
+      rows: [{ label: t("r.payload.label"), value: rep.payload_path, copy: true }],
       actions: [revealAction(rep.payload_path)],
     };
   });
@@ -1564,7 +1625,7 @@ $("tk-btn-split-secret").addEventListener("click", (e) => {
 $("tk-btn-split-file").addEventListener("click", (e) => {
   const input = $("tk-split-file-input");
   const outDir = $("tk-split-file-outdir");
-  if (!validate([[input, "Choose a file to split"], [outDir, "Choose a folder for the pieces"]])) return;
+  if (!validate([[input, t("v.sf.input")], [outDir, t("v.sf.outdir")]])) return;
   const pol = readPolicy("tk-split-file-total", "tk-split-file-needed");
   if (!pol) return;
   runTask(e.target, "tk-split-file-result", async () => {
@@ -1577,9 +1638,9 @@ $("tk-btn-split-file").addEventListener("click", (e) => {
     renderPieceList("tk-split-file-list", rep);
     return {
       ok: true,
-      title: `Made ${rep.shares_total} pieces`,
-      message: `Any ${rep.threshold} of these piece files plus the payload file can restore your file. Store each piece separately.`,
-      rows: [{ label: "Payload file", value: rep.payload_path, copy: true }],
+      title: t("r.sf.title", { n: rep.shares_total }),
+      message: t("r.sf.msg", { threshold: rep.threshold }),
+      rows: [{ label: t("r.payload.label"), value: rep.payload_path, copy: true }],
       actions: [revealAction(rep.payload_path)],
     };
   });
@@ -1594,9 +1655,9 @@ $("tk-btn-recover-pieces").addEventListener("click", (e) => {
   const output = $("tk-recover-output");
   const sharePaths = linesOf(files.value);
   const shareStrings = linesOf(codes.value);
-  if (!validate([[payload, "Choose the payload file"], [output, "Choose where to save the result"]])) return;
+  if (!validate([[payload, t("v.rp.payload")], [output, t("v.rp.output")]])) return;
   if (sharePaths.length + shareStrings.length === 0) {
-    setFieldError(files, "Add at least one piece — a file or a pasted code.");
+    setFieldError(files, t("v.rp.pieces"));
     files.focus();
     return;
   }
@@ -1613,17 +1674,17 @@ $("tk-btn-recover-pieces").addEventListener("click", (e) => {
       });
       return {
         ok: true,
-        title: "Recovered",
-        message: "The pieces matched and the secret was rebuilt.",
-        rows: [{ label: "Saved to", value: rep.output_path, copy: true }],
+        title: t("r.recover.title"),
+        message: t("r.recover.msg"),
+        rows: [{ label: t("r.label.savedTo"), value: rep.output_path, copy: true }],
         actions: [revealAction(rep.output_path), openAction(rep.output_path)],
       };
     },
     (err) => {
       if (err && err.code === "SV-UNAUTHORIZED") {
         return {
-          title: "Couldn't recover",
-          message: "These pieces don't match, are from a different split, or the payload is wrong or damaged.",
+          title: t("r.recover.bad.title"),
+          message: t("r.recover.bad.msg"),
         };
       }
       return outputExistsMap("tk-recover-output")(err);
@@ -1637,9 +1698,9 @@ $("tk-btn-qr-make").addEventListener("click", (e) => {
   const codes = $("tk-qr-codes");
   const outDir = $("tk-qr-outdir");
   const shareB64 = linesOf(codes.value);
-  if (!validate([[outDir, "Choose a folder for the QR images"]])) return;
+  if (!validate([[outDir, t("v.qr.outdir")]])) return;
   if (shareB64.length === 0) {
-    setFieldError(codes, "Paste at least one piece code (one per line).");
+    setFieldError(codes, t("v.qr.codes"));
     codes.focus();
     return;
   }
@@ -1649,11 +1710,11 @@ $("tk-btn-qr-make").addEventListener("click", (e) => {
     "tk-qr-make-result",
     async () => {
       const rep = await invoke("shares_export_qr", { shareB64, outDir: outDir.value });
-      const rows = rep.image_paths.map((p, i) => ({ label: `Piece ${i + 1}`, value: p, copy: true }));
+      const rows = rep.image_paths.map((p, i) => ({ label: t("r.qr.pieceLabel", { n: i + 1 }), value: p, copy: true }));
       return {
         ok: true,
-        title: `Made ${rep.image_paths.length} QR image${rep.image_paths.length === 1 ? "" : "s"}`,
-        message: "Each QR holds one piece. Move a threshold of them — plus the payload file — to recover.",
+        title: plural(rep.image_paths.length, "r.qrmake.title"),
+        message: t("r.qrmake.msg"),
         rows,
         actions: rep.image_paths.length ? [revealAction(rep.image_paths[0])] : [],
       };
@@ -1669,9 +1730,9 @@ $("tk-btn-qr-recover").addEventListener("click", (e) => {
   const payload = $("tk-qr-payload");
   const output = $("tk-qr-out");
   const qrPaths = linesOf(images.value);
-  if (!validate([[payload, "Choose the payload file"], [output, "Choose where to save the result"]])) return;
+  if (!validate([[payload, t("v.qr.payload")], [output, t("v.qr.output")]])) return;
   if (qrPaths.length === 0) {
-    setFieldError(images, "Add at least one QR image.");
+    setFieldError(images, t("v.qr.images"));
     images.focus();
     return;
   }
@@ -1687,23 +1748,23 @@ $("tk-btn-qr-recover").addEventListener("click", (e) => {
       });
       return {
         ok: true,
-        title: "Recovered",
-        message: "The QR pieces matched and the secret was rebuilt.",
-        rows: [{ label: "Saved to", value: rep.output_path, copy: true }],
+        title: t("r.qrrecover.title"),
+        message: t("r.qrrecover.msg"),
+        rows: [{ label: t("r.label.savedTo"), value: rep.output_path, copy: true }],
         actions: [revealAction(rep.output_path), openAction(rep.output_path)],
       };
     },
     (err) => {
       if (err && err.code === "SV-UNAUTHORIZED") {
         return {
-          title: "Couldn't recover",
-          message: "These pieces don't match, are from a different split, or the payload is wrong or damaged.",
+          title: t("r.recover.bad.title"),
+          message: t("r.recover.bad.msg"),
         };
       }
       if (err && err.code === "SV-MALFORMED") {
         return {
-          title: "Couldn't read a QR image",
-          message: "One of the images has no readable QR code. Re-capture it (sharper, well-lit, the whole code in frame) and try again.",
+          title: t("r.qr.badRead.title"),
+          message: t("r.qr.badRead.msg"),
         };
       }
       return outputExistsMap("tk-qr-out")(err);
@@ -1719,9 +1780,9 @@ $("tk-btn-wm-embed").addEventListener("click", (e) => {
   const pass = $("tk-wm-pass");
   if (
     !validate([
-      [input, "Choose an image to mark"],
-      [output, "Choose where to save the marked image"],
-      [pass, "Set a password"],
+      [input, t("v.wm.input")],
+      [output, t("v.wm.output")],
+      [pass, t("v.wm.pass")],
     ])
   )
     return;
@@ -1737,19 +1798,18 @@ $("tk-btn-wm-embed").addEventListener("click", (e) => {
       pass.value = "";
       return {
         ok: true,
-        title: "Tamper-proof mark added",
-        message:
-          "This image is now self-verifying with your password. Any later edit — including re-saving as JPEG or resizing — will show up as tampering.",
+        title: t("r.wm.title"),
+        message: t("r.wm.msg"),
         rows: [
-          { label: "Saved to", value: rep.output_path, copy: true },
-          { label: "Size", value: `${rep.width} × ${rep.height}` },
-          { label: "Check regions", value: String(rep.blocks) },
+          { label: t("r.label.savedTo"), value: rep.output_path, copy: true },
+          { label: t("r.label.size"), value: `${rep.width} × ${rep.height}` },
+          { label: t("r.wm.regions"), value: String(rep.blocks) },
         ],
         actions: [revealAction(rep.output_path)],
       };
     },
     (err) => {
-      if (err && err.code === "SV-INVALID-INPUT") return { title: "Couldn't mark this image", message: describe(err) };
+      if (err && err.code === "SV-INVALID-INPUT") return { title: t("r.wm.bad.title"), message: describe(err) };
       return outputExistsMap("tk-wm-output")(err);
     },
   );
@@ -1760,34 +1820,33 @@ $("tk-btn-wm-embed").addEventListener("click", (e) => {
 $("tk-btn-wm-verify").addEventListener("click", (e) => {
   const input = $("tk-wmv-input");
   const pass = $("tk-wmv-pass");
-  if (!validate([[input, "Choose the marked image"], [pass, "Enter the password"]])) return;
+  if (!validate([[input, t("v.wmv.input")], [pass, t("v.wmv.pass")]])) return;
   runTask(e.target, "tk-wmv-result", async () => {
     const rep = await invoke("watermark_verify", { input: input.value, passphrase: pass.value });
     pass.value = "";
     if (rep.verdict === "Intact") {
       return {
         ok: true,
-        title: "Intact",
-        message: "Every region checks out — this image is unchanged since it was marked with this password.",
-        rows: [{ label: "Regions checked", value: String(rep.total_blocks) }],
+        title: t("r.wmv.intact.title"),
+        message: t("r.wmv.intact.msg"),
+        rows: [{ label: t("r.wmv.regionsChecked"), value: String(rep.total_blocks) }],
       };
     }
     if (rep.verdict === "Tampered") {
       return {
         ok: false,
-        title: "Tampered",
-        message: `This image was altered after marking. ${rep.tampered_blocks} of ${rep.total_blocks} regions changed.`,
+        title: t("r.wmv.tampered.title"),
+        message: t("r.wmv.tampered.msg", { tampered: rep.tampered_blocks, total: rep.total_blocks }),
         rows: [
-          { label: "Altered regions", value: `${rep.tampered_blocks} of ${rep.total_blocks}` },
+          { label: t("r.wmv.altered"), value: t("r.wmv.alteredVal", { tampered: rep.tampered_blocks, total: rep.total_blocks }) },
         ],
       };
     }
     return {
       ok: false,
-      title: "No valid mark",
-      message:
-        "No watermark was found for this password. The image may be unmarked, marked with a different password, re-saved as JPEG/resized (which destroys the mark), or entirely replaced.",
-      rows: [{ label: "Regions checked", value: String(rep.total_blocks) }],
+      title: t("r.wmv.none.title"),
+      message: t("r.wmv.none.msg"),
+      rows: [{ label: t("r.wmv.regionsChecked"), value: String(rep.total_blocks) }],
     };
   });
 });
