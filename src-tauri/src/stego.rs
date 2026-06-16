@@ -32,12 +32,14 @@ pub trait StegoSurface {
         randomize: bool,
     ) -> Result<StegoHideReport, ApiError>;
 
-    /// **Extract** — recover a payload from `stego_path` to `output_path` (refused if it exists).
-    /// Wrong passphrase / tampered carrier / no payload all return the oracle-safe `SV-UNAUTHORIZED`.
+    /// **Extract** — recover a payload from `stego_path` into the destination directory `output_dir`,
+    /// saved under the original filename stored at hide time (never overwriting; the name is
+    /// disambiguated if a file with it already exists). Wrong passphrase / tampered carrier / no
+    /// payload all return the oracle-safe `SV-UNAUTHORIZED`.
     fn stego_extract(
         &self,
         stego_path: String,
-        output_path: String,
+        output_dir: String,
         passphrase: IpcPassphrase,
     ) -> Result<StegoExtractReport, ApiError>;
 
@@ -100,13 +102,13 @@ impl StegoSurface for StegoApp {
     fn stego_extract(
         &self,
         stego_path: String,
-        output_path: String,
+        output_dir: String,
         passphrase: IpcPassphrase,
     ) -> Result<StegoExtractReport, ApiError> {
         let secret = passphrase.into_secret();
         sv_stego::extract_file(
             Path::new(&stego_path),
-            Path::new(&output_path),
+            Path::new(&output_dir),
             secret.expose_secret(),
             &self.sealer,
         )
@@ -163,7 +165,9 @@ mod tests {
         let cover = dir.path().join("cover.png");
         let payload = dir.path().join("secret.txt");
         let stego = dir.path().join("stego.png");
-        let recovered = dir.path().join("out.txt");
+        // Extract into a destination *folder*; the backend names the file from the recovered frame.
+        let outdir = dir.path().join("rec");
+        std::fs::create_dir(&outdir).unwrap();
         write_cover(&cover);
         std::fs::write(&payload, b"meet at the bridge at noon").unwrap();
 
@@ -180,11 +184,15 @@ mod tests {
         assert_eq!(rep.payload_bytes, 26);
 
         let ex = app
-            .stego_extract(s(&stego), s(&recovered), IpcPassphrase::new("pw".into()))
+            .stego_extract(s(&stego), s(&outdir), IpcPassphrase::new("pw".into()))
             .unwrap();
         assert_eq!(ex.bytes_written, 26);
+        // Saved under the recovered original name (secret.txt) inside the chosen destination folder.
+        assert_eq!(ex.original_name.as_deref(), Some("secret.txt"));
+        assert!(ex.output_path.ends_with("secret.txt"));
+        assert!(outdir.join("secret.txt").exists());
         assert_eq!(
-            std::fs::read(&recovered).unwrap(),
+            std::fs::read(&ex.output_path).unwrap(),
             b"meet at the bridge at noon"
         );
 
@@ -200,7 +208,8 @@ mod tests {
         let cover = dir.path().join("c.png");
         let payload = dir.path().join("p.txt");
         let stego = dir.path().join("s.png");
-        let out = dir.path().join("o.txt");
+        let outdir = dir.path().join("rec");
+        std::fs::create_dir(&outdir).unwrap();
         write_cover(&cover);
         std::fs::write(&payload, b"secret").unwrap();
         app.stego_hide(
@@ -213,11 +222,11 @@ mod tests {
         .unwrap();
 
         let err = app
-            .stego_extract(s(&stego), s(&out), IpcPassphrase::new("wrong".into()))
+            .stego_extract(s(&stego), s(&outdir), IpcPassphrase::new("wrong".into()))
             .unwrap_err();
         assert_eq!(err, ApiError::Unauthorized);
         assert_eq!(err.code(), "SV-UNAUTHORIZED");
-        assert!(!out.exists());
+        assert_eq!(std::fs::read_dir(&outdir).unwrap().count(), 0);
     }
 
     #[test]

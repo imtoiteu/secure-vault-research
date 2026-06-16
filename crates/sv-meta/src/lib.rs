@@ -4,8 +4,10 @@
 //! hardened subprocess in the same spirit as [`sv-age`]'s `age` wrapper:
 //! - the binary is **BLAKE3-hash-pinned** ([`ExifTool::new_pinned`]); construction fails if the
 //!   on-disk binary does not match the expected hash (release path),
-//! - spawned with a **cleared environment**, a **controlled (throwaway) working directory**, **no
-//!   shell**, stdin closed, captured stdout/stderr, and a **wall-clock timeout** (fail-closed),
+//! - spawned with a **cleared environment** (plus only a fixed, wrapper-chosen minimal `PATH` on
+//!   Unix / `SystemRoot` et al. on Windows — never inherited), a **controlled (throwaway) working
+//!   directory**, **no shell**, stdin closed, captured stdout/stderr, and a **wall-clock timeout**
+//!   (fail-closed),
 //! - configuration-as-code is **disabled**: every invocation passes `-config ""` as its first two
 //!   argv tokens, which turns off ExifTool's executable-Perl config mechanism (the one
 //!   attacker-controllable RCE surface; see `metadata/EVALUATION.md` §1.5).
@@ -238,8 +240,18 @@ impl ExifTool {
             .stderr(Stdio::piped())
             .current_dir(cwd.path())
             .env_clear();
+        // Re-add ONLY the minimum each OS needs to locate the interpreter/loader — a FIXED value the
+        // wrapper chooses, never inherited from the caller, so it is not an attacker surface (the
+        // ExifTool executable-Perl config RCE vector stays closed via `-config ""`).
+        //
+        // Unix: a bundled ExifTool may be the Perl distribution's `exiftool` script, whose
+        // `#!/usr/bin/env perl` shebang needs a PATH to find `perl`. We set a fixed system PATH rather
+        // than relying on libc's implementation-defined `execvp` fallback when PATH is unset. Still no
+        // HOME / PERL* / user vars; the script finds its own `lib/` from `$0`, not the environment.
+        #[cfg(unix)]
+        command.env("PATH", "/usr/bin:/bin");
         // Windows needs SystemRoot/SystemDrive to load system DLLs and TEMP/TMP for scratch; re-add
-        // only those (still no PATH, no user/home/PERL* vars). No-op on Unix. Mirrors sv-age (H4).
+        // only those (still no inherited PATH, no user/home/PERL* vars). Mirrors sv-age (H4).
         #[cfg(windows)]
         for key in ["SystemRoot", "SystemDrive", "TEMP", "TMP"] {
             if let Ok(val) = std::env::var(key) {
@@ -715,6 +727,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "requires a real ExifTool via SV_EXIFTOOL_BIN; run with --ignored"]
     fn e2e_inspect_sanitize_diff_against_real_exiftool() {
         let Some(tool) = exiftool() else {
             eprintln!("skipping: set SV_EXIFTOOL_BIN to run the exiftool e2e tests");
@@ -769,6 +782,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "requires a real ExifTool via SV_EXIFTOOL_BIN; run with --ignored"]
     fn e2e_read_only_format_is_refused() {
         let Some(tool) = exiftool() else {
             eprintln!("skipping: SV_EXIFTOOL_BIN not set");

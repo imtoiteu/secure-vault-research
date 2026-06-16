@@ -104,6 +104,26 @@ pub fn decode_png(input: &Path) -> Result<String, QrError> {
     }
 }
 
+/// **Decode all** — locate and decode *every* QR code in `input`, returning each code's text in
+/// detection order. When several piece QRs share one photo, none is silently dropped (M3). Fails
+/// closed like [`decode_png`]: if no QR decodes, [`QrError::NoQrFound`].
+pub fn decode_png_all(input: &Path) -> Result<Vec<String>, QrError> {
+    precheck(input)?;
+    let gray = load_luma_bounded(input)?;
+    let mut prepared = rqrr::PreparedImage::prepare(gray);
+    let grids = prepared.detect_grids();
+    let mut out = Vec::with_capacity(grids.len());
+    for grid in &grids {
+        if let Ok((_meta, content)) = grid.decode() {
+            out.push(content);
+        }
+    }
+    if out.is_empty() {
+        return Err(QrError::NoQrFound);
+    }
+    Ok(out)
+}
+
 /// Load an image as 8-bit grayscale with explicit width/height/allocation limits (bomb guard).
 fn load_luma_bounded(input: &Path) -> Result<image::GrayImage, QrError> {
     let reader = image::ImageReader::open(input)
@@ -177,6 +197,20 @@ mod tests {
         assert!(out.exists());
         let decoded = decode_png(&out).unwrap();
         assert_eq!(decoded, text, "QR round-trip must be lossless");
+    }
+
+    #[test]
+    fn decode_all_returns_each_code() {
+        let dir = tmp();
+        let out = dir.path().join("q.png");
+        encode_text_to_png("PIECE-ONE", &out).unwrap();
+        // A single-QR image yields a one-element vec; a plain (no-QR) image fails closed.
+        assert_eq!(decode_png_all(&out).unwrap(), vec!["PIECE-ONE".to_string()]);
+        let plain = dir.path().join("plain.png");
+        image::GrayImage::from_pixel(40, 40, image::Luma([200u8]))
+            .save(&plain)
+            .unwrap();
+        assert!(matches!(decode_png_all(&plain), Err(QrError::NoQrFound)));
     }
 
     #[test]

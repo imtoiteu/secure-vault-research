@@ -14,11 +14,18 @@
 //! is **tiled across the block's blue-channel LSBs** — every blue LSB becomes a tag bit. Embedding
 //! touches only blue LSBs, so the content (hence the tag) is unchanged → self-consistent.
 //!
-//! Verify recomputes each block's tag and checks every blue LSB; a block is *intact* iff all match.
-//! Any change to visible content (upper-7 bits) or to a blue LSB makes ≥1 block fail → **Tampered**
-//! (localized). A clean unmarked image / wrong key / wholly replaced image matches **zero** blocks →
-//! **NotWatermarked**. The key is the toolkit's **Argon2id** (`sv_crypto::Argon2Kdf` at the OWASP
-//! policy floor) — no new primitive. Errors are the existing oracle-safe [`sv_types::ApiError`].
+//! A separate **keyed presence sentinel** (content-independent; derived from key ‖ W ‖ H) is tiled
+//! across the **green-channel LSBs**. Verify first asks *is a mark for this key present?* — true when
+//! a large majority (≥75%) of sentinel bits match. This is what lets it tell "marked with this key"
+//! from "unmarked / wrong key" even when **every** content block fails (a small single-block image,
+//! or a localized edit to one — the case that previously misreported as not-watermarked).
+//!
+//! Verify then recomputes each block's tag and checks every blue LSB; a block is *intact* iff all
+//! match. Verdict: sentinel **absent** → **NotWatermarked** (unmarked, wrong key, or the mark was
+//! wholly destroyed — a fragile mark cannot recognise the last case); sentinel **present** and all
+//! blocks match → **Intact**; present with ≥1 block failing → **Tampered**. The key is the toolkit's
+//! **Argon2id** (`sv_crypto::Argon2Kdf` at the OWASP policy floor) — no new primitive. Errors are the
+//! existing oracle-safe [`sv_types::ApiError`].
 
 #![forbid(unsafe_code)]
 
@@ -43,6 +50,14 @@ const MAX_ALLOC_BYTES: u64 = 1024 * 1024 * 1024;
 const WATERMARK_SALT: Salt = Salt(*b"sv-watermark-slt");
 /// Domain-separation tag for the per-block keyed MAC.
 const BLOCK_CONTEXT: &[u8] = b"sv-watermark-block-v1";
+/// Domain-separation tag for the content-independent keyed **presence** sentinel (H2). It lets
+/// verify distinguish "marked with this key" from "unmarked / wrong key" even when every content
+/// block fails — e.g. a small single-block image, or a localized edit to one.
+const PRESENCE_CONTEXT: &[u8] = b"sv-watermark-presence-v1";
+/// Fraction of green-LSB sentinel bits that must match the keyed stream to call a mark "present".
+/// Far above the ~0.5 a wrong key / unmarked image yields by chance (negligible false-positive even
+/// at 16×16), yet tolerant of a localized edit to up to ~25% of pixels.
+const PRESENCE_THRESHOLD: f64 = 0.75;
 
 /// Failures from the watermark codec, mapped to oracle-safe [`ApiError`] at the boundary.
 #[derive(Debug, thiserror::Error)]
@@ -110,6 +125,18 @@ pub fn embed(
         blocks += 1;
     });
 
+    // Tile the keyed presence sentinel across the green-channel LSBs (content-independent; the
+    // block tags above read only the upper 7 bits, so this does not disturb them).
+    let presence = presence_tag(w, h, &key);
+    let mut pi = 0usize;
+    for y in 0..h {
+        for x in 0..w {
+            let px = img.get_pixel_mut(x, y);
+            px.0[1] = (px.0[1] & 0xFE) | tag_bit(&presence, pi);
+            pi += 1;
+        }
+    }
+
     save_lossless(&img, output)?;
     Ok(WatermarkEmbedReport {
         output_path: path_str(output),
@@ -150,13 +177,32 @@ pub fn verify(input: &Path, passphrase: &[u8]) -> Result<WatermarkVerifyReport, 
         }
     });
 
-    let verdict = if tampered == 0 {
-        WatermarkVerdict::Intact
-    } else if tampered == total {
-        // No block validated: not watermarked, wrong key, or wholly replaced (a watermarked-untouched
-        // block matches with overwhelming probability, so "zero matches" reliably means "no mark").
+    // Keyed presence sentinel: fraction of green LSBs matching the content-independent stream. High
+    // for the right key on a (mostly) intact mark; ~0.5 by chance for a wrong key / unmarked image.
+    let presence = presence_tag(w, h, &key);
+    let (mut matched, mut total_px) = (0u64, 0u64);
+    let mut pi = 0usize;
+    for y in 0..h {
+        for x in 0..w {
+            if (img.get_pixel(x, y).0[1] & 1) == tag_bit(&presence, pi) {
+                matched += 1;
+            }
+            total_px += 1;
+            pi += 1;
+        }
+    }
+    let present = total_px > 0 && (matched as f64) / (total_px as f64) >= PRESENCE_THRESHOLD;
+
+    let verdict = if !present {
+        // The keyed sentinel is absent: unmarked, wrong key, or the image was so heavily altered that
+        // the fragile mark itself is gone (a fragile mark genuinely cannot recognise the last case).
         WatermarkVerdict::NotWatermarked
+    } else if tampered == 0 {
+        // Sentinel present and every content block matched: unchanged since marked with this key.
+        WatermarkVerdict::Intact
     } else {
+        // Sentinel present but ≥1 content block failed — including the case where *every* block
+        // failed on a small/single-block image, which previously misreported as "not watermarked".
         WatermarkVerdict::Tampered
     };
     Ok(WatermarkVerifyReport {
@@ -222,6 +268,17 @@ fn block_tag(
 fn tag_bit(tag: &[u8; 32], i: usize) -> u8 {
     let j = i % 256;
     (tag[j / 8] >> (j % 8)) & 1
+}
+
+/// The content-independent keyed presence sentinel for a `w×h` image (tiled across green LSBs).
+/// Depends only on the key and dimensions, so editing visible content never changes what it *should*
+/// be — only physically overwriting the green LSBs (heavy/total alteration) erases it.
+fn presence_tag(w: u32, h: u32, key: &WmKey) -> [u8; 32] {
+    let mut buf = Vec::with_capacity(PRESENCE_CONTEXT.len() + 8);
+    buf.extend_from_slice(PRESENCE_CONTEXT);
+    buf.extend_from_slice(&w.to_le_bytes());
+    buf.extend_from_slice(&h.to_le_bytes());
+    *blake3::keyed_hash(&key.0, &buf).as_bytes()
 }
 
 /// Iterate the `16×16` block grid; the last row/column absorbs the remainder (so every block is
@@ -322,7 +379,20 @@ fn precheck(input: &Path) -> Result<(), WatermarkError> {
             actual: meta.len(),
         });
     }
-    Ok(())
+    // Enforce the PNG/BMP-only input contract here (H3) rather than relying on the shared `image`
+    // crate's enabled codecs — workspace feature-unification (sv-qr/sv-stego enable `jpeg`) would
+    // otherwise silently let a JPEG through, contradicting the documented "PNG/BMP only" guarantee.
+    match input
+        .extension()
+        .and_then(|e| e.to_str())
+        .map(str::to_ascii_lowercase)
+        .as_deref()
+    {
+        Some("png") | Some("bmp") => Ok(()),
+        _ => Err(WatermarkError::InvalidInput(
+            "the input must be a lossless .png or .bmp image".into(),
+        )),
+    }
 }
 
 fn path_str(p: &Path) -> String {
@@ -422,6 +492,66 @@ mod tests {
             verify(&plain, b"pw").unwrap().verdict,
             WatermarkVerdict::NotWatermarked
         );
+    }
+
+    #[test]
+    fn globally_altered_marked_image_reads_as_tampered_not_unmarked() {
+        // H2: a wholesale visible-content change fails *every* content block, but the keyed presence
+        // sentinel (green LSBs, untouched here) is intact → Tampered, not the old "NotWatermarked".
+        let dir = tmp();
+        let cover = dir.path().join("c.png");
+        let marked = dir.path().join("c.wm.png");
+        write_cover(&cover, 48, 48);
+        embed(&cover, &marked, b"pw").unwrap();
+        let mut img = image::open(&marked).unwrap().to_rgba8();
+        for px in img.pixels_mut() {
+            px.0[0] ^= 0x80; // flip a high bit of red everywhere; leaves green LSBs alone
+        }
+        let edited = dir.path().join("edited.png");
+        img.save(&edited).unwrap();
+        let v = verify(&edited, b"pw").unwrap();
+        assert_eq!(v.verdict, WatermarkVerdict::Tampered);
+        assert_eq!(v.tampered_blocks, v.total_blocks, "every block failed");
+    }
+
+    #[test]
+    fn small_single_block_image_edit_reads_as_tampered() {
+        // H2: a <32px-side image is one block; the old logic mapped any edit (tampered==total) to
+        // NotWatermarked. With the sentinel it is correctly Tampered.
+        let dir = tmp();
+        let cover = dir.path().join("c.png");
+        let marked = dir.path().join("c.wm.png");
+        write_cover(&cover, 20, 20);
+        let rep = embed(&cover, &marked, b"pw").unwrap();
+        assert_eq!(rep.blocks, 1, "a <32px-side image is a single block");
+        let mut img = image::open(&marked).unwrap().to_rgba8();
+        for x in 0..3 {
+            for y in 0..3 {
+                img.get_pixel_mut(x, y).0[0] ^= 0x80;
+            }
+        }
+        let edited = dir.path().join("edited.png");
+        img.save(&edited).unwrap();
+        let v = verify(&edited, b"pw").unwrap();
+        assert_eq!(v.verdict, WatermarkVerdict::Tampered);
+        assert_eq!((v.tampered_blocks, v.total_blocks), (1, 1));
+    }
+
+    #[test]
+    fn jpeg_input_is_refused_invalid_input() {
+        // H3: PNG/BMP-only input is enforced regardless of the shared `image` codec set.
+        let dir = tmp();
+        let jpg = dir.path().join("photo.jpg");
+        std::fs::write(&jpg, b"the extension allowlist rejects before any decode").unwrap();
+        let out = dir.path().join("out.png");
+        assert!(matches!(
+            embed(&jpg, &out, b"pw"),
+            Err(WatermarkError::InvalidInput(_))
+        ));
+        assert!(matches!(
+            verify(&jpg, b"pw"),
+            Err(WatermarkError::InvalidInput(_))
+        ));
     }
 
     #[test]

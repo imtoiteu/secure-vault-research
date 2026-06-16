@@ -45,10 +45,12 @@ use sv_crypto::{secretbox, Blake3Hasher, SssSharer};
 use sv_crypto_traits::{
     Hasher, Key32, KeyDerivation, KeyShare, SecretSharer, KEYSHARE_LEN, KEY_LEN,
 };
+use sv_types::nameframe;
 use zeroize::Zeroize;
 
 use crate::{
-    path_str, read_capped, refuse_existing, write_atomic, PlatformError, MAX_PLAINTEXT_BYTES,
+    path_str, read_capped, refuse_existing, unique_path, write_atomic, PlatformError,
+    MAX_PLAINTEXT_BYTES,
 };
 
 // --- format constants -------------------------------------------------------
@@ -112,6 +114,9 @@ pub struct ShareSplitOutput {
 pub struct RecoverOutput {
     pub output_path: String,
     pub bytes_written: u64,
+    /// Original filename of a recovered **file** (restored from inside the encrypted payload); `None`
+    /// for a recovered text secret. Non-secret metadata, surfaced so the UI can offer the real name.
+    pub original_name: Option<String>,
 }
 
 // --- engine (I/O-free core) -------------------------------------------------
@@ -437,6 +442,31 @@ pub fn decode_share_string(s: &str) -> Result<Vec<u8>, PlatformError> {
     b64_decode(s)
 }
 
+/// Write the recovered bytes. With a stored original name (a split *file*), write it under that name
+/// (re-sanitized to a bare basename — a crafted payload could embed path separators / `..`) in the
+/// directory of the caller's chosen `out_path`, disambiguating so an existing file is **never
+/// overwritten**. Without a name (a recovered text *secret*), honour the literal `out_path` and
+/// refuse to overwrite it. Returns the path actually written.
+fn write_recovered(
+    out_path: &Path,
+    original_name: Option<&str>,
+    data: &[u8],
+) -> Result<PathBuf, PlatformError> {
+    if let Some(base) = original_name.and_then(nameframe::basename) {
+        let target = match out_path.parent().filter(|p| !p.as_os_str().is_empty()) {
+            Some(dir) => dir.join(base),
+            None => PathBuf::from(base),
+        };
+        let final_path = unique_path(target)?;
+        write_atomic(&final_path, data)?;
+        Ok(final_path)
+    } else {
+        refuse_existing(out_path)?;
+        write_atomic(out_path, data)?;
+        Ok(out_path.to_path_buf())
+    }
+}
+
 // --- file-I/O wrappers on PlatformCrypto ------------------------------------
 
 impl crate::PlatformCrypto {
@@ -457,9 +487,44 @@ impl crate::PlatformCrypto {
                 actual_bytes: secret.len() as u64,
             });
         }
+        // A text secret carries no filename. Frame it (present byte = 0) so recover is uniform.
+        let mut framed = nameframe::frame(None, secret);
+        let res = self.split_framed(&framed, shares_total, threshold, out_dir);
+        framed.zeroize();
+        res
+    }
 
+    /// **Split a file.** Read `input` (size-capped) and split it, storing the original basename inside
+    /// the encrypted payload so recover can restore an openable, correctly-named file.
+    pub fn split_file(
+        &self,
+        input: &Path,
+        shares_total: u8,
+        threshold: u8,
+        out_dir: &Path,
+    ) -> Result<ShareSplitOutput, PlatformError> {
+        validate_policy(shares_total, threshold)?;
+        let mut data = read_capped(input, MAX_PLAINTEXT_BYTES)?;
+        let name = nameframe::basename(&input.to_string_lossy());
+        let mut framed = nameframe::frame(name.as_deref(), &data);
+        data.zeroize();
+        let res = self.split_framed(&framed, shares_total, threshold, out_dir);
+        framed.zeroize();
+        res
+    }
+
+    /// Shared splitter over already-name-framed plaintext: split_core → refuse-overwrite → write the
+    /// payload + pieces (cleaning up siblings on a mid-write failure) → return the non-secret report.
+    /// Callers must have validated the policy and size of the *raw* input first.
+    fn split_framed(
+        &self,
+        framed: &[u8],
+        shares_total: u8,
+        threshold: u8,
+        out_dir: &Path,
+    ) -> Result<ShareSplitOutput, PlatformError> {
         let (payload_blob, mut share_blobs, group_id) =
-            split_core(secret, shares_total, threshold)?;
+            split_core(framed, shares_total, threshold)?;
         let group_hex = hex::encode(group_id);
 
         let payload_path = out_dir.join(format!("{group_hex}.payload.svss"));
@@ -501,31 +566,17 @@ impl crate::PlatformCrypto {
         })
     }
 
-    /// **Split a file.** Read `input` (size-capped) and split it via [`Self::split_secret`].
-    pub fn split_file(
-        &self,
-        input: &Path,
-        shares_total: u8,
-        threshold: u8,
-        out_dir: &Path,
-    ) -> Result<ShareSplitOutput, PlatformError> {
-        let mut data = read_capped(input, MAX_PLAINTEXT_BYTES)?;
-        let res = self.split_secret(&data, shares_total, threshold, out_dir);
-        data.zeroize();
-        res
-    }
-
     /// **Recover from pieces.** Read the supplied piece files + the payload file, reconstruct, and
-    /// write the recovered plaintext to `out_path`. Refuses to overwrite the output. Wrong/tampered
-    /// inputs fail as the oracle-safe [`PlatformError::AuthFailed`]; non-secret "wrong files" and
-    /// count conditions surface distinctly.
+    /// write the recovered plaintext. For a split *file*, it is saved under its original name in the
+    /// directory of `out_path` (disambiguated, never overwriting); for a text *secret* it is written
+    /// to the literal `out_path` (refused if it exists). Wrong/tampered inputs fail as the oracle-safe
+    /// [`PlatformError::AuthFailed`]; non-secret "wrong files" and count conditions surface distinctly.
     pub fn recover_secret(
         &self,
         share_paths: &[PathBuf],
         payload_path: &Path,
         out_path: &Path,
     ) -> Result<RecoverOutput, PlatformError> {
-        refuse_existing(out_path)?;
         if share_paths.is_empty() {
             return Err(PlatformError::InvalidInput(
                 "no pieces were provided".into(),
@@ -546,15 +597,22 @@ impl crate::PlatformCrypto {
         }
 
         let payload_blob = read_capped(payload_path, MAX_CIPHERTEXT_BYTES)?;
-        let mut plaintext = recover_core(&parsed, &payload_blob)?;
+        let mut framed = recover_core(&parsed, &payload_blob)?;
+        // Recover the original filename (if a file was split) and the bare plaintext.
+        let (original_name, mut plaintext) = nameframe::unframe(&framed);
+        framed.zeroize();
         let bytes_written = plaintext.len() as u64;
-        let res = write_atomic(out_path, &plaintext);
+        // Write under the recovered original name (disambiguated, never overwriting) for a split
+        // *file*; honour the literal `out_path` for a recovered text *secret*. `write_recovered`
+        // re-sanitizes the stored name against path traversal.
+        let res = write_recovered(out_path, original_name.as_deref(), &plaintext);
         plaintext.zeroize();
-        res?;
+        let final_path = res?;
 
         Ok(RecoverOutput {
-            output_path: path_str(out_path),
+            output_path: path_str(&final_path),
             bytes_written,
+            original_name,
         })
     }
 }
@@ -849,6 +907,8 @@ mod tests {
             .recover_secret(&paths, Path::new(&out.payload_path), &recovered)
             .unwrap();
         assert_eq!(rep.bytes_written, 20);
+        // A text secret carries no filename.
+        assert_eq!(rep.original_name, None);
         assert_eq!(std::fs::read(&recovered).unwrap(), b"my master passphrase");
     }
 
@@ -861,11 +921,65 @@ mod tests {
         std::fs::write(&input, &bytes).unwrap();
 
         let out = pc.split_file(&input, 3, 3, dir.path()).unwrap();
-        let recovered = dir.path().join("wallet.out");
+        // Recover into a clean directory (the resolved output is now `<dir>/wallet.dat`, which would
+        // otherwise collide with the still-present input and trip refuse-overwrite).
+        let outdir = dir.path().join("rec");
+        std::fs::create_dir(&outdir).unwrap();
+        let recovered = outdir.join("wallet.out");
         let paths: Vec<PathBuf> = out.share_paths.iter().map(PathBuf::from).collect();
-        pc.recover_secret(&paths, Path::new(&out.payload_path), &recovered)
+        let rep = pc
+            .recover_secret(&paths, Path::new(&out.payload_path), &recovered)
             .unwrap();
-        assert_eq!(std::fs::read(&recovered).unwrap(), bytes);
+        // The original filename round-trips AND the file is saved under it (in the chosen dir), not
+        // the caller's literal `wallet.out`, so it opens by default (C2).
+        assert_eq!(rep.original_name.as_deref(), Some("wallet.dat"));
+        assert_eq!(rep.bytes_written, 5000);
+        assert!(
+            rep.output_path.ends_with("wallet.dat"),
+            "saved as {}",
+            rep.output_path
+        );
+        assert!(
+            !recovered.exists(),
+            "the literal (.out) output path is not used"
+        );
+        assert_eq!(std::fs::read(&rep.output_path).unwrap(), bytes);
+    }
+
+    #[test]
+    fn recover_file_disambiguates_existing_target_instead_of_overwriting() {
+        let dir = tmp();
+        let pc = PlatformCrypto::new();
+        let input = dir.path().join("keys.txt");
+        std::fs::write(&input, b"BEGIN KEY ... END KEY").unwrap();
+        let out = pc.split_file(&input, 2, 2, dir.path()).unwrap();
+
+        // The recovered name already exists in the destination directory.
+        let outdir = dir.path().join("rec");
+        std::fs::create_dir(&outdir).unwrap();
+        std::fs::write(outdir.join("keys.txt"), b"existing").unwrap();
+
+        let paths: Vec<PathBuf> = out.share_paths.iter().map(PathBuf::from).collect();
+        // `out_path`'s filename is irrelevant for a split *file* — only its directory is used.
+        let rep = pc
+            .recover_secret(
+                &paths,
+                Path::new(&out.payload_path),
+                &outdir.join("ignored.bin"),
+            )
+            .unwrap();
+        assert_eq!(rep.original_name.as_deref(), Some("keys.txt"));
+        assert!(
+            rep.output_path.ends_with("keys (2).txt"),
+            "disambiguated to avoid overwrite: {}",
+            rep.output_path
+        );
+        // The pre-existing file is untouched.
+        assert_eq!(std::fs::read(outdir.join("keys.txt")).unwrap(), b"existing");
+        assert_eq!(
+            std::fs::read(&rep.output_path).unwrap(),
+            b"BEGIN KEY ... END KEY"
+        );
     }
 
     #[test]

@@ -101,6 +101,23 @@ impl PlatformCrypto {
             signer: SodiumMinisignSigner,
         }
     }
+
+    /// **Copy a file** to a new path, refusing to overwrite an existing destination. A non-crypto
+    /// convenience: the UI uses it to save a just-recovered file under its restored *original* name
+    /// (the recovered bytes were already written to a user-chosen path; this duplicates them under
+    /// the correct name/extension). Returns the destination path string.
+    pub fn copy_file(&self, from: &Path, to: &Path) -> Result<String, PlatformError> {
+        refuse_existing(to)?;
+        let meta = std::fs::metadata(from).map_err(map_io)?;
+        if meta.len() > MAX_PLAINTEXT_BYTES {
+            return Err(PlatformError::TooLarge {
+                limit_bytes: MAX_PLAINTEXT_BYTES,
+                actual_bytes: meta.len(),
+            });
+        }
+        std::fs::copy(from, to).map_err(map_io)?;
+        Ok(path_str(to))
+    }
 }
 
 impl Default for PlatformCrypto {
@@ -149,6 +166,34 @@ pub(crate) fn write_atomic(path: &Path, bytes: &[u8]) -> Result<(), PlatformErro
     tmp.persist(path)
         .map_err(|e| PlatformError::Io(e.error.to_string()))?;
     Ok(())
+}
+
+/// Disambiguate `target` so an existing file is **never overwritten**: returns `target` if it's
+/// free, else `<stem> (2).<ext>`, `<stem> (3).<ext>`, … (common desktop "save" behaviour). Errors as
+/// [`PlatformError::OutputExists`] only in the absurd case that thousands of variants all exist.
+pub(crate) fn unique_path(target: PathBuf) -> Result<PathBuf, PlatformError> {
+    if !target.exists() {
+        return Ok(target);
+    }
+    let parent = target.parent();
+    let stem = target
+        .file_stem()
+        .map_or_else(String::new, |s| s.to_string_lossy().into_owned());
+    let ext = target.extension().map(|e| e.to_string_lossy().into_owned());
+    for n in 2..=9999u32 {
+        let fname = match &ext {
+            Some(e) => format!("{stem} ({n}).{e}"),
+            None => format!("{stem} ({n})"),
+        };
+        let candidate = match parent {
+            Some(p) if !p.as_os_str().is_empty() => p.join(&fname),
+            _ => PathBuf::from(&fname),
+        };
+        if !candidate.exists() {
+            return Ok(candidate);
+        }
+    }
+    Err(PlatformError::OutputExists)
 }
 
 /// Map an I/O error, distinguishing a missing file (`NotFound`) from other failures.

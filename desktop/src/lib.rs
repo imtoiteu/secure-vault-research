@@ -308,6 +308,15 @@ fn shares_recover_from_qr(
     platform.shares_recover_from_qr(qr_paths, payload_path, out_path)
 }
 
+#[tauri::command]
+fn copy_file(
+    platform: tauri::State<'_, Platform>,
+    from: String,
+    to: String,
+) -> Result<String, ApiError> {
+    platform.copy_file(from, to)
+}
+
 // --- Steganography (vault-free, session-free; standalone toolkit module) -----
 // Backed by the third managed state `Stego`; additive to the vault surface.
 
@@ -327,10 +336,10 @@ fn stego_hide(
 fn stego_extract(
     stego: tauri::State<'_, Stego>,
     stego_path: String,
-    output_path: String,
+    output_dir: String,
     passphrase: IpcPassphrase,
 ) -> Result<StegoExtractReport, ApiError> {
-    stego.stego_extract(stego_path, output_path, passphrase)
+    stego.stego_extract(stego_path, output_dir, passphrase)
 }
 
 #[tauri::command]
@@ -369,6 +378,14 @@ fn metadata_diff(
     path_b: String,
 ) -> Result<MetadataDiffReport, ApiError> {
     meta.metadata_diff(path_a, path_b)
+}
+
+/// Whether the Analysis module is usable in this build (its hash-pinned ExifTool resolved). The UI
+/// probes this to disable/explain the metadata tools instead of letting a click fail with a generic
+/// internal error when the binary isn't bundled (C4).
+#[tauri::command]
+fn metadata_available(meta: tauri::State<'_, Meta>) -> bool {
+    meta.is_available()
 }
 
 // --- Watermarking (vault-free, session-free; standalone toolkit module) -------
@@ -614,12 +631,14 @@ pub fn run() {
             shares_recover_secret,
             shares_export_qr,
             shares_recover_from_qr,
+            copy_file,
             stego_hide,
             stego_extract,
             stego_detect,
             metadata_inspect,
             metadata_sanitize,
             metadata_diff,
+            metadata_available,
             watermark_embed,
             watermark_verify
         ])

@@ -205,6 +205,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "requires a real ExifTool via SV_EXIFTOOL_BIN; run with --ignored"]
     fn e2e_inspect_sanitize_diff_surface_roundtrip() {
         let Some(app) = enabled_app() else {
             eprintln!("skipping: set SV_EXIFTOOL_BIN to run the meta IPC e2e test");
@@ -248,6 +249,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "requires a real ExifTool via SV_EXIFTOOL_BIN; run with --ignored"]
     fn e2e_read_only_format_is_refused_invalid_input() {
         let Some(app) = enabled_app() else {
             eprintln!("skipping: SV_EXIFTOOL_BIN not set");

@@ -22,6 +22,81 @@ use serde::{Deserialize, Serialize};
 /// breaking change to a DTO; additive (optional) fields keep the same major.
 pub const CONTRACT_VERSION: u32 = 1;
 
+/// **Name-framing** — prepend an optional original filename to a payload so it can travel *inside*
+/// an encrypted region (never as cleartext, which would leak it). Used by modules that recover a
+/// file from an opaque container — Steganography *extract* and Secret-Sharing *recover* — so the
+/// saved file can be restored under (or suggested with) its original name and extension.
+///
+/// Framed layout: `[present: u8 (0|1)]  ([name_len: u16 LE][name_utf8])?  [payload…]`.
+/// The leading byte is always written, so [`nameframe::unframe`] is unambiguous for our own data.
+/// It is also *total*: a foreign/legacy buffer it cannot parse yields `(None, whole-buffer)` rather
+/// than erroring or corrupting bytes. The recovered name is metadata (non-secret), so it may be
+/// surfaced in a DTO; the payload bytes remain the caller's to zeroize.
+pub mod nameframe {
+    /// Largest original-name length we store/accept (UTF-8 bytes). Names are basenames, so this is
+    /// generous; an over-long name is simply not stored (treated as "no name").
+    pub const MAX_NAME_LEN: usize = 1024;
+
+    /// Frame `payload` behind an optional original `name`. A `name` that is empty or longer than
+    /// [`MAX_NAME_LEN`] is dropped (stored as "no name").
+    #[must_use]
+    pub fn frame(name: Option<&str>, payload: &[u8]) -> Vec<u8> {
+        match name.filter(|n| !n.is_empty() && n.len() <= MAX_NAME_LEN) {
+            Some(n) => {
+                let nb = n.as_bytes();
+                let mut out = Vec::with_capacity(1 + 2 + nb.len() + payload.len());
+                out.push(1u8);
+                out.extend_from_slice(&(nb.len() as u16).to_le_bytes());
+                out.extend_from_slice(nb);
+                out.extend_from_slice(payload);
+                out
+            }
+            None => {
+                let mut out = Vec::with_capacity(1 + payload.len());
+                out.push(0u8);
+                out.extend_from_slice(payload);
+                out
+            }
+        }
+    }
+
+    /// Inverse of [`frame`]: returns `(original_name, payload)`. Total and non-corrupting — a buffer
+    /// that is not a recognizable frame yields `(None, buf.to_vec())`.
+    #[must_use]
+    pub fn unframe(buf: &[u8]) -> (Option<String>, Vec<u8>) {
+        match buf.first() {
+            Some(0) => (None, buf[1..].to_vec()),
+            Some(1) => {
+                if buf.len() < 3 {
+                    return (None, buf.to_vec());
+                }
+                let name_len = u16::from_le_bytes([buf[1], buf[2]]) as usize;
+                let start = 3 + name_len;
+                if name_len == 0 || name_len > MAX_NAME_LEN || start > buf.len() {
+                    return (None, buf.to_vec());
+                }
+                match std::str::from_utf8(&buf[3..start]) {
+                    Ok(name) => (Some(name.to_string()), buf[start..].to_vec()),
+                    Err(_) => (None, buf.to_vec()),
+                }
+            }
+            _ => (None, buf.to_vec()),
+        }
+    }
+
+    /// The basename (final path component) of `path`, for use as a stored original name. Strips any
+    /// directory so no filesystem-path information is embedded. Returns `None` for an empty/`.`/`..`.
+    #[must_use]
+    pub fn basename(path: &str) -> Option<String> {
+        let base = path.rsplit(['/', '\\']).next().unwrap_or(path).trim();
+        if base.is_empty() || base == "." || base == ".." {
+            None
+        } else {
+            Some(base.to_string())
+        }
+    }
+}
+
 /// Non-secret description of a vault, safe to render in the UI.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct VaultMeta {
@@ -250,6 +325,9 @@ pub struct ShareSplitReport {
 pub struct RecoverReport {
     pub output_path: String,
     pub bytes_written: u64,
+    /// For a recovered **file** (Split File), its original filename, restored from inside the
+    /// encrypted payload. `None` for a recovered text **secret** (Split Secret). Non-secret metadata.
+    pub original_name: Option<String>,
 }
 
 /// Result of exporting Secret Sharing pieces as QR images (**Secure QR Transfer**). Carries only
@@ -275,15 +353,19 @@ pub struct WatermarkEmbedReport {
 
 /// Verdict of verifying a fragile watermark. **Deliberately no "Authentic"/"Genuine" variant** — the
 /// strongest positive is [`WatermarkVerdict::Intact`] ("unchanged since it was marked *with this key*"),
-/// which is tamper-evidence, **not** a proof of origin. [`WatermarkVerdict::NotWatermarked`] covers a
-/// clean unmarked image, a wrong key, or a wholly replaced one (indistinguishable, by design).
+/// which is tamper-evidence, **not** a proof of origin. The verdict is gated by a keyed *presence
+/// sentinel*: [`WatermarkVerdict::NotWatermarked`] means that sentinel is absent (unmarked, wrong key,
+/// or a mark destroyed by wholesale alteration — indistinguishable, by design); when it is present,
+/// the per-block tag checks decide Intact vs Tampered.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum WatermarkVerdict {
-    /// Every block matched: the image is unchanged since it was watermarked with this key.
+    /// Sentinel present and every block matched: unchanged since it was watermarked with this key.
     Intact,
-    /// Some blocks matched and some did not: the image was altered after watermarking (localized).
+    /// Sentinel present but ≥1 block failed: the image was altered after watermarking. Covers a
+    /// localized edit on a multi-block image **and** an edit to a small single-block image (which
+    /// previously misreported as not-watermarked).
     Tampered,
-    /// No block matched: not watermarked, wrong key, or wholly replaced.
+    /// Keyed presence sentinel absent: not watermarked, wrong key, or wholly altered/replaced.
     NotWatermarked,
 }
 
@@ -292,7 +374,8 @@ pub enum WatermarkVerdict {
 pub struct WatermarkVerifyReport {
     pub verdict: WatermarkVerdict,
     pub total_blocks: u32,
-    /// How many `16×16` blocks failed their tamper check (0 when `Intact`; all when `NotWatermarked`).
+    /// How many `16×16` blocks failed their tamper check (0 when `Intact`). With the presence
+    /// sentinel deciding `NotWatermarked`, this count is informational for the `Tampered` case.
     pub tampered_blocks: u32,
 }
 
@@ -355,6 +438,10 @@ pub struct StegoHideReport {
 pub struct StegoExtractReport {
     pub output_path: String,
     pub bytes_written: u64,
+    /// The payload's original filename, recovered from inside the encrypted frame (if one was stored
+    /// at hide time). The UI offers saving the recovered file under this real name/extension. A
+    /// filename is metadata, not a secret — it never reveals the passphrase, key, or payload bytes.
+    pub original_name: Option<String>,
 }
 
 /// Uniform, **oracle-safe** error surface for the UI (pre-M6 taxonomy, E1/E2/E3). The

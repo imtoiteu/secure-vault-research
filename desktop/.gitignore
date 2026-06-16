@@ -6,3 +6,7 @@
 /binaries/age
 /binaries/age-keygen
 /binaries/*.exe
+# Bundled ExifTool (Analysis module): the `exiftool` Perl script + its `lib/` tree are staged from
+# the upstream clone by build.rs (see stage_exiftool); derived artifacts, not first-party source.
+/binaries/exiftool
+/binaries/lib/

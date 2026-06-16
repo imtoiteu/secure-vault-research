@@ -383,7 +383,11 @@ impl<P: PayloadCipher> VaultService for VaultBackend<P> {
             &signing_sk,
         )?;
         container::write_atomic(&path, &bytes)?;
-        // Rotate the session's MK to the new one.
+        // Rotate the live session's MK to the new one. If the session is no longer present it was
+        // concurrently locked (removed from the map) — the on-disk re-wrap above still committed, and
+        // no live session is left holding a now-stale key, so reporting success is correct. A racing
+        // second change_passphrase on the same session read its MK before this write and would fail
+        // its own unwrap against the new wrapping (AuthFailed), never silently corrupting state (M4).
         let mut map = self.sessions.lock().map_err(|_| VaultError::Internal)?;
         if let Some(st) = map.get_mut(&session.session_id) {
             st.master_key = new_mk;

@@ -128,6 +128,10 @@ pub trait PlatformSurface {
         payload_path: String,
         out_path: String,
     ) -> Result<RecoverReport, ApiError>;
+
+    /// **Copy a file** to a new path, refusing to overwrite. A non-crypto UI convenience used to save
+    /// a recovered file under its restored original name. Returns the destination path. Session-free.
+    fn copy_file(&self, from: String, to: String) -> Result<String, ApiError>;
 }
 
 /// Project the engine's [`ShareSplitOutput`] onto the IPC [`ShareSplitReport`] DTO (field-for-field;
@@ -184,7 +188,11 @@ impl PlatformSurface for PlatformApp {
             )
             .map_err(ApiError::from)?;
         Ok(IntegrityReport {
-            blake3_ok: valid,
+            // Verify Signature performs no expected-hash comparison, so no content-hash match is
+            // established here — only `signature_ok` is meaningful on this surface. Reporting the
+            // signature verdict in `blake3_ok` (whose contract is "BLAKE3 content hash matched")
+            // would misrepresent it to any consumer that reads the field (M1).
+            blake3_ok: false,
             signature_ok: valid,
             computed_hash_hex: file_blake3_hex,
         })
@@ -374,6 +382,7 @@ impl PlatformSurface for PlatformApp {
         Ok(RecoverReport {
             output_path: rep.output_path,
             bytes_written: rep.bytes_written,
+            original_name: rep.original_name,
         })
     }
 
@@ -412,12 +421,20 @@ impl PlatformSurface for PlatformApp {
         // Decode each QR image to its piece string (fail-closed: a bad image / absent QR is
         // SV-MALFORMED), then route the strings through the UNCHANGED recover bridge — identical
         // staging, identical oracle-safe error semantics as the pasted-codes path.
+        // Decode *every* QR in each image (not just the first) so a photo containing more than one
+        // piece QR contributes all of them, rather than silently dropping the rest (M3).
         let mut share_strings = Vec::with_capacity(qr_paths.len());
         for p in &qr_paths {
-            let text = sv_qr::decode_png(Path::new(p)).map_err(ApiError::from)?;
-            share_strings.push(text);
+            let texts = sv_qr::decode_png_all(Path::new(p)).map_err(ApiError::from)?;
+            share_strings.extend(texts);
         }
         self.shares_recover_secret(Vec::new(), share_strings, payload_path, out_path)
+    }
+
+    fn copy_file(&self, from: String, to: String) -> Result<String, ApiError> {
+        self.crypto
+            .copy_file(Path::new(&from), Path::new(&to))
+            .map_err(ApiError::from)
     }
 }
 
@@ -462,7 +479,10 @@ mod tests {
                 kp.public_key_path.clone(),
             )
             .unwrap();
-        assert!(report.signature_ok && report.blake3_ok);
+        // Verify Signature establishes signature validity only; it compares no expected hash, so
+        // `blake3_ok` is `false` (no content-hash match was checked) — not the signature verdict (M1).
+        assert!(report.signature_ok);
+        assert!(!report.blake3_ok);
 
         // Encrypt File → Decrypt File.
         let enc = dir.path().join("f.svenc");
@@ -662,15 +682,23 @@ mod tests {
         assert!(rep.share_b64.is_empty());
         assert_eq!(rep.share_paths.len(), 3);
 
-        let out = dir.path().join("wallet.out");
-        app.shares_recover_secret(
-            rep.share_paths.clone(),
-            vec![],
-            rep.payload_path.clone(),
-            s(&out),
-        )
-        .unwrap();
-        assert_eq!(std::fs::read(&out).unwrap(), bytes);
+        // Recover into a clean dir: the file is now saved under its recovered original name
+        // (`wallet.dat`), which would otherwise collide with the still-present input.
+        let outdir = dir.path().join("rec");
+        std::fs::create_dir(&outdir).unwrap();
+        let out = outdir.join("wallet.out");
+        let rep2 = app
+            .shares_recover_secret(
+                rep.share_paths.clone(),
+                vec![],
+                rep.payload_path.clone(),
+                s(&out),
+            )
+            .unwrap();
+        assert_eq!(rep2.original_name.as_deref(), Some("wallet.dat"));
+        assert!(rep2.output_path.ends_with("wallet.dat"));
+        assert!(!out.exists(), "the literal (.out) output path is not used");
+        assert_eq!(std::fs::read(&rep2.output_path).unwrap(), bytes);
     }
 
     #[test]

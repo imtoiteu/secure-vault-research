@@ -30,17 +30,23 @@ and is **not** applied to the committed defaults — the default state keeps `ca
      `age-keygen`) before first use.
   4. **fail-closed in release** — an unpinned binary is tolerated only in `debug_assertions`
      builds; a release build refuses to start unpinned.
-- **ExifTool** (the **Analysis** module's engine) is an external dependency wired **identically**:
-  `build.rs` hashes `binaries/exiftool` (or the `SV_EXIFTOOL_BIN_SRC` override) into the
-  `SV_EXIFTOOL_BLAKE3_PIN` compile-time pin; it is bundled via `bundle.resources`; and
-  [`desktop/src/lib.rs`](../desktop/src/lib.rs) `build_meta` resolves it (env `SV_EXIFTOOL_BIN` →
-  resource dir → next to the executable) and verifies it via `sv_meta::ExifTool::new_pinned`. The
-  hardened runner adds `-config ""` (disables ExifTool's executable-Perl config — the one
-  attacker-controllable RCE surface), a throwaway cwd, `env_clear`, and a wall-clock timeout. **One
-  deliberate difference from `age`:** ExifTool is an *optional* module, so a missing / unpinned (in
-  release) / hash-mismatched binary **disables the Analysis module** (every `metadata_*` command then
-  returns the fail-closed `SV-INTERNAL`) rather than aborting startup — the rest of the toolkit runs.
-  See [metadata/EVALUATION.md](../../metadata/EVALUATION.md) §1.5 (security) and §4 (architecture).
+- **ExifTool** (the **Analysis** module's engine) is **bundled into the app package and resolved from
+  app resources — no env var, no external setup, no repository-relative path at runtime.** `build.rs`
+  `stage_exiftool` copies the ExifTool distribution into `binaries/` on first build (the `exiftool`
+  Perl script **plus its sibling `lib/` tree** on Unix; the self-contained `windows_exiftool` PAR exe
+  on Windows), source = the in-repo `metadata/exiftool` clone or `SV_EXIFTOOL_DIST_SRC`. It is then
+  BLAKE3-pinned into `SV_EXIFTOOL_BLAKE3_PIN` and bundled via `bundle.resources` (`binaries/**/*`,
+  which carries the whole `lib/` tree as a sibling of the script). At runtime
+  [`desktop/src/lib.rs`](../desktop/src/lib.rs) `build_meta` resolves it (the `SV_EXIFTOOL_BIN`
+  override is still honored first, then the **bundled resource dir**, then next to the executable) and
+  verifies it via `sv_meta::ExifTool::new_pinned`. The hardened runner adds `-config ""` (disables
+  ExifTool's executable-Perl config — the one attacker-controllable RCE surface), a throwaway cwd,
+  `env_clear` (re-adding only a fixed `PATH=/usr/bin:/bin` on Unix so the script's `#!/usr/bin/env perl`
+  finds system Perl), and a wall-clock timeout. **One deliberate difference from `age`:** ExifTool is an
+  *optional* module, so a missing / unpinned (in release) / hash-mismatched binary **disables the
+  Analysis module** (every `metadata_*` command then returns the fail-closed `SV-INTERNAL`) rather than
+  aborting startup — the rest of the toolkit runs. See
+  [metadata/EVALUATION.md](../../metadata/EVALUATION.md) §1.5 (security) and §4 (architecture).
 - The frontend is dependency-free static files (`app.withGlobalTauri: true`), so **no Node/npm
   bundler step** is part of the build.
 
@@ -340,8 +346,20 @@ and `age` (`brew install age`). Then:
 cargo install tauri-cli --version '^2' --locked      # one-time
 export SV_AGE_BIN="$(command -v age)"
 export SV_AGE_KEYGEN_BIN="$(command -v age-keygen)"
+# Analysis module: nothing to do. build.rs auto-stages ExifTool (script + lib/) from the in-repo
+# metadata/exiftool clone into desktop/binaries/ on first build, and the runtime resolves it from
+# there. Override the staging source with SV_EXIFTOOL_DIST_SRC, or skip staging by pointing
+# SV_EXIFTOOL_BIN at any in-tree `exiftool` script. Needs system Perl (`/usr/bin/perl`, on macOS).
 cd desktop && cargo tauri dev
 ```
+
+> The Analysis module is **self-contained**: `build.rs` `stage_exiftool` copies ExifTool into
+> `desktop/binaries/` (default source: the `metadata/exiftool/` clone one level above the product
+> root `secure-vault/`; override with `SV_EXIFTOOL_DIST_SRC`). A debug build runs it **unpinned**
+> (enabled with a warning); a **release** `cargo tauri build` pins the staged binary and bundles it
+> (with its `lib/` tree) into the app package, so the packaged app resolves it from app resources
+> **with no env var** — verified end-to-end against the in-package binary. Delete `binaries/exiftool`
+> + `binaries/lib/` to re-stage from an updated clone.
 
 ### Windows (10/11)
 Prereqs: Rust (MSVC toolchain) + "Desktop development with C++" build tools; WebView2 (preinstalled

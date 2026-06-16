@@ -10,7 +10,7 @@ use std::path::{Path, PathBuf};
 
 use zeroize::Zeroize;
 
-use sv_types::{StegoDetectReport, StegoExtractReport, StegoHideReport};
+use sv_types::{nameframe, StegoDetectReport, StegoExtractReport, StegoHideReport};
 
 use crate::detect;
 use crate::error::StegoError;
@@ -34,14 +34,23 @@ pub fn hide_file(
 ) -> Result<StegoHideReport, StegoError> {
     refuse_existing(output_path)?;
     let cover = read_capped(cover_path, MAX_IMAGE_BYTES)?;
-    let mut payload = read_capped(payload_path, MAX_PAYLOAD_BYTES)?;
+    let mut raw = read_capped(payload_path, MAX_PAYLOAD_BYTES)?;
+    let payload_bytes = raw.len() as u64;
 
-    let result = pipeline::hide_detailed(&cover, &payload, passphrase, opts, sealer);
-    payload.zeroize(); // wipe our copy of the (sensitive) payload regardless of outcome
+    // Frame the payload behind its original basename (inside the encrypted region — never cleartext)
+    // so extract can restore an openable, correctly-named file. The frame consumes a little capacity.
+    let name = nameframe::basename(&payload_path.to_string_lossy());
+    let mut framed = nameframe::frame(name.as_deref(), &raw);
+    raw.zeroize(); // wipe our copy of the (sensitive) payload regardless of outcome
+
+    let result = pipeline::hide_detailed(&cover, &framed, passphrase, opts, sealer);
+    framed.zeroize();
     let (stego, meta) = result?;
 
     write_atomic(output_path, &stego)?;
 
+    // `meta.payload_bytes` is the framed length (the bits actually consumed); utilization reflects
+    // that, while the report's `payload_bytes` is the user's real payload size.
     let utilization_pct = if meta.capacity_bytes == 0 {
         0.0
     } else {
@@ -50,31 +59,40 @@ pub fn hide_file(
     Ok(StegoHideReport {
         output_path: path_str(output_path),
         cover_format: meta.cover_format.to_string(),
-        payload_bytes: meta.payload_bytes,
+        payload_bytes,
         capacity_bytes: meta.capacity_bytes,
         utilization_pct,
     })
 }
 
-/// **Extract to a file.** Read `stego_path`, recover the payload, and write it to `output_path`
-/// (refused if it exists). Wrong passphrase / tampered carrier / no payload → the oracle-safe
+/// **Extract into a directory.** Read `stego_path`, recover the payload, and write it into
+/// `output_dir` **under the original filename stored at hide time** (re-sanitized to a bare basename
+/// — a crafted carrier could embed path separators / `..`), so the recovered file opens by default.
+/// The destination is a *folder*, not a filename: the payload's true name/type is unknowable until
+/// decryption, so honouring a caller-chosen (image-extensioned) filename is exactly what produced an
+/// unopenable file. An existing file is **never overwritten** — the name is disambiguated
+/// (`report (2).docx`, …). A payload with no stored name (legacy frame) is written as
+/// [`DEFAULT_RECOVERED_NAME`]. Wrong passphrase / tampered carrier / no payload → the oracle-safe
 /// [`StegoError::AuthFailed`]/[`StegoError::NoPayload`] (both `SV-UNAUTHORIZED`).
 pub fn extract_file(
     stego_path: &Path,
-    output_path: &Path,
+    output_dir: &Path,
     passphrase: &[u8],
     sealer: &dyn PayloadSealer,
 ) -> Result<StegoExtractReport, StegoError> {
-    refuse_existing(output_path)?;
     let stego = read_capped(stego_path, MAX_IMAGE_BYTES)?;
-    let mut plaintext = pipeline::extract(&stego, passphrase, sealer)?;
-    let bytes_written = plaintext.len() as u64;
-    let written = write_atomic(output_path, &plaintext);
-    plaintext.zeroize(); // wipe the recovered plaintext copy regardless of write outcome
-    written?;
+    let mut framed = pipeline::extract(&stego, passphrase, sealer)?;
+    // Recover the original name (if framed at hide time) and the bare payload bytes.
+    let (original_name, mut payload) = nameframe::unframe(&framed);
+    framed.zeroize();
+    let bytes_written = payload.len() as u64;
+    let written = write_into_dir(output_dir, original_name.as_deref(), &payload);
+    payload.zeroize(); // wipe the recovered plaintext copy regardless of write outcome
+    let final_path = written?;
     Ok(StegoExtractReport {
-        output_path: path_str(output_path),
+        output_path: path_str(&final_path),
         bytes_written,
+        original_name,
     })
 }
 
@@ -89,6 +107,59 @@ pub fn detect_file(image_path: &Path) -> Result<StegoDetectReport, StegoError> {
 
 fn path_str(p: &Path) -> String {
     p.to_string_lossy().into_owned()
+}
+
+/// Default basename for a recovered payload that carries no stored name (legacy / raw frame). Rare;
+/// the real extension is unknown, so a generic name is the honest choice.
+const DEFAULT_RECOVERED_NAME: &str = "recovered.bin";
+
+/// Write `data` into `dir` under the recovered `original_name` (re-sanitized to a bare basename —
+/// path-traversal guard), disambiguating against existing files so nothing is overwritten. Returns
+/// the path actually written.
+fn write_into_dir(
+    dir: &Path,
+    original_name: Option<&str>,
+    data: &[u8],
+) -> Result<PathBuf, StegoError> {
+    let name = original_name
+        .and_then(nameframe::basename)
+        .unwrap_or_else(|| DEFAULT_RECOVERED_NAME.to_string());
+    let target = if dir.as_os_str().is_empty() {
+        PathBuf::from(name)
+    } else {
+        dir.join(name)
+    };
+    let final_path = unique_path(target)?;
+    write_atomic(&final_path, data)?;
+    Ok(final_path)
+}
+
+/// Return `target` if it's free, else `<stem> (2).<ext>`, `<stem> (3).<ext>`, … so an existing file
+/// is **never overwritten** (mirrors common desktop "save" disambiguation). Errors as
+/// [`StegoError::OutputExists`] only in the absurd case that thousands of variants all exist.
+fn unique_path(target: PathBuf) -> Result<PathBuf, StegoError> {
+    if !target.exists() {
+        return Ok(target);
+    }
+    let parent = target.parent();
+    let stem = target
+        .file_stem()
+        .map_or_else(String::new, |s| s.to_string_lossy().into_owned());
+    let ext = target.extension().map(|e| e.to_string_lossy().into_owned());
+    for n in 2..=9999u32 {
+        let fname = match &ext {
+            Some(e) => format!("{stem} ({n}).{e}"),
+            None => format!("{stem} ({n})"),
+        };
+        let candidate = match parent {
+            Some(p) if !p.as_os_str().is_empty() => p.join(&fname),
+            _ => PathBuf::from(&fname),
+        };
+        if !candidate.exists() {
+            return Ok(candidate);
+        }
+    }
+    Err(StegoError::OutputExists)
 }
 
 fn refuse_existing(p: &Path) -> Result<(), StegoError> {
@@ -163,7 +234,9 @@ mod tests {
         let cover = dir.path().join("cover.png");
         let payload = dir.path().join("secret.txt");
         let stego = dir.path().join("out.png");
-        let recovered = dir.path().join("recovered.txt");
+        // Extract into a destination *folder*; the backend names the file from the recovered frame.
+        let outdir = dir.path().join("rec");
+        std::fs::create_dir(&outdir).unwrap();
         write_png(&cover, 64, 64);
         std::fs::write(&payload, b"the launch codes are 0000").unwrap();
 
@@ -183,12 +256,77 @@ mod tests {
         assert!(report.utilization_pct > 0.0 && report.utilization_pct < 100.0);
         assert!(Path::new(&report.output_path).exists());
 
-        let ex = extract_file(&stego, &recovered, b"pw", &sealer).unwrap();
+        let ex = extract_file(&stego, &outdir, b"pw", &sealer).unwrap();
         assert_eq!(ex.bytes_written, 25);
+        // The original payload filename round-trips out of the encrypted frame, and the file is
+        // SAVED under that name inside the chosen destination folder — so it opens by default.
+        assert_eq!(ex.original_name.as_deref(), Some("secret.txt"));
+        assert_eq!(ex.output_path, path_str(&outdir.join("secret.txt")));
+        assert!(outdir.join("secret.txt").exists());
         assert_eq!(
-            std::fs::read(&recovered).unwrap(),
+            std::fs::read(&ex.output_path).unwrap(),
             b"the launch codes are 0000"
         );
+    }
+
+    #[test]
+    fn extract_saves_under_original_name_for_real_file_types() {
+        // The reported defect, end-to-end: hide a file of each real type inside a PNG, then extract
+        // into a destination folder. The saved file must carry the ORIGINAL name+extension and the
+        // exact original bytes (magic intact) so it opens — never the carrier's image extension.
+        let sealer = fast_sealer();
+        let cases: [(&str, &[u8]); 4] = [
+            (
+                "report.docx",
+                b"PK\x03\x04\x14\x00 docx is a zip container ....",
+            ), // ZIP/OOXML magic
+            (
+                "invoice.pdf",
+                b"%PDF-1.7\n%\xe2\xe3\xcf\xd3\n1 0 obj <<>> ....",
+            ),
+            ("backup.zip", b"PK\x03\x04 plain zip archive body ........"),
+            (
+                "avatar.png",
+                b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR payload ....",
+            ),
+        ];
+        for (name, body) in cases {
+            let dir = tmp();
+            let cover = dir.path().join("cover.png");
+            write_png(&cover, 96, 96); // ample capacity for these small bodies + the name frame
+            let payload = dir.path().join(name);
+            std::fs::write(&payload, body).unwrap();
+            let stego = dir.path().join("cover.png.stego.png");
+            hide_file(
+                &cover,
+                &payload,
+                &stego,
+                b"pw",
+                &HideOptions::default(),
+                &sealer,
+            )
+            .unwrap();
+
+            // Extract into a destination folder; the backend names the file from the recovered
+            // frame, restoring the original name + extension regardless of the carrier's type.
+            let outdir = dir.path().join("rec");
+            std::fs::create_dir(&outdir).unwrap();
+            let ex = extract_file(&stego, &outdir, b"pw", &sealer).unwrap();
+
+            assert_eq!(
+                ex.original_name.as_deref(),
+                Some(name),
+                "name recovered for {name}"
+            );
+            assert_eq!(
+                ex.output_path,
+                path_str(&outdir.join(name)),
+                "saved under original name for {name}"
+            );
+            let written = std::fs::read(&ex.output_path).unwrap();
+            assert_eq!(written, body, "exact bytes for {name}");
+            assert_eq!(&written[..4], &body[..4], "magic bytes intact for {name}");
+        }
     }
 
     #[test]
@@ -226,7 +364,8 @@ mod tests {
         let cover = dir.path().join("c.png");
         let payload = dir.path().join("p.txt");
         let stego = dir.path().join("s.png");
-        let out = dir.path().join("o.txt");
+        let outdir = dir.path().join("rec");
+        std::fs::create_dir(&outdir).unwrap();
         write_png(&cover, 64, 64);
         std::fs::write(&payload, b"secret").unwrap();
         let sealer = fast_sealer();
@@ -239,9 +378,56 @@ mod tests {
             &sealer,
         )
         .unwrap();
-        let err = extract_file(&stego, &out, b"wrong", &sealer).unwrap_err();
+        let err = extract_file(&stego, &outdir, b"wrong", &sealer).unwrap_err();
         assert!(matches!(err, StegoError::AuthFailed));
-        assert!(!out.exists());
+        assert_eq!(
+            std::fs::read_dir(&outdir).unwrap().count(),
+            0,
+            "nothing is written on a failed extract"
+        );
+    }
+
+    #[test]
+    fn extract_disambiguates_existing_target_instead_of_overwriting() {
+        let dir = tmp();
+        let cover = dir.path().join("cover.png");
+        let payload = dir.path().join("secret.txt");
+        let stego = dir.path().join("stego.png");
+        write_png(&cover, 80, 80);
+        std::fs::write(&payload, b"second extraction").unwrap();
+        let sealer = fast_sealer();
+        hide_file(
+            &cover,
+            &payload,
+            &stego,
+            b"pw",
+            &HideOptions::default(),
+            &sealer,
+        )
+        .unwrap();
+
+        // A file with the recovered name already exists in the destination folder.
+        let outdir = dir.path().join("rec");
+        std::fs::create_dir(&outdir).unwrap();
+        std::fs::write(outdir.join("secret.txt"), b"do not clobber").unwrap();
+
+        let ex = extract_file(&stego, &outdir, b"pw", &sealer).unwrap();
+        assert_eq!(ex.original_name.as_deref(), Some("secret.txt"));
+        assert_eq!(
+            ex.output_path,
+            path_str(&outdir.join("secret (2).txt")),
+            "disambiguated to avoid overwrite: {}",
+            ex.output_path
+        );
+        // The pre-existing file is untouched; the recovery is the new, disambiguated file.
+        assert_eq!(
+            std::fs::read(outdir.join("secret.txt")).unwrap(),
+            b"do not clobber"
+        );
+        assert_eq!(
+            std::fs::read(&ex.output_path).unwrap(),
+            b"second extraction"
+        );
     }
 
     #[test]
