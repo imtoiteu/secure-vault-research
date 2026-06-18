@@ -18,9 +18,12 @@ those procedures can run, and the exact pre-flight verification that gates a pub
 
 These are independent of signing but block a *bundle* regardless:
 
-- [ ] **Flip `bundle.active`** in [`desktop/tauri.conf.json`](../desktop/tauri.conf.json) from
-      `false` → `true`. (Icons are now wired: `bundle.icon` references the real
-      `.png`/`.icns`/`.ico` set generated into `desktop/icons/`.)
+- [x] **`bundle.active` is already `true`** in [`desktop/tauri.conf.json`](../desktop/tauri.conf.json)
+      — bundling is enabled, so `cargo tauri build` produces the app package (with the pinned `age`
+      toolchain and ExifTool shipped via `bundle.resources: ["binaries/**/*"]`). Icons are wired:
+      `bundle.icon` references the real `.png`/`.icns`/`.ico` set in `desktop/icons/` (an **interim**
+      brand set; final branding still pending). The emitted bundle is **unsigned** until the rest of
+      this checklist is met — do not distribute it.
 - [ ] **Place the pinned `age` / `age-keygen` binaries** per [DEPLOYMENT.md §2.3](DEPLOYMENT.md)
       (acquire → verify provenance → place under `desktop/binaries/` → BLAKE3-pin). A *release*
       build refuses to run unpinned; today's local builds emit the DEV-UNPINNED warning.

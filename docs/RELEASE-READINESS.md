@@ -14,8 +14,10 @@ beta.
 ## Where things stand
 - **Fixed + validated (see [VALIDATION-RESULTS.md](VALIDATION-RESULTS.md)):** H2, H3, H6, H7, and
   the H1 safety-guard/error-clarity mitigation. Core gates: fmt / clippy(-D warnings) /
-  build --locked / 127 tests / `cargo deny` all green (was 80 at validation time; +47 since, as the
-  `sv-platform` crypto-services layer and Secret Sharing engine landed — plus 1 desktop-crate test).
+  build --locked / tests / `cargo deny` all green. The workspace suite is now **253 test functions
+  (249 passing; 4 `#[ignore]` env-gated `age`/ExifTool e2e that run in CI)** — up from 80 at
+  validation time as the `sv-platform` crypto-services layer, Secret Sharing engine, and the
+  stego/meta/qr/watermark modules landed — plus 1 desktop-crate parity test.
 - **H4 (Windows `env_clear`) — RESOLVED & validated on CI** (Windows `age` e2e green, 2026-06-15).
 - **Open blocker (this document):** H5 (distribution signing).
   *(The H-numbers here are the hardening-risk series — H1–H14 in VALIDATION-PLAN.md — not the

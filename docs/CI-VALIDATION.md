@@ -8,8 +8,14 @@ assumes this; the outer research evidence base is *not* part of this repo).
 [`27563728420`](https://github.com/imtoiteu/secure-vault-research/actions/runs/27563728420):
 **all 9 jobs green.**
 
-> This is the first time CI has ever executed (the project was not previously a git repository).
-> Cross-platform behaviour — Linux and Windows in particular — had been authored but never run.
+> This was the first execution of CI (the project had not previously been a git repository).
+> Cross-platform behaviour — Linux and Windows in particular — had been authored but not yet run.
+
+> **Currency note.** The test counts below (127 Linux/macOS · 126 Windows) are the figures **for
+> commit `780444d`**. The suite has since grown: a local `cargo test --workspace` now reports
+> **253 test functions — 249 passing, 4 `#[ignore]` env-gated `age`/ExifTool e2e** (the gated ones
+> run in CI, where `SV_AGE_BIN`/`SV_AGE_KEYGEN_BIN` are set) — plus the 1 desktop parity test. This
+> document remains the record of that specific green run; re-run CI for the live total.
 
 ---
 
@@ -85,7 +91,8 @@ clear the distribution blocker:
 - **🔴 H5 — signing/notarization** still blocks any *distributed* beta (macOS Gatekeeper / Windows
   SmartScreen quarantine an unsigned bundle; the nested `age` binary is killed). No certificates
   exist yet. See [`SIGNING-REQUIREMENTS.md`](SIGNING-REQUIREMENTS.md). CI does not produce signed
-  artifacts (the `bundle.active` flag is still `false` and no pinned `age` binaries are bundled).
+  artifacts: no signing certificates exist (H5), so any bundle would be unsigned — and the pinned
+  `age`/`age-keygen` binaries are git-ignored, so they are not present in a CI checkout to bundle.
 - **🟡 Tracked, non-blocking:** H1 `age` streaming/memory bound; multi-process vault lock; generic
   `verify_integrity`; the vault is not yet a consumer of `sv-platform`; final brand assets.
 

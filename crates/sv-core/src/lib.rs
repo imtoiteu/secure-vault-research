@@ -4,9 +4,9 @@
 //! [`service`] capability surface, and the [`error`] taxonomy. **No UI/Tauri
 //! dependencies** — this crate is pure domain logic and is unit-testable in isolation.
 //!
-//! The crypto-free shapes are frozen in M0; behaviour lands in M4 (key hierarchy),
-//! M5 (container [`format`] + [`container`] framing/sign/verify), and M6
-//! (session + service + recovery). Crypto is **injected** (generic over `sv-crypto-traits`),
+//! The crypto-free shapes were frozen in M0; the behaviour is implemented — the key
+//! hierarchy ([`keys`]), the container [`format`] + [`container`] framing/sign/verify, and the
+//! [`service`] session + recovery surface. Crypto is **injected** (generic over `sv-crypto-traits`),
 //! so this crate's production graph stays backend-/FFI-free.
 
 #![forbid(unsafe_code)]

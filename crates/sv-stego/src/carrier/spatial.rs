@@ -10,7 +10,7 @@ use std::io::Cursor;
 
 use image::{DynamicImage, ImageFormat, RgbaImage};
 
-use crate::carrier::{Carrier, CarrierKind};
+use crate::carrier::{decode_bounded, Carrier, CarrierKind};
 use crate::error::StegoError;
 
 /// Bytes per pixel in the working RGBA8 buffer.
@@ -42,8 +42,7 @@ impl SpatialCarrier {
             ImageFormat::Png | ImageFormat::Bmp => {}
             _ => return Err(StegoError::UnsupportedCoverFormat),
         }
-        let img = image::load_from_memory_with_format(bytes, format)
-            .map_err(|_| StegoError::CoverUndecodable)?;
+        let img = decode_bounded(bytes, format).map_err(|_| StegoError::CoverUndecodable)?;
         let rgba = img.to_rgba8();
         let (width, height) = rgba.dimensions();
         Ok(Self {

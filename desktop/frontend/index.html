@@ -8,7 +8,10 @@
   </head>
   <body>
     <header>
-      <h1 data-i18n="app.title">🔒 Security &amp; Privacy Toolkit</h1>
+      <div class="brand">
+        <h1 data-i18n="app.title">🔒 Security &amp; Privacy Toolkit</h1>
+        <span class="brand-sub" data-i18n="header.attribution">© Tracy Tran • Secure Vault v0.1.0</span>
+      </div>
       <span class="grow"></span>
       <select id="lang-select" class="lang-pick" data-i18n-title="header.language" aria-label="Language">
         <option value="vi" data-i18n="lang.vi">Tiếng Việt</option>
@@ -29,31 +32,59 @@
           <div class="navgroup" data-i18n="nav.group.vaults">Vaults</div>
           <button class="navitem" data-screen="vault" data-i18n="nav.vault">🗄️ Secure Vault</button>
 
-          <div class="navgroup" data-i18n="nav.group.protect">Protect a file</div>
-          <button class="navitem" data-screen="encrypt" data-i18n="nav.encrypt">🔐 Lock a file</button>
-          <button class="navitem" data-screen="decrypt" data-i18n="nav.decrypt">🔓 Unlock a file</button>
-          <button class="navitem" data-screen="hide" data-i18n="nav.hide">🕵️ Hide data in an image</button>
-          <button class="navitem" data-screen="unhide" data-i18n="nav.unhide">🔓 Reveal hidden data</button>
-          <button class="navitem" data-screen="watermark" data-i18n="nav.watermark">💧 Tamper-proof a file</button>
+          <!-- Collapsible tool groups. The toggle button drives `aria-expanded`, which is both the
+               a11y state and the CSS hook for the caret + showing/hiding `.navgroup-items`. The
+               .navitem buttons inside are unchanged, so the name-based router (showScreen /
+               wireSidebar, which select `#sidebar-nav .navitem` as descendants) is untouched. -->
+          <div class="navgroup-wrap" data-group="protect">
+            <button type="button" class="navgroup navgroup-toggle" aria-expanded="true" aria-controls="navgrp-protect">
+              <span class="navgroup-label" data-i18n="nav.group.protect">Protect a file</span>
+            </button>
+            <div class="navgroup-items" id="navgrp-protect">
+              <button class="navitem" data-screen="encrypt" data-i18n="nav.encrypt">🔐 Lock a file</button>
+              <button class="navitem" data-screen="decrypt" data-i18n="nav.decrypt">🔓 Unlock a file</button>
+              <button class="navitem" data-screen="hide" data-i18n="nav.hide">🕵️ Hide data in an image</button>
+              <button class="navitem" data-screen="unhide" data-i18n="nav.unhide">🔓 Reveal hidden data</button>
+              <button class="navitem" data-screen="watermark" data-i18n="nav.watermark">💧 Tamper-proof a file</button>
+            </div>
+          </div>
 
-          <div class="navgroup" data-i18n="nav.group.authentic">Prove it's authentic</div>
-          <button class="navitem" data-screen="sign" data-i18n="nav.sign">✍️ Sign a file</button>
-          <button class="navitem" data-screen="verify" data-i18n="nav.verify">✅ Check a signature</button>
-          <button class="navitem" data-screen="hash" data-i18n="nav.hash">🔢 Fingerprint a file</button>
-          <button class="navitem" data-screen="intact" data-i18n="nav.intact">🛡️ Check a file is unchanged</button>
-          <button class="navitem" data-screen="verify-integrity" data-i18n="nav.verifyIntegrity">🧾 Verify a download</button>
+          <div class="navgroup-wrap" data-group="authentic">
+            <button type="button" class="navgroup navgroup-toggle" aria-expanded="true" aria-controls="navgrp-authentic">
+              <span class="navgroup-label" data-i18n="nav.group.authentic">Prove it's authentic</span>
+            </button>
+            <div class="navgroup-items" id="navgrp-authentic">
+              <button class="navitem" data-screen="sign" data-i18n="nav.sign">✍️ Sign a file</button>
+              <button class="navitem" data-screen="verify" data-i18n="nav.verify">✅ Check a signature</button>
+              <button class="navitem" data-screen="hash" data-i18n="nav.hash">🔢 Fingerprint a file</button>
+              <button class="navitem" data-screen="intact" data-i18n="nav.intact">🛡️ Check a file is unchanged</button>
+              <button class="navitem" data-screen="verify-integrity" data-i18n="nav.verifyIntegrity">🧾 Verify a download</button>
+            </div>
+          </div>
 
-          <div class="navgroup" data-i18n="nav.group.backup">Back up &amp; recover</div>
-          <button class="navitem" data-screen="split-secret" data-i18n="nav.splitSecret">🧩 Split a secret</button>
-          <button class="navitem" data-screen="split-file" data-i18n="nav.splitFile">🧩 Split a file</button>
-          <button class="navitem" data-screen="recover-pieces" data-i18n="nav.recoverPieces">🔗 Recover from pieces</button>
-          <button class="navitem" data-screen="qr-transfer" data-i18n="nav.qrTransfer">📷 Secure QR transfer</button>
+          <div class="navgroup-wrap" data-group="backup">
+            <button type="button" class="navgroup navgroup-toggle" aria-expanded="true" aria-controls="navgrp-backup">
+              <span class="navgroup-label" data-i18n="nav.group.backup">Back up &amp; recover</span>
+            </button>
+            <div class="navgroup-items" id="navgrp-backup">
+              <button class="navitem" data-screen="split-secret" data-i18n="nav.splitSecret">🧩 Split a secret</button>
+              <button class="navitem" data-screen="split-file" data-i18n="nav.splitFile">🧩 Split a file</button>
+              <button class="navitem" data-screen="recover-pieces" data-i18n="nav.recoverPieces">🔗 Recover from pieces</button>
+              <button class="navitem" data-screen="qr-transfer" data-i18n="nav.qrTransfer">📷 Secure QR transfer</button>
+            </div>
+          </div>
 
-          <div class="navgroup" data-i18n="nav.group.inspect">Inspect &amp; clean</div>
-          <button class="navitem" data-screen="detect" data-i18n="nav.detect">🔎 Detect hidden data</button>
-          <button class="navitem" data-screen="metadata-inspect" data-i18n="nav.metadataInspect">🔍 Inspect metadata</button>
-          <button class="navitem" data-screen="metadata-clean" data-i18n="nav.metadataClean">🧹 Remove metadata</button>
-          <button class="navitem" data-screen="metadata-compare" data-i18n="nav.metadataCompare">📑 Compare metadata</button>
+          <div class="navgroup-wrap" data-group="inspect">
+            <button type="button" class="navgroup navgroup-toggle" aria-expanded="true" aria-controls="navgrp-inspect">
+              <span class="navgroup-label" data-i18n="nav.group.inspect">Inspect &amp; clean</span>
+            </button>
+            <div class="navgroup-items" id="navgrp-inspect">
+              <button class="navitem" data-screen="detect" data-i18n="nav.detect">🔎 Detect hidden data</button>
+              <button class="navitem" data-screen="metadata-inspect" data-i18n="nav.metadataInspect">🔍 Inspect metadata</button>
+              <button class="navitem" data-screen="metadata-clean" data-i18n="nav.metadataClean">🧹 Remove metadata</button>
+              <button class="navitem" data-screen="metadata-compare" data-i18n="nav.metadataCompare">📑 Compare metadata</button>
+            </div>
+          </div>
         </nav>
       </aside>
 
@@ -66,6 +97,14 @@
           <h2 class="screen-title" data-i18n="home.title">What would you like to do?</h2>
 
           <p class="muted hint" data-i18n="home.hint">Pick a task. Every tool explains what it does, what it needs, and what you get.</p>
+
+          <!-- Recent tools: populated by main.js from session history; hidden when empty. Tiles
+               mirror the live sidebar labels (icon + name), so no new tool translations are needed
+               and they follow the active language. Routing reuses the standard showScreen path. -->
+          <section id="recent-tools" class="hidden">
+            <h3 class="group-title" data-i18n="home.recent">Recent tools</h3>
+            <div id="recent-tools-list" class="tiles small"></div>
+          </section>
 
           <h3 class="group-title" data-i18n="home.quickStart">Quick start</h3>
           <div class="tiles">
@@ -273,6 +312,7 @@
                   <input id="add-name" type="text" placeholder="Name in the vault" data-i18n-ph="vault.files.add.ph.name" autocomplete="off" />
                   <button id="btn-add" data-i18n="vault.btn.addFile">Add file</button>
                 </div>
+                <div id="files-result" class="result hidden"></div>
               </section>
 
               <!-- Sign a file with the vault -->
@@ -1162,6 +1202,7 @@
         <p class="muted" data-i18n="about.blurb">Security &amp; Privacy Toolkit — an offline desktop app that assembles vetted
           open-source security tools.</p>
         <p class="muted" id="about-version"></p>
+        <p class="muted attribution" data-i18n="about.attribution">© Tracy Tran</p>
       </div>
     </div>
 

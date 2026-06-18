@@ -1,8 +1,10 @@
 # Secure Vault — H1–H7 Experimental Validation Results
 
-Status: **evidence-based findings — no fixes applied.** Each hypothesis was reproduced or
-falsified against the **real production code path** (`VaultBackend` + `AgePayloadCipher` driving the
-actual `age`/`age-keygen` subprocesses), not the in-memory test stub.
+Status: **evidence-based findings.** Each hypothesis was reproduced or falsified against the **real
+production code path** (`VaultBackend` + `AgePayloadCipher` driving the actual `age`/`age-keygen`
+subprocesses), not the in-memory test stub. *(Update: the H1/H2/H3/H6/H7 findings below were
+subsequently fixed and re-validated — see "Re-validation after fixes"; **H4 was later validated green
+on Windows CI**, 2026-06-15; H5 signing remains the only open distribution blocker.)*
 
 ## Method
 
@@ -51,7 +53,7 @@ actual `age`/`age-keygen` subprocesses), not the in-memory test stub.
   at `dest`; no existence check or confirmation.
 - **Impact:** routine operation can destroy an unrelated file. **Severity: High (silent data loss).**
 
-### H4 — `env_clear()` breaks `age` on Windows · **NOT REPRODUCED (macOS falsified; Windows untested)**
+### H4 — `env_clear()` breaks `age` on Windows · **NOT REPRODUCED (macOS falsified; Windows untested at the time)** · *later RESOLVED — validated green on Windows CI, 2026-06-15*
 - **Evidence (macOS):** the real pipeline runs fine under `Command::env_clear()`; an independent
   `env -i` (empty environment) keygen + encrypt + decrypt also succeeded. So `env_clear()` does
   **not** break macOS.
@@ -102,7 +104,7 @@ actual `age`/`age-keygen` subprocesses), not the in-memory test stub.
 | **H1** Large file → opaque fail | **Yes** (memory, not timeout) | Fully in-memory age pipeline (~2.7× RSS); 120 s wall-clock; timeout/backend → `Internal` | **High** | Stream payloads (avoid whole-file `Vec`s); make timeout proportional to size or idle-based; report a specific "too large / timed out" error |
 | **H2** No create passphrase confirm | **Yes** | Single `#passphrase` field on create; confirm exists only on change | **Critical** | Add confirm-match (and ideally a strength hint) to the create form |
 | **H3** Extract overwrites silently | **Yes** | `extract_item` → `write_atomic` `persist` replaces `dest`; no existence check | **High** | Refuse/confirm on existing `dest` (or write to a unique name); surface a distinct code |
-| **H4** `env_clear()` breaks Windows | **No (macOS); untested (Windows)** | `Command::env_clear()` on the age spawns; macOS unaffected | **Unknown** (Critical if confirmed on Windows) | Test on real Windows 10/11; if it fails, allow-list `SystemRoot`/`SystemDrive` instead of clearing |
+| **H4** `env_clear()` breaks Windows | **No (macOS); later validated on Windows CI ✅** | `Command::env_clear()` on the age spawns; macOS unaffected; the `SystemRoot`/`SystemDrive` allow-list lets it start on Windows | **Resolved** (was Unknown; closed on CI 2026-06-15) | Done — `age_backed_lifecycle_roundtrips` ran green on `windows-latest` |
 | **H5** Bundled age blocked on install | **Yes (macOS, non-notarized)** | Gatekeeper SIGKILLs quarantined, non-notarized exec'd binary (exit 137, `spctl` rejected) | **High** (distribution) | Notarize the app **and** sign the nested age binaries (or ship them as signed sidecars); verify with `spctl`/`stapler` |
 | **H6** Errors collapse to `SV-INTERNAL` | **Yes** | `From<VaultError>`: `Io/Crypto/Internal → Internal` | **High** | Add actionable variants (e.g. `SV-IO`, `SV-PERMISSION`, `SV-TOO-LARGE`/`SV-TIMEOUT`); keep oracle-safe ones merged |
 | **H7** Concurrent writes lose data | **Yes (8/8)** | Whole-vault read-modify-write with no per-vault write lock; thread-pool dispatch | **High** (backend) / **Medium** (current UI) | Serialize writes per vault path (mutex/file lock); reject concurrent writers; keep button-disable as defense-in-depth |
@@ -117,9 +119,11 @@ H4 on Windows and H5 in the release-signing pipeline. No code was changed during
 The fixes for **H2, H7, H1, H3, H6** were implemented (correctness + data-safety only; no new
 features) and re-validated against the **same real production path**. Gates after the change:
 **fmt/clippy(-D warnings)/build --locked/`cargo deny` all clean; 80 tests pass (was 77)** — the 3
-added are the H1/H3/H7 regression tests. *(Snapshot from this validation pass. The workspace count
-has since grown to **127** as the `sv-platform` crypto-services layer and Secret Sharing engine
-landed; the desktop crate adds 1 more — see [RELEASE-READINESS-TOOLKIT.md](RELEASE-READINESS-TOOLKIT.md).)*
+added are the H1/H3/H7 regression tests. *(Snapshot from this validation pass. The workspace suite
+has since grown to **253 test functions — 249 passing, 4 `#[ignore]` env-gated `age`/ExifTool e2e** —
+as the `sv-platform` crypto-services layer, Secret Sharing engine, and the stego/meta/qr/watermark
+modules landed; the desktop crate adds 1 parity test — see
+[RELEASE-READINESS-TOOLKIT.md](RELEASE-READINESS-TOOLKIT.md).)*
 
 ## What changed (by hypothesis)
 - **H2** — the create form now has a **confirm-passphrase** field and refuses to create unless the
@@ -153,14 +157,15 @@ landed; the desktop crate adds 1 more — see [RELEASE-READINESS-TOOLKIT.md](REL
 | **H1** | **Mitigated** (safe + clear failure) | true fix is **streaming** the payload (remove the ~2.7× in-memory copies); the 2 GiB cap is an interim guard |
 | **H3** | **Fixed** (refuse overwrite) | optional: explicit "overwrite" affordance in the UI |
 | **H6** | **Fixed** (distinct codes) | could split `SV-IO` into permission/disk-full if desired |
-| **H4** | **Still untested on Windows** | **must** run on real Windows 10/11 before release (see below) |
+| **H4** | **Resolved — validated on CI (2026-06-15)** | the `age_backed_lifecycle_roundtrips` e2e ran and passed on a real `windows-latest` runner; the `SystemRoot`/`SystemDrive` allow-list lets `age` start under `env_clear()` (see [CI-VALIDATION.md](CI-VALIDATION.md)) |
 | **H5** | **Open (release pipeline)** | notarize app + sign nested `age` binaries; verify `spctl`/`stapler` (see [DEPLOYMENT.md](DEPLOYMENT.md) §6) |
 
-## Remaining before broader testing / release — H4 & H5 (Windows + distribution)
-These were out of scope for a macOS host and are **not** closed:
-1. **H4 (Windows `env_clear`)** — on a real Windows 10/11 box: build, `cargo tauri dev`, create a
-   vault + add a file. If keygen/encrypt fails, the cleared environment is the cause → allow-list
-   `SystemRoot`/`SystemDrive` rather than clearing. **Blocker for Windows support.**
+## Remaining before broader testing / release — H5 (distribution)
+**H4 is now closed** — the Windows `env_clear()` e2e ran green on CI (2026-06-15), so the macOS-host
+gap is resolved. The remaining open item is distribution signing:
+1. **H4 (Windows `env_clear`) — RESOLVED.** Validated automatically on the `windows-latest` CI job
+   (the allow-list predicted below was already applied in `sv-age`/`payload.rs`). A manual
+   Windows-10/11 *desktop*-SKU spot-check remains a nice-to-have (the runner is Server-family).
 2. **H5 (install-time quarantine)** — produce a signed+notarized macOS `.dmg` with the nested `age`
    binaries signed; install on a clean account and confirm crypto works on first run
    (`spctl -a -t exec`, `stapler validate`). Repeat for a signed Windows installer. **Blocker for

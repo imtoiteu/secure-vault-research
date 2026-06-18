@@ -1,6 +1,6 @@
 [package]
 name = "sv-crypto"
-description = "Concrete crypto adapters (stubs in M0). Re-exports sv-crypto-traits; backends (blake3/argon2/FFI) land in M1-M2."
+description = "Concrete crypto adapters: BLAKE3, Argon2id, libsodium secretbox/Ed25519-minisign, Shamir (sss). Re-exports sv-crypto-traits."
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true

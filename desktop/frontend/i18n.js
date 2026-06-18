@@ -30,6 +30,7 @@
   const EN = {
     // ---- chrome / header ----
     "app.title": "🔒 Security & Privacy Toolkit",
+    "header.attribution": "© Tracy Tran • Secure Vault v0.1.0",
     "header.about": "About",
     "header.language": "Language",
     "lang.vi": "Tiếng Việt",
@@ -65,6 +66,7 @@
     // ---- home ----
     "home.title": "What would you like to do?",
     "home.hint": "Pick a task. Every tool explains what it does, what it needs, and what you get.",
+    "home.recent": "Recent tools",
     "home.quickStart": "Quick start",
     "home.allTools": "All tools",
     "home.q.encrypt.title": "Lock a file",
@@ -442,6 +444,7 @@
     "about.close": "Close",
     "about.blurb": "Security & Privacy Toolkit — an offline desktop app that assembles vetted open-source security tools.",
     "about.version": "Version {app} · vault format v{fmt} · suite v{suite} · contract v{contract}",
+    "about.attribution": "© Tracy Tran",
 
     // ---- shared buttons / labels ----
     "btn.browse": "Browse…",
@@ -577,6 +580,7 @@
     "r.create.msg.recovery": "Recovery is enabled — make the pieces after you open it.",
     "r.create.msg.plain": "Now open it: pick this file in “Open a vault” and enter your password.",
     "r.label.savedTo": "Saved to",
+    "r.extract.title": "Saved a copy",
     "r.note": "Note",
     "r.ext.caveat": "If the saved file won’t open, rename it to add the original file’s extension (e.g. .pdf, .zip, .jpg).",
     "r.label.originalName": "Original file",
@@ -773,6 +777,7 @@
   const VI = {
     // ---- chrome / header ----
     "app.title": "🔒 Bộ công cụ Bảo mật & Riêng tư",
+    "header.attribution": "© Tracy Tran • Secure Vault v0.1.0",
     "header.about": "Giới thiệu",
     "header.language": "Ngôn ngữ",
     "lang.vi": "Tiếng Việt",
@@ -808,6 +813,7 @@
     // ---- home ----
     "home.title": "Bạn muốn làm gì?",
     "home.hint": "Hãy chọn một tác vụ. Mỗi công cụ đều giải thích nó làm gì, cần gì, và bạn nhận được gì.",
+    "home.recent": "Công cụ gần đây",
     "home.quickStart": "Bắt đầu nhanh",
     "home.allTools": "Tất cả công cụ",
     "home.q.encrypt.title": "Khóa tệp",
@@ -1185,6 +1191,7 @@
     "about.close": "Đóng",
     "about.blurb": "Bộ công cụ Bảo mật & Riêng tư — một ứng dụng máy tính ngoại tuyến tập hợp các công cụ bảo mật mã nguồn mở đã được kiểm chứng.",
     "about.version": "Phiên bản {app} · định dạng két v{fmt} · bộ mã hóa v{suite} · hợp đồng v{contract}",
+    "about.attribution": "© Tracy Tran",
 
     // ---- shared buttons / labels ----
     "btn.browse": "Duyệt…",
@@ -1319,6 +1326,7 @@
     "r.create.msg.recovery": "Khôi phục đã bật — hãy tạo các mảnh sau khi bạn mở nó.",
     "r.create.msg.plain": "Giờ hãy mở nó: chọn tệp này trong “Mở két” và nhập mật khẩu.",
     "r.label.savedTo": "Đã lưu vào",
+    "r.extract.title": "Đã lưu một bản sao",
     "r.note": "Lưu ý",
     "r.ext.caveat": "Nếu tệp đã lưu không mở được, hãy đổi tên để thêm phần mở rộng gốc của tệp (ví dụ .pdf, .zip, .jpg).",
     "r.label.originalName": "Tệp gốc",
@@ -1425,8 +1433,8 @@
     "r.detect.unsupported.msg": "Ảnh phải là PNG hoặc BMP.",
     "detect.verdict.NotObserved": "Các phép thử này không phát hiện gì",
     "detect.verdict.Low": "Nghi ngờ thấp",
-    "detect.verdict.Elevated": "Nghi ngờ cao",
-    "detect.verdict.High": "Nghi ngờ rất cao",
+    "detect.verdict.Elevated": "Nghi ngờ khá cao",
+    "detect.verdict.High": "Nghi ngờ cao",
 
     // ---- result: inspect metadata ----
     "r.mi.title": "Đã đọc siêu dữ liệu",

@@ -1,17 +1,40 @@
 # Release-Readiness Review — Security & Privacy Toolkit
 
 **Scope:** Currently implemented modules — Secure Vault, Cryptography, Integrity (see status note below), Secret Sharing.
-**Out of scope (research-stage, not assessed for release):** Steganography, Watermarking, Analysis, Secure QR Transfer.
+**Out of scope of *this* review (research-stage at review time, not assessed here):** Steganography, Watermarking, Analysis, Secure QR Transfer. *(Update 2026-06-17: all four have since been **implemented standalone** — see `../docs/PRODUCT-VISION.md` and [`docs/architecture/04-module-design.md`](architecture/04-module-design.md); they simply postdate this review's scope.)*
 **Date:** 2026-06-15
 **Method:** Produced by a multi-agent review (parallel security / UX / maintainability / consistency reviewers reading source, each finding adversarially verified against `file:line`). 44 findings raised, 44 kept after verification. One synthesized claim — the per-crate attribution in the test-count note — was **corrected during a final fact-check** (see the provenance note); the corrected figures are reproduced from local `cargo test` runs.
 
 > **Doc-path convention used below.** This review is scoped to `secure-vault/`, so citations like `docs/RELEASE-READINESS.md` resolve under `secure-vault/docs/`. Two referenced docs live one directory up at the **repository top level**: `../docs/PRODUCT-VISION.md` and `../docs/PLATFORM-AUDIT.md`. They are cited with the `../docs/` prefix throughout. CI lives at `secure-vault/.github/workflows/ci.yml` (verified to exist).
 >
-> **Test count provenance (corrected).** The "126 workspace tests" figure was reproduced locally and breaks down **by crate** as `sv-age 6 + sv-app 25 + sv-core 22 + sv-crypto 20 + sv-crypto-traits 6 + sv-platform 38 + sv-sys-sodium 3 + sv-sys-sss 4 + sv-types 2 = 126`. The heaviest by count are **`sv-platform` (38)** and **`sv-app` (25)**; the longest-running by wall-clock are the **Argon2id-driven `sv-platform` tests (~33 s)** and **`sv-app`'s age-backed lifecycle e2e (~71 s, gated behind `SV_AGE_BIN`)** — exactly the work a never-executed CI must carry. (`sv-age` is only 6 fast tests; the age-backed lifecycle test lives in `sv-app`, not `sv-age`.) The count is asserted from a local run, not from CI.
+> **Test count provenance (review-time figure — superseded; see Currency note).** At review time the suite was **126 workspace tests**, reproduced locally as `sv-age 6 + sv-app 25 + sv-core 22 + sv-crypto 20 + sv-crypto-traits 6 + sv-platform 38 + sv-sys-sodium 3 + sv-sys-sss 4 + sv-types 2 = 126`. **It has since grown to 253 (249 passing + 4 env-gated e2e)** as the stego/meta/qr/watermark modules and additional tests landed; the current per-crate breakdown is in §0. The longest-running remain the Argon2id-driven `sv-platform` tests and `sv-app`'s age-backed lifecycle e2e (gated behind `SV_AGE_BIN`). CI has since executed (commit `780444d`).
 
 ---
 
-## 0. Resolution log — release-engineering pass (2026-06-15, post-review)
+> ## ⚠️ Currency note (read first) — updated 2026-06-17
+>
+> This is a **dated, point-in-time review (2026-06-15)**; its findings below are **preserved as
+> originally written**. Several are **now resolved** — do not read the body as current status:
+> - **CI has run and is green** across the 3-OS matrix (commit `780444d`). The body's "CI has never
+>   run / not a git repo / never executed" claims are **obsolete** — the repo is on GitHub.
+> - **H4 (Windows `env_clear`) is validated**: the `age_backed_lifecycle_roundtrips` e2e ran green on
+>   `windows-latest`. Windows is **no longer gated out** of the build/test gate; **H5 signing is the
+>   sole remaining distribution blocker.**
+> - **All Medium findings are fixed** (the release-readiness audit's M-series), including the
+>   misrouted Home tile and the missing `intact`/`split-file` tiles; the **desktop crate is now
+>   CI-gated** with an `ApiError ↔ UI` parity test.
+> - **Generic file-vs-expected Verify Integrity is implemented** (`integrity_verify_integrity`,
+>   `sv-platform`) — superseding the body's "not yet implemented" notes.
+> - **Test count:** a local `cargo test --workspace` now reports **253 functions — 249 passing, 4
+>   `#[ignore]` env-gated `age`/ExifTool e2e** (run in CI) — plus 1 desktop parity test. This replaces
+>   every "126/127" figure below.
+>
+> See §0 (resolution log, updated) and **[`docs/architecture/`](architecture/README.md)** for the
+> current authoritative picture.
+
+---
+
+## 0. Resolution log — release-engineering pass (2026-06-15; updated 2026-06-17)
 
 The findings below are preserved **as originally raised** (point-in-time snapshot). A subsequent
 release-engineering pass (P1–P4) closed several of them; recorded here for traceability:
@@ -29,15 +52,17 @@ release-engineering pass (P1–P4) closed several of them; recorded here for tra
   **hardening-risk H1–H14** (VALIDATION-PLAN/RELEASE-READINESS). A full renumber was deliberately
   declined — both series are internally coherent and woven across 4+ docs; a partial renumber leaves
   gaps and a full one risks drift in frozen design docs.
-- **#6 / #8 stale test counts** — **resolved**: RELEASE-READINESS.md, DEPLOYMENT.md, VALIDATION-RESULTS.md
-  now read **127** workspace tests. The figure is **+1 over this review's reproduced 126**: the
-  release-engineering pass added the `sv-types` `ALL_CODES` completeness/tripwire test (so `sv-types`
-  is now 3, not 2). The desktop crate carries 1 more (the parity test). Current per-crate:
-  `sv-age 6 + sv-app 25 + sv-core 22 + sv-crypto 20 + sv-crypto-traits 6 + sv-platform 38 +
-  sv-sys-sodium 3 + sv-sys-sss 4 + sv-types 3 = 127` (+1 desktop).
-- **H4 Windows `env_clear` code fix** — **landed** (`SystemRoot`/`SystemDrive`/`TEMP`/`TMP` allow-list
-  in `sv-age` + `payload.rs`); still **awaiting execution** on the `windows-latest` CI job (no git
-  remote yet → CI has never run). **H5 signing/notarization remains the distribution blocker.**
+- **#6 / #8 stale test counts** — **resolved + re-reconciled (2026-06-17)**: the suite has since
+  grown well beyond the review's 126. A local `cargo test --workspace` now reports **253 test
+  functions — 249 passing, 4 `#[ignore]` env-gated `age`/ExifTool e2e** (run in CI). Current
+  per-crate (passing): `sv-stego 74 + sv-platform 46 + sv-app 37 + sv-core 22 + sv-crypto 20 +
+  sv-watermark 11 + sv-meta 8 + sv-qr 8 + sv-age 6 + sv-crypto-traits 6 + sv-sys-sss 4 + sv-types 4 +
+  sv-sys-sodium 3 = 249`; +4 ignored = 253; +1 desktop parity test. RELEASE-READINESS.md,
+  DEPLOYMENT.md, VALIDATION-RESULTS.md, and CI-VALIDATION.md now carry these figures.
+- **H4 Windows `env_clear`** — **resolved & validated on CI (2026-06-15)**: the
+  `SystemRoot`/`SystemDrive`/`TEMP`/`TMP` allow-list landed in `sv-age` + `payload.rs`, and the
+  `age_backed_lifecycle_roundtrips` e2e **ran green on the `windows-latest` job** (commit `780444d`).
+  CI has executed (the repo is on GitHub). **H5 signing/notarization remains the sole distribution blocker.**
 - **Placeholder icons** — **resolved (interim)**: a real `.png`/`.icns`/`.ico` set replaces the
   299-byte placeholder and is wired into `bundle.icon`; final brand assets still pending.
 
@@ -47,23 +72,23 @@ release-engineering pass (P1–P4) closed several of them; recorded here for tra
 
 ### Recommendation: **GO, with caveats (desktop-only; Windows gated out; see distribution rule below)**
 
-The implemented core is releasable for the macOS/Linux desktop target. The cryptographic spine is well-constructed and its documented security claims are matched by the source: the oracle-safe error merge is applied identically at every boundary (`crates/sv-platform/src/error.rs:58-88`, `crates/sv-core/src/error.rs:68-103`), secret value types are zeroizing, redacted, growth-proof, and non-`Serialize` (`crates/sv-crypto-traits/src/lib.rs:151-254`), the secret-sharing header binding via `derive_key` is cryptographically sound and tested (`crates/sv-platform/src/sharing.rs:121-129,605-630`), the `age` subprocess is hash-pinned/env-cleared/no-shell/timeout-bounded and fails closed in release (`crates/sv-age/src/lib.rs:62-149`; `desktop/src/lib.rs:272-315`), and the Argon2id floor meets OWASP guidance (`crates/sv-crypto/src/policy.rs:15-22`). The architecture is unusually disciplined (dependency-inverted trait ABI, `crates/sv-crypto-traits` → impls → backend-free domain crates), 126 workspace tests pass locally, and the redesigned frontend delivers a consistent, plain-language, oracle-safe UX. **No security blocker was found in the code under review.**
+The implemented core is releasable for the macOS/Linux desktop target. The cryptographic spine is well-constructed and its documented security claims are matched by the source: the oracle-safe error merge is applied identically at every boundary (`crates/sv-platform/src/error.rs:58-88`, `crates/sv-core/src/error.rs:68-103`), secret value types are zeroizing, redacted, growth-proof, and non-`Serialize` (`crates/sv-crypto-traits/src/lib.rs:151-254`), the secret-sharing header binding via `derive_key` is cryptographically sound and tested (`crates/sv-platform/src/sharing.rs:121-129,605-630`), the `age` subprocess is hash-pinned/env-cleared/no-shell/timeout-bounded and fails closed in release (`crates/sv-age/src/lib.rs:62-149`; `desktop/src/lib.rs:272-315`), and the Argon2id floor meets OWASP guidance (`crates/sv-crypto/src/policy.rs:15-22`). The architecture is unusually disciplined (dependency-inverted trait ABI, `crates/sv-crypto-traits` → impls → backend-free domain crates), the workspace suite passes (now **249/253**, up from the 126 at review time — see Currency note), and the redesigned frontend delivers a consistent, plain-language, oracle-safe UX. **No security blocker was found in the code under review.**
 
 **Secure Vault container core — separately reviewed, sound.** The flagship module was examined on its own merits, not only as the "older surface" the cross-module findings critique. The `.svault` format is a frozen, authenticated layout (`crates/sv-core/src/format.rs:4-23,78-108`): `MAGIC ‖ FORMAT_VERSION ‖ HEADER_LEN ‖ CBOR header ‖ payload ‖ minisign trailer`, signed over `BLAKE3(BLAKE3(MAGIC‖VERSION‖HEADER_LEN‖HEADER) ‖ BLAKE3(PAYLOAD))`, so any header or payload byte tamper breaks signature verification on read; section digests are recomputed, not stored. The header carries **only wrapped secrets, never plaintext keys**, and no item directory (the directory lives inside the single age-encrypted payload). CBOR uses `deny_unknown_fields` (`format.rs:245-256`). Master-key wrapping is domain-separated by field **and** vault UUID and is transplant-resistant by test (`crates/sv-core/src/keys.rs:52,192-233`). Session split/recover (`keys_split`/`keys_recover`, `src-tauri/src/service.rs:565-630`) is exercised by a count-precheck roundtrip test. The vault core is examined and sound; the §5 vault findings concern guard/naming gaps at its edges, not the container internals.
 
 The caveats that qualify the GO:
 
-- **Windows is a hard blocker and must be excluded from this release.** `env_clear()` (`crates/sv-age/src/lib.rs:107`, `src-tauri/src/payload.rs:45`) has no `SystemRoot`/`SystemDrive` allow-list and may *break* `age`/`age-keygen` on Windows; this is falsified on macOS but **untested on Windows**. Importantly, the Windows validation is **fully designed** — `.github/workflows/ci.yml:28-52` installs age on every OS, sets `SV_AGE_BIN`/`SV_AGE_KEYGEN_BIN`, and runs the real `age_backed_lifecycle_roundtrips` e2e (create → keygen → encrypt/decrypt, all through `env_clear`) inside the `windows-latest` job, with explicit PASS/FAIL criteria and the exact `SystemRoot`/`SystemDrive` fix pre-specified (`docs/RELEASE-READINESS.md:26-49`). The only gap is that **it has never executed** (the tree is not a git repo and has no remote). The gate is correct by inspection; running it is what remains.
+- **Windows — RESOLVED (was a hard blocker at review time).** `env_clear()` (`crates/sv-age/src/lib.rs`, `src-tauri/src/payload.rs`) now carries a `SystemRoot`/`SystemDrive`/`TEMP`/`TMP` allow-list, and the `age_backed_lifecycle_roundtrips` e2e (create → keygen → encrypt/decrypt, all through `env_clear`) **ran green on the `windows-latest` CI job** (commit `780444d`, 2026-06-15; see [CI-VALIDATION.md](CI-VALIDATION.md)). The validation gate the review described as "designed but never executed" has executed and passed — Windows is **no longer excluded**.
 - **Signing/notarization (H5) blocks _all_ distribution, including beta.** Per `docs/RELEASE-READINESS.md` (status: "blocked on H4 + H5"), H5 blocks any distribution incl. beta. A quarantined non-notarized nested binary is SIGKILLed on macOS (verified). Accordingly, this GO authorizes **macOS/Linux development/CI builds for the team**, not distribution of any kind (no beta, no public download) until H5's signed-artifact scripts and clean-machine launch pass.
 - **Two UX defects mislead a first-time user** and should be fixed pre-release: the Home "Check a file" tile routes to signature-verify, not integrity-check (`index.html:69-73`), and two shipping tools are missing from the Home grid (`index.html:83-94`).
 
-**Status discipline holds (verified).** `../docs/PRODUCT-VISION.md` is accurate: Verify Integrity is correctly marked partial; Steganography, Watermarking, Analysis, and Secure QR Transfer are all 🔬 *Research* with no product code. The implemented vs. planned vs. research labels match the code.
+**Status discipline holds (verified).** `../docs/PRODUCT-VISION.md` is accurate and its labels match the code. *(At review time Steganography, Watermarking, Analysis, and Secure QR Transfer were 🔬 Research with no product code, and Verify Integrity was partial. Update 2026-06-17: all four modules are now ✅ Implemented (standalone) and generic Verify Integrity ships as `integrity_verify_integrity` — PRODUCT-VISION reflects this.)*
 
 These caveats are bounded and have concrete, low-cost fixes. The release engineering — not the cryptography — is what is unfinished. Hence **go-with-caveats**, not no-go.
 
 ### Status note on "Integrity" as an in-scope module
 
-"Integrity" is in scope but **partial**: `../docs/PRODUCT-VISION.md` marks **Verify Integrity** as 🟡 *Implemented (vault-bound)*. What ships is (a) `integrity_check`, which verifies a `.svault` container, and (b) the standalone `intact` hash-compare screen plus standalone Hash File / Verify Signature commands. The **generic** "file vs. expected hash/signature" verify (composing Hash File + Verify Signature for arbitrary files) is **not yet implemented**. Treat Integrity as released for the vault-container and hash-compare paths only.
+"Integrity" was **partial** at review time: `integrity_check` (a `.svault` container) plus the standalone `intact` hash-compare screen and standalone Hash File / Verify Signature commands. *(Update 2026-06-17: the **generic** "file vs. expected hash/signature" verify — composing Hash File + Verify Signature for arbitrary files — is now **implemented** as `integrity_verify_integrity` (`sv-platform`), UI **Verify a download**; `../docs/PRODUCT-VISION.md` marks Verify Integrity ✅ Implemented (standalone). The "not yet implemented" note below is superseded.)*
 
 ---
 
@@ -112,7 +137,7 @@ These caveats are bounded and have concrete, low-cost fixes. The release enginee
 
 ## 4. Maintainability & Architecture
 
-**Assessment:** Unusually disciplined for this stage: clean dependency-inverted spine, 126 passing tests (reproduced locally; see provenance note), oracle-safe coded errors, zeroizing secret types, and a documented frozen-engine/additive-surface discipline. The principal risks are at the edges and in the docs, not the Rust core: the desktop crate is untested and outside every gate, the Tauri dependency tree escapes `cargo deny`, and there is meaningful doc drift. The single most consequential release fact is that **CI has never run** (the tree is not a git repo) — though the workflow itself (including the Windows e2e) is fully designed and correct by inspection.
+**Assessment:** Unusually disciplined for this stage: clean dependency-inverted spine, a passing suite (249/253; 126 at review time), oracle-safe coded errors, zeroizing secret types, and a documented frozen-engine/additive-surface discipline. The principal risks the review flagged were at the edges and in the docs, not the Rust core. *(Update 2026-06-17: most are now closed — **CI has run green** (commit `780444d`), the **desktop crate is now CI-gated** (fmt/clippy/test + an `ApiError ↔ UI` parity test), and the doc drift is being reconciled. The Tauri dependency tree is still outside the workspace `cargo deny` *licenses* gate (a separate desktop advisory/bans/sources scan exists).)*
 
 | Severity | Finding | Evidence (file:line) | Recommendation |
 |---|---|---|---|
@@ -120,9 +145,9 @@ These caveats are bounded and have concrete, low-cost fixes. The release enginee
 | positive | Recover temp-file bridge correct, RAII-clean (cleanup across `?` early-return), well-tested (6 share/recover tests incl. oracle-safety) | `src-tauri/src/platform.rs:263-307` + share tests | No change; model for future paste/transcribe (QR) bridges. |
 | medium | Desktop crate (large JS IPC + Tauri Rust) has zero tests and is workspace-excluded from fmt/clippy/test/deny; the 12-code `ApiError`↔`MESSAGES` contract is hand-duplicated with no parity test | `desktop/frontend/main.js:20-33,39-62`; `desktop/src/lib.rs`; `Cargo.toml` (excludes `desktop`); `crates/sv-types/src/lib.rs` | Add a JS unit test of `describe()` against a Rust-emitted fixture of every `ApiError` JSON; diff in CI. Generate `MESSAGES` keys from `sv-types`. Add `desktop/` to a CI clippy/fmt step. |
 | medium | Tauri/webview tree (hundreds of extra packages) escapes `cargo deny`/`audit` because `desktop` is workspace-excluded | `Cargo.toml` (excludes `desktop`); `deny.toml`; desktop `Cargo.lock` vs workspace lock | Add a second `cargo-deny`/`cargo-audit` invocation inside `desktop/` in CI (enforce advisories+yanked, warn on licenses). Closes the supply-chain blind spot on the executed runtime. |
-| medium | Doc drift — stale test counts across three release-gating docs (e.g. "77"/"80" vs reproduced 126) | `docs/RELEASE-READINESS.md`; `docs/VALIDATION-RESULTS.md`; `docs/DEPLOYMENT.md:276` | Update all three to 126 (by-crate breakdown in the provenance note above: `sv-platform` 38 and `sv-app` 25 are the heaviest; `sv-age` is 6, behind `SV_AGE_BIN`) or reference live CI output. `DEPLOYMENT.md`'s "expect 77 passing" would mislead a reviewer running the gate. |
+| medium → **resolved (2026-06-17)** | Doc drift — stale test counts across the release-gating docs | `docs/RELEASE-READINESS.md`; `docs/VALIDATION-RESULTS.md`; `docs/DEPLOYMENT.md`; `docs/CI-VALIDATION.md` | **Done:** all reconciled to the current **253 (249 passing + 4 `#[ignore]` env-gated `age`/ExifTool e2e)**, plus 1 desktop parity test. |
 | medium | Doc drift — CLAUDE.md and `../docs/PLATFORM-AUDIT.md` describe the crypto-services layer as "planned/NEW" when `sv-platform` is fully implemented and wired (38 tests); "H4" is used for two different items | `docs/M7-HARDENING.md` vs `docs/RELEASE-READINESS.md`; `CLAUDE.md` ("Planned clarifying move"); `../docs/PLATFORM-AUDIT.md` vs `crates/sv-platform/*` | Renumber one H4; update CLAUDE.md and `../docs/PLATFORM-AUDIT.md` to "implemented (`sv-platform`); vault not yet a consumer." Prevents a contributor rebuilding a shipped crate. |
-| medium | Carry-forward items accurately tracked but genuinely unaddressed in code; the H4 Windows validation gate is **fully designed but has never executed** (not a git repo) | `crates/sv-age/src/lib.rs:107`, `src-tauri/src/payload.rs:45` (no Windows allow-list); `.github/workflows/ci.yml:28-52` (real `windows-latest` e2e); `docs/RELEASE-READINESS.md:26-49`; `desktop/icons/128x128.png` (299 B placeholder); H5 | Init git repo + remote so `ci.yml` runs the Windows env_clear e2e; pre-emptively add `SystemRoot`/`SystemDrive` allow-list. Treat H4/H5 as open blockers per docs. |
+| medium → **resolved** | The H4 Windows validation gate has executed; carry-forwards re-checked | `crates/sv-age/src/lib.rs`, `src-tauri/src/payload.rs` (allow-list landed); `.github/workflows/ci.yml` (real `windows-latest` e2e); `docs/RELEASE-READINESS.md`; `desktop/icons/` (real interim set) | **Done:** repo is on GitHub; the Windows `env_clear` e2e ran **green** (commit `780444d`); the `SystemRoot`/`SystemDrive` allow-list is in place; the 299-byte placeholder icons were replaced with a real interim set. **H5 (signing) is the only open distribution blocker.** |
 | low | Two parallel file-level crypto stacks (vault vs `sv-platform`) with divergent hashing: vault buffers whole file (uncapped `std::fs::read`), platform streams | `src-tauri/src/service.rs:71-72,520-523,685-687` vs `crates/sv-platform/src/integrity.rs:17-31`, `crates/sv-platform/src/lib.rs:70-71` | Track follow-up to delegate vault file ops to `sv-platform` once the engine can be un-frozen; until then document the intentional divergence at both `hash_file` sites. (Same digest; operational, not correctness, split.) |
 | low | Stale workspace lint allowance (`todo = "allow"`) and stale M0 "no crypto logic" Cargo.toml header — no `todo!()` stubs remain | `Cargo.toml` header + lints | Remove `todo = "allow"` (or downgrade to warn); rewrite the header to the Phase-1-complete state. |
 | low | Product version split: core 0.0.0 vs shell 0.1.0; `AppInfo.app_version` reports the 0.0.0 sv-app crate | `crates/sv-types/src/lib.rs:23`; `src-tauri/src/lib.rs:119-126`; `desktop/Cargo.toml`, `desktop/tauri.conf.json` | Keep FORMAT/SUITE/CONTRACT separation; pick one product-version source so `AppInfo.app_version` matches the user-visible shell version. |
@@ -153,33 +178,33 @@ These caveats are bounded and have concrete, low-cost fixes. The release enginee
 
 ### A. Blocks release
 
-1. **[BLOCKER — Windows] `env_clear()` may break `age`/`age-keygen` on Windows; untested; CI gate designed but never run.** `crates/sv-age/src/lib.rs:107`, `src-tauri/src/payload.rs:45` (no `SystemRoot`/`SystemDrive` allow-list). The validation gate is fully designed and correct by inspection — `.github/workflows/ci.yml:28-52` runs `age_backed_lifecycle_roundtrips` on `windows-latest` with explicit PASS/FAIL criteria (`docs/RELEASE-READINESS.md:26-49`); it has never executed (not a git repo).
-   **Next action:** Ship **macOS/Linux only**. To enable Windows: init git repo + remote so `ci.yml` runs the Windows env_clear e2e, and pre-emptively add a `SystemRoot`/`SystemDrive` allow-list to `sv-age::run()` and `payload.rs`. Do not claim Windows support until that job passes.
+> **Status (2026-06-17):** of the three review-time blockers, **#1 (Windows) and #3 (CI never run)
+> are RESOLVED** — the repo is on GitHub and CI ran green across the matrix, including the Windows
+> `env_clear` e2e (commit `780444d`). **Only #2 (H5 signing) remains** — and only for *distribution*;
+> internal/CI/dev builds are unblocked.
 
-2. **[BLOCKER — distribution, incl. beta] Signing/notarization (H5) unaddressed.** `docs/RELEASE-READINESS.md` status is "blocked on H4 + H5"; bundle is inactive and icons are 299-byte placeholders (`desktop/icons/128x128.png`); a quarantined non-notarized nested binary is SIGKILLed on macOS (verified).
-   **Next action:** Provision signing/notarization credentials and real branding icons (`cargo tauri icon`); run the macOS + Windows signed-artifact validation scripts and a clean-machine launch green before **any** distribution. **No beta distribution may begin** until H5 passes — only internal/CI builds for the development team.
+1. **[RESOLVED — was Windows blocker] `env_clear()` on Windows.** The `SystemRoot`/`SystemDrive`/`TEMP`/`TMP` allow-list landed in `sv-age::run()` + `payload.rs`, and `age_backed_lifecycle_roundtrips` **ran green on `windows-latest`** (commit `780444d`, 2026-06-15; see [CI-VALIDATION.md](CI-VALIDATION.md)). Windows is no longer excluded.
 
-3. **[BLOCKER — gate credibility] No CI has ever run; the release gate hinges on it.** Tree is not a git repo. The heaviest tests (the Argon2id-driven `sv-platform` suite and `sv-app`'s age-backed lifecycle e2e) have never run in CI.
-   **Next action:** Initialize repo + remote; run the full workflow (fmt/clippy/build --locked/test/deny + the OS matrix) and confirm green before declaring the gate passed. This also unblocks #1.
+2. **[BLOCKER — distribution, incl. beta] Signing/notarization (H5) unaddressed.** The bundle is **active** (`bundle.active: true`) and ships a real **interim** icon set (the 299-byte placeholders were replaced; final branding still pending), so the remaining distribution blocker is signing alone: no signing/notarization material exists, and a quarantined non-notarized nested binary is SIGKILLed on macOS (verified).
+   **Next action:** Provision signing/notarization credentials and real branding icons (`cargo tauri icon`); run the macOS + Windows signed-artifact validation scripts and a clean-machine launch green before **any** distribution. **No beta distribution may begin** until H5 passes — only internal/CI builds for the development team. *(Out of scope for internal use per the internal-use mandate.)*
+
+3. **[RESOLVED — was gate-credibility blocker] CI has run.** The repo is on GitHub and the full workflow (fmt/clippy/build --locked/test/deny + the 3-OS matrix) ran **green** (commit `780444d`), including the Argon2id-driven `sv-platform` suite and `sv-app`'s age-backed lifecycle e2e.
 
 ### B. High (fix before release; not strictly blocking)
 
-4. **[HIGH — UX] Home "Check a file" tile misroutes a checksum-only user into a 3-field signature form.** `index.html:69-73` (`data-goto="verify"`).
-   **Next action:** Retarget the tile to the `intact` screen (or split into two tiles) so wording matches destination.
+4. **[RESOLVED — was HIGH UX] Home "Check a file" tile misroute.** The tile now routes to the integrity workflow; all Home/all-tools tiles were audited and the two live tools that had been missing (`intact`, `split-file`) were added (§0).
 
-5. **[HIGH — maintainability] Desktop crate untested and outside all gates; `ApiError`↔`MESSAGES` 12-code contract hand-duplicated.** `Cargo.toml` (excludes `desktop`); `desktop/frontend/main.js:20-33`; `crates/sv-types/src/lib.rs`.
-   **Next action:** Add a CI clippy/fmt step for `desktop/`, plus a JS `describe()` test diffed against a Rust-emitted `ApiError` fixture; ideally generate `MESSAGES` keys from `sv-types`.
+5. **[RESOLVED — was HIGH maintainability] Desktop crate untested and outside all gates.** `desktop/` now runs fmt/clippy(-D warnings)/test in CI, with an `ApiError ↔ UI message` parity test (`ui_contract`, 1:1 against `ApiError::ALL_CODES`); the duplicated `SV-IO` text was deduplicated via `ApiError::io_generic()` (§0).
 
-6. **[HIGH — supply chain] The Tauri/webview tree escapes `cargo deny`/`audit`.** `Cargo.toml` (excludes `desktop`); `deny.toml`.
-   **Next action:** Add a second `cargo-deny`/`cargo-audit` invocation inside `desktop/` in CI (enforce advisories+yanked).
+6. **[MOSTLY RESOLVED — was HIGH supply chain] The Tauri/webview tree under `cargo deny`/`audit`.** CI now runs `cargo-deny` + `cargo-audit` over the desktop webview tree (advisories/bans/sources) in the supply-chain job (see [CI-VALIDATION.md](CI-VALIDATION.md)). **Residual:** the *licenses* gate is still not enforced on that tree — tracked as a Low item.
 
 ### C. Medium (fix soon; safe post-release)
 
-7. **[MEDIUM — UX] Two shipping tools (`intact`, `split-file`) missing from Home grid; coming-soon placeholders shown instead.** `index.html:83-94` vs sidebar `index.html:38,42`. → Add `intact` and `split-file` tiles.
+7. **[RESOLVED — was MEDIUM UX] Two shipping tools (`intact`, `split-file`) missing from Home grid.** Both tiles were added to the Home grid (§0).
 
-8. **[MEDIUM — docs] Stale test counts in three gating docs (77/80 vs reproduced 126).** `docs/RELEASE-READINESS.md`, `docs/VALIDATION-RESULTS.md`, `docs/DEPLOYMENT.md:276`. → Update to 126 (by-crate breakdown in the provenance note) or reference live CI output.
+8. **[RESOLVED — was MEDIUM docs] Stale test counts in the gating docs.** Reconciled (2026-06-17) to the current **253 (249 passing + 4 env-gated e2e)** across RELEASE-READINESS.md, VALIDATION-RESULTS.md, DEPLOYMENT.md, and CI-VALIDATION.md.
 
-9. **[MEDIUM — docs] CLAUDE.md and `../docs/PLATFORM-AUDIT.md` call shipped `sv-platform` "planned/NEW"; "H4" overloaded.** → Renumber one H4; mark `sv-platform` implemented (vault not yet a consumer).
+9. **[RESOLVED — was MEDIUM docs] `sv-platform` mislabeled "planned/NEW"; "H4" overloaded.** CLAUDE.md and `../docs/PLATFORM-AUDIT.md` mark `sv-platform` implemented (vault not yet a consumer); the H-series namespaces are explicitly scoped (Header-schema H1–H6 vs hardening-risk H1–H14) (§0).
 
 ### D. Low (post-release hygiene)
 
@@ -204,4 +229,4 @@ These caveats are bounded and have concrete, low-cost fixes. The release enginee
 
 ---
 
-**Bottom line:** The implemented modules — including the Secure Vault container core (authenticated CBOR header, master-key wrapping, session split/recover), reviewed on its own merits and found sound — are cryptographically and architecturally strong enough to release on macOS/Linux as a go-with-caveats. Integrity ships only for the vault-container and hash-compare paths; generic file-vs-expected verify is not yet implemented. Status discipline holds: research and QR features are correctly labeled 🔬. The gating work is release engineering — running the (already-designed) CI for the first time, resolving the Windows `env_clear` question, and provisioning signing — not core correctness. Per the cited H5 rule, **no distribution including beta** may begin until signing passes. Fix the misrouted Home tile and close the desktop test/audit gaps in parallel; everything else is post-release hygiene.
+**Bottom line:** The implemented modules — including the Secure Vault container core (authenticated CBOR header, master-key wrapping, session split/recover), reviewed on its own merits and found sound — are cryptographically and architecturally strong enough to release on macOS/Linux as a go-with-caveats. *(Update 2026-06-17: generic file-vs-expected verify is now implemented (`integrity_verify_integrity`); the previously research-stage stego/watermark/analysis/QR modules now ship standalone. The release-engineering gaps the review flagged — running CI, the Windows `env_clear` question, the misrouted Home tile, the desktop test/audit gaps — are **closed**: CI ran green across the matrix (commit `780444d`), H4 is validated, and the desktop crate is CI-gated.)* The remaining gating work is **distribution signing (H5) only** — and per the H5 rule, **no distribution including beta** may begin until signing passes; internal/CI/dev builds are unblocked. (H5 is out of scope for internal use.)

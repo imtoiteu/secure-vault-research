@@ -507,23 +507,32 @@ fn require_dev_build(what: &str) -> Result<(), String> {
     }
 }
 
-/// Resolve a bundled binary: `SV_AGE*` env override → Tauri **resource** dir → next to the
-/// executable. On Unix, ensure it is executable (resource copies can lose the bit).
+/// Resolve a bundled binary: `SV_AGE*` env override (**debug builds only**) → Tauri **resource**
+/// dir → next to the executable. On Unix, ensure it is executable (resource copies can lose the
+/// bit). A release build ignores the env override and resolves only from the bundle (audit M-3).
 fn resolve_binary(app: &tauri::AppHandle, stem: &str) -> Result<PathBuf, String> {
     use tauri::Manager;
     let name = exe_name(stem);
 
-    let env_key = match stem {
-        "age" => "SV_AGE_BIN",
-        "age-keygen" => "SV_AGE_KEYGEN_BIN",
-        "exiftool" => "SV_EXIFTOOL_BIN",
-        _ => "",
-    };
-    if !env_key.is_empty() {
-        if let Ok(p) = std::env::var(env_key) {
-            let p = PathBuf::from(p);
-            if p.exists() {
-                return ensure_executable(p);
+    // Dev-only path override. In a **release** build the binary must come from the bundled
+    // resource dir (or next to the executable): an env var must not be able to redirect which
+    // binary we launch. The BLAKE3 pin would still reject a non-matching one (so this is hardening,
+    // not a hole), but closing the resolution surface in release keeps a shipped app from being
+    // pointed at an out-of-bundle toolchain (audit M-3). `cargo tauri dev` (debug) still honors
+    // `SV_AGE_BIN` / `SV_AGE_KEYGEN_BIN` / `SV_EXIFTOOL_BIN` for local iteration.
+    if cfg!(debug_assertions) {
+        let env_key = match stem {
+            "age" => "SV_AGE_BIN",
+            "age-keygen" => "SV_AGE_KEYGEN_BIN",
+            "exiftool" => "SV_EXIFTOOL_BIN",
+            _ => "",
+        };
+        if !env_key.is_empty() {
+            if let Ok(p) = std::env::var(env_key) {
+                let p = PathBuf::from(p);
+                if p.exists() {
+                    return ensure_executable(p);
+                }
             }
         }
     }

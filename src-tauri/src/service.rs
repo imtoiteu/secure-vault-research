@@ -25,6 +25,9 @@ use sv_crypto_traits::{
     AgeIdentity, CryptoError, Ed25519PublicKey, Hasher, KdfParams, Key32, KeyShare,
     MinisignSignature, Salt, SecretBytes, SecretSharer, Signer, KEYSHARE_LEN,
 };
+// Single source of truth for the whole-file read ceiling, shared with the crypto-services layer so
+// the two can never drift (audit M-2).
+use sv_platform::MAX_PLAINTEXT_BYTES;
 use sv_types::{
     IntegrityReport, ItemInfo, KdfDescriptor, SessionHandle, ShareExportInfo, SharePolicy,
     VaultMeta,
@@ -687,6 +690,21 @@ fn item_info(e: &ItemEntry) -> ItemInfo {
 }
 
 fn read_file(path: &Path) -> Result<Vec<u8>, VaultError> {
+    // Cap whole-file reads at the same 2 GiB ceiling the crypto-services layer enforces
+    // (`sv_platform::MAX_PLAINTEXT_BYTES`, documented there as "the vault's 2 GiB cap" — a cap the
+    // vault assumed but never enforced; that gap is audit M-2). A multi-gigabyte input now fails
+    // with a clear `TooLarge` ("file too large") instead of an unbounded allocation / OOM. The size
+    // is checked from metadata *before* the read, so the allocation never happens. Every read path
+    // goes through here — add-item source, integrity/hash/sign/verify, recover shares, AND opening
+    // the vault container itself (so selecting a huge non-vault file can't OOM the open path).
+    // Vault hashing is not yet streamed (tracked separately as H1), so the cap applies uniformly.
+    let meta = std::fs::metadata(path).map_err(|e| map_io(e, path))?;
+    if meta.len() > MAX_PLAINTEXT_BYTES {
+        return Err(VaultError::TooLarge {
+            limit_bytes: MAX_PLAINTEXT_BYTES,
+            actual_bytes: meta.len(),
+        });
+    }
     std::fs::read(path).map_err(|e| map_io(e, path))
 }
 

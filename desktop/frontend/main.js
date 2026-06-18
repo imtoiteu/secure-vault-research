@@ -94,6 +94,7 @@ async function withButton(btn, fn) {
       btn.disabled = false;
       btn.textContent = label;
     }
+    clearSecretInputs(btn);
   }
 }
 
@@ -318,6 +319,18 @@ function hideAllResults() {
   document.querySelectorAll('[id$="-result"]').forEach((el) => el.classList.add("hidden"));
 }
 
+// Wipe any passphrase typed on the screen that owns `btn`, so a secret never lingers in the DOM
+// after an operation completes — on success OR failure (a wrong-passphrase error must not leave it
+// behind). Input-validation failures return before the runTask/withButton wrapper runs, so an empty
+// or mismatched field is preserved for the user to correct.
+function clearSecretInputs(btn) {
+  const scope = btn && btn.closest(".screen");
+  if (!scope) return;
+  scope.querySelectorAll('input[type="password"]').forEach((i) => {
+    i.value = "";
+  });
+}
+
 // Run a task that produces a result card. Shows a "Working…" busy state, renders the returned
 // result on success, or an error card (optionally refined by errMap) on failure.
 async function runTask(btn, resultId, fn, errMap) {
@@ -337,6 +350,7 @@ async function runTask(btn, resultId, fn, errMap) {
       btn.disabled = false;
       btn.textContent = label;
     }
+    clearSecretInputs(btn);
   }
 }
 
@@ -425,9 +439,22 @@ function showScreen(name) {
   // The status bar is a single global element; a message left by the previous screen's task would
   // otherwise linger under an unrelated tool. Clear it on every navigation (as a language switch does).
   setStatus("", "info");
-  // Don't leave rendered secret share codes on screen after navigating away.
-  const pieces = $("tk-split-secret-pieces");
-  if (pieces) pieces.innerHTML = "";
+  // A result card (a PASS/FAIL verdict or an output path) left by the previous screen would otherwise
+  // read as the current tool's result — actively misleading for the verification tools. Hide them all
+  // on navigation, mirroring the lock/recover/language-switch paths.
+  hideAllResults();
+  // Don't leave rendered operation output on screen after navigating away: secret share codes,
+  // file-split paths, and vault recovery-share paths. (The vault item-list is session state, not an
+  // operation result, so it is intentionally preserved here.)
+  ["tk-split-secret-pieces", "tk-split-file-list", "share-list"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = "";
+  });
+  // A passphrase typed but not submitted (or left after a failed attempt) must not linger in the DOM
+  // once the user leaves the screen. Clear every passphrase field on navigation.
+  document.querySelectorAll('input[type="password"]').forEach((i) => {
+    i.value = "";
+  });
 }
 
 function wireSidebar() {
@@ -440,6 +467,130 @@ function initTiles() {
   document.querySelectorAll(".tile[data-goto]").forEach((t) => {
     t.addEventListener("click", () => showScreen(t.dataset.goto));
   });
+}
+
+// ---- collapsible sidebar groups ------------------------------------------
+// Expand/collapse the tool groups and remember the choice for the session. This is purely
+// additive presentation: it never calls showScreen and never touches the .navitem buttons, so
+// the name-based router is unaffected. `aria-expanded` is both the a11y state and the CSS hook.
+const NAVGROUP_STORE = "sv.navGroups";
+
+function loadNavGroupState() {
+  try {
+    const v = JSON.parse(sessionStorage.getItem(NAVGROUP_STORE));
+    return v && typeof v === "object" ? v : {};
+  } catch (_) {
+    return {};
+  }
+}
+
+function initNavGroups() {
+  const state = loadNavGroupState();
+  document.querySelectorAll(".navgroup-toggle").forEach((btn) => {
+    const wrap = btn.closest(".navgroup-wrap");
+    const key = wrap && wrap.dataset.group;
+    if (!key) return;
+    // Default is expanded (everything visible) for first-run discoverability; a stored session
+    // choice overrides it.
+    if (key in state) btn.setAttribute("aria-expanded", state[key] ? "true" : "false");
+    btn.addEventListener("click", () => {
+      const expanded = btn.getAttribute("aria-expanded") !== "true";
+      btn.setAttribute("aria-expanded", expanded ? "true" : "false");
+      state[key] = expanded;
+      try {
+        sessionStorage.setItem(NAVGROUP_STORE, JSON.stringify(state));
+      } catch (_) {
+        /* persistence best-effort; the toggle still works in-session via the DOM */
+      }
+    });
+  });
+}
+
+// ---- Recent Tools (Home) -------------------------------------------------
+// A convenience strip at the top of Home listing the few tools the user opened most recently, so
+// repeat tasks are one click away. Design notes:
+//   • OBSERVER only — it records navigations by listening for clicks on existing nav items / Home
+//     tiles. It does NOT modify showScreen or routing.
+//   • Tile labels are mirrored from the live sidebar buttons, so tool names need no new
+//     translations and follow the active language (re-rendered on language switch).
+//   • State lives in sessionStorage (session-scoped, like the nav groups).
+const RECENT_STORE = "sv.recentTools";
+const RECENT_MAX = 4;
+const RECENT_SKIP = new Set(["home"]); // Home hosts the strip; don't list it as a tool.
+
+function loadRecent() {
+  try {
+    const v = JSON.parse(sessionStorage.getItem(RECENT_STORE));
+    return Array.isArray(v) ? v.filter((s) => typeof s === "string") : [];
+  } catch (_) {
+    return [];
+  }
+}
+
+function recordRecent(screen) {
+  if (!screen || RECENT_SKIP.has(screen)) return;
+  // Only record real, routable tools (a matching sidebar item must exist).
+  if (!document.querySelector(`#sidebar-nav .navitem[data-screen="${screen}"]`)) return;
+  let list = loadRecent().filter((s) => s !== screen);
+  list.unshift(screen);
+  list = list.slice(0, RECENT_MAX);
+  try {
+    sessionStorage.setItem(RECENT_STORE, JSON.stringify(list));
+  } catch (_) {
+    /* best-effort */
+  }
+  renderRecentTools();
+}
+
+function renderRecentTools() {
+  const section = document.getElementById("recent-tools");
+  const row = document.getElementById("recent-tools-list");
+  if (!section || !row) return;
+  const list = loadRecent();
+  row.innerHTML = "";
+  if (!list.length) {
+    section.classList.add("hidden");
+    return;
+  }
+  list.forEach((screen) => {
+    const nav = document.querySelector(`#sidebar-nav .navitem[data-screen="${screen}"]`);
+    if (!nav) return; // tool no longer present — skip silently
+    const label = nav.textContent.trim();
+    const sp = label.indexOf(" ");
+    const icon = sp > 0 ? label.slice(0, sp) : "";
+    const title = sp > 0 ? label.slice(sp + 1) : label;
+
+    const tile = document.createElement("button");
+    tile.className = "tile";
+    tile.dataset.goto = screen;
+    if (icon) {
+      const ic = document.createElement("span");
+      ic.className = "tile-icon";
+      ic.textContent = icon;
+      tile.appendChild(ic);
+    }
+    const tt = document.createElement("span");
+    tt.className = "tile-title";
+    tt.textContent = title;
+    tile.appendChild(tt);
+    tile.addEventListener("click", () => showScreen(screen));
+    row.appendChild(tile);
+  });
+  section.classList.remove("hidden");
+}
+
+function initRecentTools() {
+  const record = (el) => {
+    const screen = el.dataset.screen || el.dataset.goto;
+    if (screen) recordRecent(screen);
+  };
+  document
+    .querySelectorAll("#sidebar-nav .navitem")
+    .forEach((n) => n.addEventListener("click", () => record(n)));
+  document
+    .querySelectorAll("#main .tile[data-goto]")
+    .forEach((tile) => tile.addEventListener("click", () => record(tile)));
+  renderRecentTools();
 }
 
 function initAbout() {
@@ -711,26 +862,45 @@ async function refreshItems() {
       <span class="item-name"></span>
       <span class="muted">${humanSize(it.size_bytes)} · ${shortHash(it.content_hash_hex)}</span>
       <button class="extract secondary btn-mini"></button>`;
-    li.querySelector("button.extract").textContent = t("vault.files.saveCopy");
+    const extractBtn = li.querySelector("button.extract");
+    extractBtn.textContent = t("vault.files.saveCopy");
     li.querySelector(".item-name").textContent = it.name; // textContent → no HTML injection
-    li.querySelector("button.extract").addEventListener("click", () => extractItem(it));
+    extractBtn.addEventListener("click", () => extractItem(it, extractBtn));
     list.appendChild(li);
   }
 }
 
-async function extractItem(it) {
+async function extractItem(it, btn) {
   // Native save dialog instead of a blind prompt(): the user picks a non-colliding name, and the
   // backend still refuses to overwrite (SV-OUTPUT-EXISTS) as a backstop.
   const dest = await pickPath("save", { defaultPath: it.name });
   if (!dest) return;
-  await withButton(null, async () => {
-    try {
+  // Report into a result card with reveal/open actions — the same feedback every other
+  // file-producing operation gives (Sign, Make recovery pieces, the toolkit), instead of a
+  // transient status-bar line with no way to find the saved file (audit M-8).
+  runTask(
+    btn,
+    "files-result",
+    async () => {
       await invoke("item_extract", { session, itemId: it.item_id, dest });
-      setStatus(t("status.savedTo", { name: baseName(dest), dest }), "ok");
-    } catch (e) {
-      setStatus(describe(e), "error");
-    }
-  });
+      return {
+        ok: true,
+        title: t("r.extract.title"),
+        rows: [{ label: t("r.label.savedTo"), value: dest, copy: true }],
+        actions: [revealAction(dest), openAction(dest)],
+      };
+    },
+    (err) =>
+      err && err.code === "SV-OUTPUT-EXISTS"
+        ? {
+            title: t("r.exists.title"),
+            message: t("r.exists.msg"),
+            actions: [
+              { label: t("r.exists.pickNew"), primary: true, onClick: () => extractItem(it, btn) },
+            ],
+          }
+        : null,
+  );
 }
 
 // ===========================================================================
@@ -765,6 +935,7 @@ window.onLangChange = function () {
   const sel = $("lang-select");
   if (sel) sel.value = window.i18n.getLang();
   updateAboutVersion();
+  renderRecentTools(); // re-mirror tool labels in the newly-selected language
   const badge = $("lock-badge");
   if (badge) badge.textContent = session ? t("vault.badge.unlocked") : t("vault.badge.locked");
   if (session) {
@@ -815,7 +986,9 @@ async function init() {
   window.i18n.apply(); // translate static markup up front (Vietnamese by default)
   initLang();
   wireSidebar();
+  initNavGroups();
   initTiles();
+  initRecentTools();
   initAbout();
   initBrowse();
   initDragDrop();

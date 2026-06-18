@@ -12,6 +12,10 @@ pub mod spatial;
 pub use jpeg::JpegCarrier;
 pub use spatial::SpatialCarrier;
 
+use std::io::Cursor;
+
+use image::{DynamicImage, ImageFormat};
+
 use crate::error::StegoError;
 
 /// Which family of cover a carrier embeds into. Recorded in the SVSTEG header's carrier flag
@@ -52,4 +56,30 @@ pub trait Carrier {
 #[must_use]
 pub fn is_jpeg(bytes: &[u8]) -> bool {
     bytes.starts_with(&[0xFF, 0xD8, 0xFF])
+}
+
+/// Upper bound on decoded width/height (px). A cover this large is absurd for LSB stego; the cap
+/// exists only to reject a decompression bomb, not to constrain legitimate use.
+const MAX_DECODE_DIM: u32 = 30_000;
+/// Upper bound on bytes the decoder may allocate. The 64 MiB file-size cap ([`crate::io`]) bounds the
+/// *compressed* input, but a crafted PNG can inflate ~1000:1; without this guard an in-spec file
+/// could decode to a multi-GiB RGBA8 buffer (OOM). Mirrors the bomb guards in `sv-qr`/`sv-watermark`.
+const MAX_DECODE_ALLOC_BYTES: u64 = 1024 * 1024 * 1024;
+
+/// Decode in-memory `bytes` of known `format` to a [`DynamicImage`] with explicit dimension and
+/// allocation limits, so a highly-compressed cover within the file-size cap cannot expand to an
+/// unbounded buffer. Any failure (including a limit breach) is the caller's to map to
+/// [`StegoError::CoverUndecodable`] (`SV-MALFORMED` — a fact about the file, never an oracle).
+pub(crate) fn decode_bounded(
+    bytes: &[u8],
+    format: ImageFormat,
+) -> Result<DynamicImage, image::ImageError> {
+    let mut reader = image::ImageReader::new(Cursor::new(bytes));
+    reader.set_format(format);
+    let mut limits = image::Limits::default();
+    limits.max_image_width = Some(MAX_DECODE_DIM);
+    limits.max_image_height = Some(MAX_DECODE_DIM);
+    limits.max_alloc = Some(MAX_DECODE_ALLOC_BYTES);
+    reader.limits(limits);
+    reader.decode()
 }

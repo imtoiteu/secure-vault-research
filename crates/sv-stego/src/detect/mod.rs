@@ -22,7 +22,7 @@ pub mod rs;
 use image::ImageFormat;
 use sv_types::{StegoDetectReport, StegoSignal, Suspicion};
 
-use crate::carrier::is_jpeg;
+use crate::carrier::{decode_bounded, is_jpeg};
 use crate::error::StegoError;
 
 /// The standing caveat attached to every report.
@@ -53,8 +53,7 @@ impl DecodedImage {
             ImageFormat::Png | ImageFormat::Bmp => {}
             _ => return Err(StegoError::UnsupportedCoverFormat),
         }
-        let img = image::load_from_memory_with_format(bytes, format)
-            .map_err(|_| StegoError::CoverUndecodable)?;
+        let img = decode_bounded(bytes, format).map_err(|_| StegoError::CoverUndecodable)?;
         let rgba_img = img.to_rgba8();
         let (width, height) = rgba_img.dimensions();
         Ok(Self {

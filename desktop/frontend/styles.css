@@ -50,6 +50,20 @@ h1 {
   margin: 0;
 }
 
+/* Brand block: app title with an attribution sub-line directly beneath it. */
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.brand-sub {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
 h2 {
   font-size: 1.05rem;
   margin: 0 0 0.75rem;
@@ -139,6 +153,54 @@ h3 {
   color: var(--muted);
   margin: 0.95rem 0 0.2rem;
   padding: 0 0.6rem;
+}
+
+/* Collapsible nav groups. The toggle reuses the .navgroup label look and adds a button reset
+   plus a disclosure caret driven entirely by aria-expanded (single source of truth). */
+.navgroup-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.navgroup-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.navgroup-toggle:hover {
+  color: var(--fg);
+  filter: none;
+}
+
+/* Caret sits at the right edge so the group label stays left-aligned with its items. Points down
+   when expanded, right when collapsed. Pure transform — no layout impact. */
+.navgroup-toggle::after {
+  content: "";
+  margin-left: auto;
+  flex: 0 0 auto;
+  width: 0;
+  height: 0;
+  border-left: 4px solid currentColor;
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  transform: rotate(90deg);
+  transition: transform 0.15s ease;
+  opacity: 0.75;
+}
+
+.navgroup-toggle[aria-expanded="false"]::after {
+  transform: rotate(0deg);
+}
+
+.navgroup-toggle[aria-expanded="false"] + .navgroup-items {
+  display: none;
 }
 
 .navitem {
@@ -362,6 +424,14 @@ textarea.dropping,
   padding: 1.25rem;
   max-width: 480px;
   width: 90%;
+}
+
+/* Ownership attribution line in the About panel (presentation only). */
+.modal-card .attribution {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  opacity: 0.85;
 }
 
 /* Header language selector */

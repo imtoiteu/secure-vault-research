@@ -1,9 +1,11 @@
 # Secure Vault — M0 / M0.1 Contracts (Foundations)
 
-**Status:** M0 complete + **M0.1 revision applied**. This document is the authoritative
-description of the crate boundaries, DTOs, crypto traits, `.svault` schema, IPC surface,
-verification gates, and the assumptions that could force a future change. **No production
-crypto exists yet** — adapters are `todo!()` stubs filled in M1–M6.
+**Status:** M0 + M0.1 complete, and **the full roadmap (M1–M7) is now implemented.** This document
+remains the authoritative description of the *foundational* crate boundaries, DTOs, crypto traits,
+`.svault` schema, IPC surface, verification gates, and the assumptions that could force a future
+change — i.e. the frozen contracts the rest of the build targets. **The adapters are now real**
+(BLAKE3, Argon2id, libsodium secretbox/Ed25519-minisign, Shamir, age — no `todo!()` stubs remain).
+For the current end-to-end picture, see [`docs/architecture/`](architecture/README.md).
 
 > **Freeze status (post-M0.1):**
 > - **Crypto-trait layer (`sv-crypto-traits`) — FROZEN.** The M0.1 review fixes (C1, C2,
@@ -20,8 +22,9 @@ crypto exists yet** — adapters are `todo!()` stubs filled in M1–M6.
 >   changes them (expanded error taxonomy + stable codes, `IncompatibleVersion`/`Malformed`/
 >   `InsufficientShares`, `IpcPassphrase` boundary newtype, session/secret-lifetime rules).
 
-> Scope reminder: M0/M0.1 only. M1 (BLAKE3+Argon2id), M2 (FFI), M3 (age), M4 (key
-> hierarchy), M5 (container), M6 (session/commands), M7 (hardening) are NOT started.
+> Scope reminder: this document specifies the **M0/M0.1 foundations**. The later milestones —
+> M1 (BLAKE3+Argon2id), M2 (FFI), M3 (age), M4 (key hierarchy), M5 (container), M6
+> (session/commands), M7 (hardening) — have **all since been implemented** against these contracts.
 
 ---
 
@@ -31,7 +34,7 @@ crypto exists yet** — adapters are `todo!()` stubs filled in M1–M6.
 sv-crypto-traits ◀───────────┬───────────┬─────────────┐   (stable ABI: traits + types, B1)
    ▲ (re-export)             │           │             │
 sv-crypto (impls)        sv-age      sv-sys-sss     sv-core ◀── sv-types
-   (stub adapters, M1+)   (M3)        (M2)              ▲           ▲ (leaf: DTOs, no secrets)
+   (real adapters)       (age)       (Shamir FFI)      ▲           ▲ (leaf: DTOs, no secrets)
                                                         │
                                           src-tauri (sv-app) ◀── sv-core, sv-types
                                           (IPC surface; no `tauri` dep yet)
@@ -41,11 +44,11 @@ sv-crypto (impls)        sv-age      sv-sys-sss     sv-core ◀── sv-types
 |---|---|---|---|
 | `sv-types` | Public IPC/UI DTOs | serde | **No (enforced invariant)** |
 | `sv-crypto-traits` | **Stable ABI**: crypto traits + value types + algorithm ids | serde, zeroize, thiserror | Yes (zeroizing types) |
-| `sv-crypto` | Concrete adapters (stubs); re-exports `sv-crypto-traits` | sv-crypto-traits | Yes (zeroizing types) |
+| `sv-crypto` | Concrete adapters (BLAKE3, Argon2id, minisign, Shamir); re-exports `sv-crypto-traits` | sv-crypto-traits, sv-sys-* | Yes (zeroizing types) |
 | `sv-core` | `.svault` schema, key hierarchy, service API, errors | sv-types, sv-crypto-traits, ciborium | Yes (in-memory only) |
-| `sv-age` | `FileCipher` over the bundled `age` subprocess (stub) | sv-crypto-traits | Yes (identity, transient) |
-| `sv-sys-sss` | libsss FFI (placeholder); re-exports `KEYSHARE_LEN` | sv-crypto-traits | n/a in M0 |
-| `sv-sys-sodium` | libsodium FFI (placeholder) | — | n/a in M0 |
+| `sv-age` | `FileCipher` over the bundled, hash-pinned `age` subprocess | sv-crypto-traits | Yes (identity, transient) |
+| `sv-sys-sss` | Shamir (`sss` hazmat) FFI; re-exports `KEYSHARE_LEN` | sv-crypto-traits | n/a (FFI) |
+| `sv-sys-sodium` | libsodium FFI (secretbox, Ed25519, BLAKE2b) | — | n/a (FFI) |
 | `src-tauri` (`sv-app`) | IPC command surface (contract) | sv-core, sv-types | No (wraps→zeroizes passphrase) |
 
 **Why this shape (B1):** the trait/type **contracts** live in the tiny, backend-free
@@ -88,7 +91,7 @@ Constants: `HASH_LEN=KEY_LEN=32`, `SALT_LEN=16`, `KEYSHARE_LEN=33` (**single sou
 key, no heap), **`KeyShare`** (C5 — fixed 33-byte array), `SecretBytes` (C5 — `Box<[u8]>`,
 growth-proof), `AgeIdentity`.
 
-**Traits → adapters (all stubbed in M0; each adapter reports a real `alg()`):**
+**Traits → adapters (stubbed at M0, now all implemented; each adapter reports its `alg()`):**
 
 | Trait | Methods | Adapter | Backend / Milestone |
 |---|---|---|---|
@@ -174,9 +177,9 @@ projecting `VaultError`→`ApiError` (E1–E3). All 14 commands implemented + an
 handshake. **Sessions:** opaque random `session_id` → table holding **only the zeroizing MK**
 + path; explicit `lock` zeroizes; the age identity / signing key are materialized transiently
 per op. **Unlock hardening:** verify-then-parse (signature before credential), KDF-param
-ceiling before Argon2. The literal `#[tauri::command]`/`tauri.conf.json` runtime shell is the
-only remaining glue (added with the frontend); the backend is complete and tested
-(stub `PayloadCipher` for the full lifecycle + an `age`-gated e2e).
+ceiling before Argon2. The literal `#[tauri::command]`/`tauri.conf.json` runtime shell now exists
+in the workspace-excluded `desktop/` crate; the backend is complete and tested (a `StubPayloadCipher`
+exercises the full lifecycle in unit tests, plus an `age`-gated e2e).
 
 ---
 
@@ -187,7 +190,7 @@ only remaining glue (added with the frontend); the backend is complete and teste
 | Format | `cargo fmt --all --check` | ✅ |
 | Lint | `cargo clippy --workspace --all-targets -- -D warnings` | ✅ no warnings |
 | Build | `cargo build --workspace --locked` | ✅ |
-| Tests | `cargo test --workspace` | ✅ 14 passed |
+| Tests | `cargo test --workspace` | ✅ 14 passed *(M0 acceptance snapshot; the suite is now **253** — 249 passing + 4 env-gated e2e — see [architecture/08](architecture/08-testing-and-validation.md))* |
 | Supply chain | `cargo deny check` + `cargo audit` | ✅ deny ok locally; both in CI |
 | SBOM stub | `scripts/sbom.sh` | ✅ emits dependency manifest |
 
@@ -210,10 +213,12 @@ These are decisions taken to let M0 proceed; each maps to an open question from 
 roadmap and the contract it would churn if revisited. **Recorded here so a later change is
 a conscious, reviewed event.**
 
-> **Post-M0.1:** the *type-level* building blocks for several of these now exist (the
-> `…Alg` enums and `AeadAlg::XSalsa20Poly1305` for A5, the single-source `KEYSHARE_LEN`
-> for A8, the `KdfParams` enum for A4). The assumptions themselves remain **gated** to the
-> milestone shown — M0.1 only froze the crypto-trait layer, not the schema/IPC.
+> **Update (post-implementation):** these assumptions have **all since been resolved** at the
+> milestones shown — the schema decisions (A1–A3, A5, A8, A10) in
+> [`M5-SCHEMA-DECISIONS.md`](M5-SCHEMA-DECISIONS.md), the IPC ones (A6, A7, A9) in
+> [`M6-IPC-DECISIONS.md`](M6-IPC-DECISIONS.md), and the Argon2 default (A4) carried with a recalibration
+> note into M7. The table is retained as the record of *why* each shape was chosen. (M0.1 itself only
+> froze the crypto-trait layer; the schema/IPC were decided in their own pre-M5/M6 reviews.)
 
 | # | Assumption (M0 default) | Risk if wrong | Contract(s) affected | Decide by |
 |---|---|---|---|---|
@@ -227,7 +232,7 @@ a conscious, reviewed event.**
 | A8 | `KEYSHARE_LEN = 33` (libsss hazmat 32-byte key shares) | Using full-secret `sss_create_shares` (64B) instead would change share size | `KeyShare`, `SssSharer`, share-envelope format | M2 |
 | A9 | `src-tauri` carries **no `tauri` dep** in M0; `CommandSurface` is a plain trait | Tauri's command macro constraints (arg types, async) may force signature tweaks | `sv-app::CommandSurface` | M6 |
 | A10 | CBOR (`ciborium`) is the header encoding | A different codec changes nothing structurally but breaks existing files | `VaultHeader` on-disk bytes | M5 |
-| A11 | Repo root for CI = `secure-vault/` (so `.github` is here); `git init` still pending | Wrong root breaks Actions paths | `.github/workflows/ci.yml` | before first push |
+| A11 | Repo root for CI = `secure-vault/` (so `.github` is here) | Wrong root breaks Actions paths | `.github/workflows/ci.yml` | **done** — repo on GitHub, CI green ([CI-VALIDATION.md](CI-VALIDATION.md)) |
 
 **Versioning safety net:** `FORMAT_VERSION` (on-disk) and `CONTRACT_VERSION` (IPC) exist
 specifically so that A1–A10, if revisited after release, become version bumps with
@@ -235,7 +240,11 @@ migration rather than silent breakage.
 
 ---
 
-## 9. Not done in M0 (explicitly deferred)
-No crypto logic (all adapters `todo!()`); no FFI/`unsafe` (sys crates are empty); no age
-subprocess; no Tauri runtime/`tauri.conf.json` wiring (stub only); no `git init`/first
-commit; no real SBOM (CycloneDX) — stub only. These belong to M1–M7 per the roadmap.
+## 9. Deferred at M0 — now done (status as of 2026-06-17)
+These were explicitly out of scope for M0 and have **since been delivered** across M1–M7: crypto
+logic (all adapters implemented — BLAKE3/Argon2id/secretbox/Ed25519-minisign/Shamir/age); FFI/`unsafe`
+(the `sv-sys-*` crates wrap libsodium and the `sss` hazmat); the bundled, hash-pinned `age`
+subprocess; the Tauri runtime/`tauri.conf.json` wiring (in the workspace-excluded `desktop/` crate);
+and `git init` + first commit (the repo is on GitHub, CI green — see
+[CI-VALIDATION.md](CI-VALIDATION.md)). **Still a stub:** the SBOM (`scripts/sbom.sh` emits a
+dependency-manifest stub, not full CycloneDX).

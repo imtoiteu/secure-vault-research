@@ -22,14 +22,16 @@ and is **not** applied to the committed defaults — the default state keeps `ca
      `binaries/age` and `binaries/age-keygen` (or the `SV_AGE_BIN_SRC` / `SV_AGE_KEYGEN_BIN_SRC`
      overrides) and embeds each as a compile-time pin (`SV_AGE_BLAKE3_PIN`,
      `SV_AGE_KEYGEN_BLAKE3_PIN`). A missing binary emits the `dev-unpinned` sentinel + a warning.
-  2. **bundled as a resource** — `bundle.resources: ["binaries/*"]` in
-     [`tauri.conf.json`](../desktop/tauri.conf.json).
+  2. **bundled as a resource** — `bundle.resources: ["binaries/**/*"]` in
+     [`tauri.conf.json`](../desktop/tauri.conf.json) (the recursive glob also carries ExifTool's
+     sibling `lib/` tree; see below).
   3. **verified at runtime** — [`desktop/src/lib.rs`](../desktop/src/lib.rs) resolves each binary
-     (env override → Tauri resource dir → next to the executable), ensures it is executable, and
-     checks its BLAKE3 against the pin (`AgeCipher::new_pinned` for `age`; an explicit check for
-     `age-keygen`) before first use.
+     (the `SV_AGE_BIN` / `SV_AGE_KEYGEN_BIN` env override **in debug builds only** → Tauri resource
+     dir → next to the executable), ensures it is executable, and checks its BLAKE3 against the pin
+     (`AgeCipher::new_pinned` for `age`; an explicit check for `age-keygen`) before first use.
   4. **fail-closed in release** — an unpinned binary is tolerated only in `debug_assertions`
-     builds; a release build refuses to start unpinned.
+     builds; a release build refuses to start unpinned. A release build also ignores the `SV_*_BIN`
+     runtime path overrides (they are honored only in debug), resolving solely from the bundle.
 - **ExifTool** (the **Analysis** module's engine) is **bundled into the app package and resolved from
   app resources — no env var, no external setup, no repository-relative path at runtime.** `build.rs`
   `stage_exiftool` copies the ExifTool distribution into `binaries/` on first build (the `exiftool`
@@ -38,8 +40,9 @@ and is **not** applied to the committed defaults — the default state keeps `ca
   BLAKE3-pinned into `SV_EXIFTOOL_BLAKE3_PIN` and bundled via `bundle.resources` (`binaries/**/*`,
   which carries the whole `lib/` tree as a sibling of the script). At runtime
   [`desktop/src/lib.rs`](../desktop/src/lib.rs) `build_meta` resolves it (the `SV_EXIFTOOL_BIN`
-  override is still honored first, then the **bundled resource dir**, then next to the executable) and
-  verifies it via `sv_meta::ExifTool::new_pinned`. The hardened runner adds `-config ""` (disables
+  override is honored first **in debug builds only**, then the **bundled resource dir**, then next to
+  the executable — a release build resolves solely from the bundle) and verifies it via
+  `sv_meta::ExifTool::new_pinned`. The hardened runner adds `-config ""` (disables
   ExifTool's executable-Perl config — the one attacker-controllable RCE surface), a throwaway cwd,
   `env_clear` (re-adding only a fixed `PATH=/usr/bin:/bin` on Unix so the script's `#!/usr/bin/env perl`
   finds system Perl), and a wall-clock timeout. **One deliberate difference from `age`:** ExifTool is an
@@ -181,31 +184,28 @@ cargo tauri build               # release + installers (icons + §5 config requi
 
 ## 5. Installer generation
 
-Bundling is **off by default** (`bundle.active: false`) so a stray `cargo tauri build` does not
-emit unsigned installers. Two release-time edits enable it:
-
-**(a) Generate icons** (Tauri requires an icon set to bundle). From `desktop/`:
-
-```sh
-cargo tauri icon path/to/Secure-Vault-1024.png    # writes desktop/icons/*
-```
-
-**(b) Edit [`desktop/tauri.conf.json`](../desktop/tauri.conf.json)** `bundle` block:
+Bundling is **enabled** (`bundle.active: true`), so `cargo tauri build` produces the app package —
+this is what the local ExifTool/age end-to-end verification and internal distribution use. **The
+emitted installers are unsigned until H5 (signing/notarization) is addressed; do not distribute them
+externally** (see [SIGNING-REQUIREMENTS.md](SIGNING-REQUIREMENTS.md)). The `bundle` block in
+[`desktop/tauri.conf.json`](../desktop/tauri.conf.json) currently reads:
 
 ```jsonc
 "bundle": {
   "active": true,
-  "targets": ["dmg", "app"],            // macOS; use ["msi","nsis"] on Windows, or "all"
+  "targets": "all",                     // per-host: emits .dmg/.app on macOS, .msi/.nsis on Windows
   "icon": [
     "icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png",
     "icons/icon.icns", "icons/icon.ico"
   ],
-  "resources": ["binaries/*"]           // unchanged — keeps the age toolchain bundled
+  "resources": ["binaries/**/*"]        // bundles the age toolchain + ExifTool (script + lib/ tree)
 }
 ```
 
-Then `cargo tauri build`. Keep `targets` per-host (you cannot emit a `.dmg` on Windows or an
-`.msi` on macOS).
+The icon set is wired (real `.png`/`.icns`/`.ico` files in `desktop/icons/`, an **interim** brand
+set — regenerate with `cargo tauri icon path/to/Secure-Vault-1024.png` when final art lands). `targets: "all"`
+emits whatever the **host** OS supports (you cannot emit a `.dmg` on Windows or an `.msi` on macOS);
+narrow it to e.g. `["dmg", "app"]` if you want a specific subset.
 
 ---
 
@@ -290,7 +290,7 @@ Run in order; do not ship if any gate is red.
 cargo fmt --all --check
 cargo clippy --workspace --all-targets -- -D warnings
 cargo build --workspace --locked
-cargo test --workspace            # expect 127 passing (desktop crate adds 1 more, run separately)
+cargo test --workspace            # 253 tests: 249 pass; 4 are #[ignore] age/ExifTool e2e (set SV_AGE_BIN[_KEYGEN] to run them). Desktop crate adds 1 parity test, run separately.
 cargo deny check
 ```
 
@@ -379,11 +379,12 @@ network) and `build.rs` prints a `dev-unpinned` warning (expected when using env
 
 **Icons are a hard build requirement** (verified by building the app): `tauri::generate_context!()`
 panics at compile time without `desktop/icons/icon.png` —
-`failed to open icon …/desktop/icons/icon.png`. The repo ships **placeholder** PNGs
-(`icons/{icon,32x32,128x128,128x128@2x}.png`, a plain blue square) so the app compiles and runs out
-of the box. **Replace them with real branding before release** via `cargo tauri icon path/to/logo.png`
-(which also emits `icon.icns`/`icon.ico` and the full set for installers), and add a `bundle.icon`
-array to `tauri.conf.json` when you enable bundling (§5).
+`failed to open icon …/desktop/icons/icon.png`. The repo ships a real **interim** icon set
+(`icons/{icon,32x32,128x128,128x128@2x}.png` plus the `.icns`/`.ico` and Windows Square* tiles) so the
+app compiles, runs, and bundles out of the box. **Replace it with final branding before a public
+release** via `cargo tauri icon path/to/logo.png` (which regenerates `icon.icns`/`icon.ico` and the
+full set for installers). `bundle.icon` is already wired in `tauri.conf.json` (§5), so a regenerated
+set is picked up with no further config edit.
 
 Then walk the smoke matrix in §8.2 — it now also exercises the validation fixes: confirm-passphrase
 on create (H2), "file already exists" on extract to an existing path (`SV-OUTPUT-EXISTS`, H3), and a
