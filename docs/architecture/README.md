@@ -1,6 +1,7 @@
 # Secure Vault — Architecture & Design Documentation Package
 
-**Status:** Authoritative as of 2026-06-17. **Primary source of truth: the source code** under
+**Status:** Authoritative as of 2026-06-17 (report-diagram set + discrepancy addendum added
+2026-06-18). **Primary source of truth: the source code** under
 `secure-vault/` (this directory's grandparent). Every structural claim below is cited to a
 `file:line` location that was read directly; nothing here is inferred from marketing or roadmap
 intent. Where documentation and implementation disagree, see
@@ -24,7 +25,9 @@ intent. Where documentation and implementation disagree, see
 | 6 | [06-security-design.md](06-security-design.md) | Threat model, trust boundaries, oracle-safety, zeroization, subprocess hardening, assumptions |
 | 7 | [07-uml-diagrams.md](07-uml-diagrams.md) | Use-case, component, sequence, deployment, and data-flow diagrams (Mermaid) |
 | 8 | [08-testing-and-validation.md](08-testing-and-validation.md) | Test inventory, CI gates, validation findings |
-| 9 | [09-discrepancies.md](09-discrepancies.md) | Documentation-vs-implementation divergences found during this pass |
+| 9 | [09-discrepancies.md](09-discrepancies.md) | Documentation-vs-implementation divergences found during this pass (incl. the 2026-06-18 architecture-audit addendum, D-6–D-12) |
+| 10a | [10-report-diagrams.md](10-report-diagrams.md) | Final-report diagram set, source-grounded — **Mermaid**. 15 required figures (system context, layered architecture, crate dependency graph, security-domain decomposition, crypto primitive stack, `.svault` byte-layout, key hierarchy, and the seal/unseal/encrypt/sign/integrity/stego/sharing/trust-boundary pipelines) + 8 supporting figures (IPC map, header CBOR model, detection fusion, QR, watermark, metadata, error→`ApiError` mapping, secret lifecycle) |
+| 10b | [10-report-diagrams.plantuml.md](10-report-diagrams.plantuml.md) | The same 23 diagrams expressed in **PlantUML** (syntax-checked and rendered to SVG with PlantUML 1.2024.8). Use whichever notation your report toolchain prefers; `10a` is canonical for the captions/facts |
 
 ## One-paragraph summary
 
@@ -47,4 +50,6 @@ binaries (`age`, `age-keygen`, `exiftool`).
   as such.
 - Citations are `path:line` relative to `secure-vault/` (e.g.
   [crates/sv-core/src/format.rs](../../crates/sv-core/src/format.rs)).
-- Diagrams are **Mermaid**; they render in GitHub and most Markdown viewers.
+- Diagrams are **Mermaid** (render in GitHub and most Markdown viewers). The final-report set
+  ([10a](10-report-diagrams.md)) is also available in **PlantUML** ([10b](10-report-diagrams.plantuml.md))
+  for toolchains that prefer it; `07-uml-diagrams.md` remains the inline design-package diagrams.

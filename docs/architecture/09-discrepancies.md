@@ -102,3 +102,40 @@ These were verified to **match** the implementation and are recorded so they are
   as documented.
 - **`SV_*_BIN` runtime overrides are debug-only** — `DEPLOYMENT.md` and `binaries/README.md` match
   [desktop/src/lib.rs:513](../../desktop/src/lib.rs#L513) after the M-3 doc ripple.
+
+---
+
+## Architecture-audit addendum (2026-06-18)
+
+A full source-grounded architecture audit (the one that produced the report figures in
+[10-report-diagrams.md](10-report-diagrams.md)) surfaced a further set of items. Unlike D-1–D-5
+(documentation-currency, already **reconciled**), these are recorded **for the record and are not yet
+applied** — that audit was a documentation/diagram task, so **no code or comments were changed**. They
+split into (i) stale code comments, (ii) dead UI markup, and (iii) one *deferred* crypto-hardening
+decision (a tracked design gap, **not a defect**). Severity is editorial except **D-9**.
+
+| ID | Where | Finding | Class | Recommendation (not yet applied) |
+|----|-------|---------|-------|----------------------------------|
+| D-6 | [src-tauri/src/lib.rs:5](../../src-tauri/src/lib.rs#L5) | Comment "Each method becomes a `#[tauri::command]` once the frontend lands" describes a pre-frontend state; the 38 `#[tauri::command]`s now live in `desktop/src/lib.rs`. | Stale comment | Reword to note the surface is realized in the `desktop/` crate. |
+| D-7 | [src-tauri/tauri.conf.json:1](../../src-tauri/tauri.conf.json#L1) | A 6-line stub (`"milestone": "wiring deferred to M6"`); the live Tauri config is [desktop/tauri.conf.json](../../desktop/tauri.conf.json). A reader auditing only `src-tauri/` would miss the real composition root + config. | Stale/placeholder | Add a one-line pointer to `desktop/` as the live root, or remove the stub. |
+| D-8 | [crates/sv-age/src/lib.rs:18](../../crates/sv-age/src/lib.rs#L18) | Module doc says "there is no wall-clock spawn timeout yet (M7)"; the timeout **is** implemented (`:50`, `:92-97`, `:147-159`) with a passing abort test. | Stale comment (contradicts code) | Delete the "no timeout yet" sentence. |
+| D-9 | [crates/sv-crypto/src/secretbox.rs:5](../../crates/sv-crypto/src/secretbox.rs#L5) | Key-wrap uses a random nonce and **no AAD**; binding wrapped secrets to `vault_uuid ‖ field ‖ version` (header-schema **H2**) is still deferred. Domain separation is currently provided by per-field BLAKE3-derived wrap keys (a wrong context derives a wrong key → MAC fails), so this is defense-in-depth deferral, **not an exploitable gap**. | Deferred design (H2) | Track under the M5 header-schema; add AAD when the suite block lands. |
+| D-10 | [crates/sv-crypto-traits/src/lib.rs:52](../../crates/sv-crypto-traits/src/lib.rs#L52) | `AeadAlg::XSalsa20Poly1305` is declared as a suite id but not wired into the `secretbox` functions (which take a raw `[u8;32]` key, no alg tag). | Loose end | Wire the id when H2's suite block is added, or annotate as reserved. |
+| D-11 | [crates/sv-crypto-traits/src/lib.rs:275](../../crates/sv-crypto-traits/src/lib.rs#L275) | `CryptoError::NotImplemented` is never constructed (no stub impls remain). | Dead variant | Remove, or annotate as reserved for future adapters. |
+| D-12 | [desktop/frontend/index.html:748](../../desktop/frontend/index.html#L748), [:1083](../../desktop/frontend/index.html#L1083) | Two "Coming soon" screens (`soon-hide`, `soon-detect`) have no nav/tile wiring and no `invoke`; `soon-detect` is superseded by the live `detect` screen. | Dead UI markup | Remove the orphaned sections. |
+
+### Re-confirmed as correct (not discrepancies)
+
+The audit independently re-verified three items already in *"Things that are correct"* above; they
+remain accurate:
+
+- Standalone **Encrypt/Decrypt File = Argon2id + `secretbox` (`SVENC`), not age** — confirmed in
+  `sv-platform/src/{crypto,artifact}.rs` (no `sv-age` dependency). The report figures draw this fork
+  explicitly (DIAG-12 vs the vault's age payload in DIAG-10/11).
+- **The vault is not yet a consumer of `sv-platform`** — confirmed from the manifests in *both*
+  directions (`sv-core` ⇎ `sv-platform`); the vault reaches primitives via `sv-crypto-traits`/`sv-crypto`.
+- **`SV_*_BIN` overrides are debug-only** — confirmed (release resolves bundled resources only, fail-closed).
+
+One manifest-level note for future docs: an early audit pass mis-attributed `sv-platform` as a
+dependency of `sv-stego`/`sv-qr`; the manifests show `sv-stego → sv-crypto-traits/sv-crypto/sv-types`
+and `sv-qr → sv-types` only, with `sv-platform` consumed solely by `sv-app`. DIAG-03 uses the exact edges.
