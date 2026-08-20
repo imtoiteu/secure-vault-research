@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="750" viewBox="0 0 1180 750" role="img" aria-label="Hình 3.5 — Mã hóa và giải mã tệp độc lập bằng mật khẩu (định dạng SVENC)">
+<defs>
+<marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#44506080"/></marker>
+<marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8a94a4"/></marker>
+<marker id="arwo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="none" stroke="#445060" stroke-width="1.4"/></marker>
+</defs>
+<style>text{font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1c2330}.ttl{font-size:20px;font-weight:700}.sub{font-size:12px;fill:#5b6675}.zl{font-size:12px;font-weight:700}.zs{font-size:10.5px;fill:#67707d}.el{font-size:10.5px;fill:#3a45060}.src{font-size:10px;fill:#77808c}</style>
+<rect x="0" y="0" width="1180" height="750" fill="#ffffff"/>
+<text class="ttl" x="26" y="34">Hình 3.5 — Mã hóa và giải mã tệp độc lập bằng mật khẩu (định dạng SVENC)</text>
+<text class="sub" x="26" y="54">Đường này KHÔNG dùng age: chỉ Argon2id + secretbox, thuần Rust + libsodium</text>
+<path d="M260 141.0 L545.0 141.0 L545.0 271.0 L830 271.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="527.175" y="126.5" width="65.65" height="17.5" rx="3" fill="#ffffffe0"/>
+<text x="560" y="137.0" text-anchor="middle" font-size="10.5" fill="#3a5060">dữ liệu rõ</text>
+<path d="M260 227.0 L310 227.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M155.0 282 L155.0 270.0 L415.0 270.0 L415.0 258" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M415.0 258 L415.0 270.0 L415.0 270.0 L415.0 282" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M520 313.0 L570 271.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M780 271.0 L830 271.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M980.0 302 L980.0 344.0 L720.0 344.0 L720.0 386" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M720.0 482 L510.0 512" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M710 550.0 L760 550.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M720.0 482 L490.0 482 L490.0 550.0 L260 550.0" fill="none" stroke="#8a94a4" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arwd)"/>
+<rect x="144.39249999999998" y="456.5" width="71.215" height="17.5" rx="3" fill="#ffffffe0"/>
+<text x="180" y="467.0" text-anchor="middle" font-size="10.5" fill="#3a5060">cùng cơ chế</text>
+<path d="M50 122.4 A105.0 12.4 0 0 1 260 122.4 L260 159.6 A105.0 12.4 0 0 1 50 159.6 Z" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/><path d="M50 122.4 A105.0 12.4 0 0 0 260 122.4" fill="none" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="155.0" y="139.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0A3D3D">Tệp đầu vào</text>
+<text x="155.0" y="154.0" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">≤ 2 GiB (kiểm bằng stat)</text>
+<rect x="50" y="196" width="210" height="62" rx="7" fill="#FFF0F6" stroke="#B5197F" stroke-width="1.6"/>
+<text x="155.0" y="225.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A0C3E">Mật khẩu</text>
+<text x="155.0" y="240.0" text-anchor="middle" font-size="10" fill="#5A0C3Ebb">IpcPassphrase → &amp;[u8]</text>
+<rect x="50" y="282" width="210" height="62" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="155.0" y="311.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1C2330">Muối 16 byte mới</text>
+<text x="155.0" y="326.0" text-anchor="middle" font-size="10" fill="#1C2330bb">getrandom</text>
+<rect x="310" y="196" width="210" height="62" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="415.0" y="225.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#3A1560">Argon2id</text>
+<text x="415.0" y="240.0" text-anchor="middle" font-size="10" fill="#3A1560bb">tham số theo sàn OWASP</text>
+<rect x="310" y="282" width="210" height="62" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="415.0" y="311.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#3A1560">BLAKE3::derive_key</text>
+<text x="415.0" y="326.0" text-anchor="middle" font-size="10" fill="#3A1560bb">ngữ cảnh tách miền theo MAGIC</text>
+<rect x="570" y="240" width="210" height="62" rx="7" fill="#FFF0F6" stroke="#B5197F" stroke-width="1.6"/>
+<text x="675.0" y="269.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A0C3E">Khóa tệp FEK (32 byte)</text>
+<text x="675.0" y="284.0" text-anchor="middle" font-size="10" fill="#5A0C3Ebb">Key32, tự xóa khi hủy</text>
+<rect x="830" y="240" width="300" height="62" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="980.0" y="269.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#3A1560">secretbox::seal (XSalsa20-Poly1305)</text>
+<text x="980.0" y="284.0" text-anchor="middle" font-size="10" fill="#3A1560bb">nonce 24 byte ngẫu nhiên + thẻ Poly1305 16 byte</text>
+<rect x="310" y="386" width="820" height="96" rx="7" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="720.0" y="426.25" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0A3D3D">Tệp .svenc — 62 byte header + bản mã</text>
+<text x="720.0" y="440.75" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">MAGIC &quot;SVENC\0&quot; (6) ‖ version u16 (2) ‖ kdf_alg (1) ‖ mem_kib u32 ‖ time_cost u32 ‖ parallelism u32 ‖ salt (16) ‖ aead_alg (1) ‖ nonce (24) ‖</text>
+<text x="720.0" y="453.25" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">ciphertext</text>
+<rect x="310" y="512" width="400" height="76" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="510.0" y="548.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0E3A19">Đường mở: đọc header, chặn tham số Argon2 vượt trần</text>
+<text x="510.0" y="563.0" text-anchor="middle" font-size="10" fill="#0E3A19bb">mem ≤ 4 GiB, t ≤ 64, p ≤ 64 — kiểm TRƯỚC khi chạy KDF</text>
+<rect x="760" y="512" width="370" height="76" rx="7" fill="#FCE4E4" stroke="#B3261E" stroke-width="1.6"/>
+<text x="945.0" y="548.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5E1611">Mọi thất bại ⇒ SV-UNAUTHORIZED</text>
+<text x="945.0" y="563.0" text-anchor="middle" font-size="10" fill="#5E1611bb">sai mật khẩu và bản mã bị sửa không phân biệt được</text>
+<path d="M50 526 A105.0 14 0 0 1 260 526 L260 574 A105.0 14 0 0 1 50 574 Z" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/><path d="M50 526 A105.0 14 0 0 0 260 526" fill="none" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="155.0" y="542.25" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0A3D3D">Tệp .svkey</text>
+<text x="155.0" y="556.75" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">cùng cơ chế, khác MAGIC — dùng để</text>
+<text x="155.0" y="569.25" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">cất khóa ký Ed25519 khi lưu trữ</text>
+<text x="50" y="636" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">Header là dữ liệu công khai nhưng CÓ THỂ bị kẻ tấn công điều khiển trước khi có bất kỳ phép xác thực nào, nên tham số chi phí Argon2 phải được chặn trần trước khi chạy KDF; nếu không, một tệp</text>
+<text x="50" y="650" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">.svenc độc hại có thể yêu cầu hàng chục GiB bộ nhớ. Tính toàn vẹn của header không được bảo vệ bằng AAD (secretbox không có AAD) mà bằng cách gấp MAGIC vào ngữ cảnh dẫn xuất khóa: sửa header ⇒ sai</text>
+<text x="50" y="664" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">khóa ⇒ hỏng thẻ xác thực.</text>
+<text class="src" x="26" y="724">Nguồn: crates/sv-platform/src/crypto.rs encrypt_file/decrypt_file; crates/sv-platform/src/artifact.rs seal_with_passphrase/open_with_passphrase</text>
+</svg>

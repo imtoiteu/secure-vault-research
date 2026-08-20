@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="660" viewBox="0 0 1160 660" role="img" aria-label="Hình 4.3 — Thông lượng mã hóa và giải mã tải trọng qua tiến trình con age">
+<defs>
+<marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#44506080"/></marker>
+<marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8a94a4"/></marker>
+<marker id="arwo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="none" stroke="#445060" stroke-width="1.4"/></marker>
+</defs>
+<style>text{font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1c2330}.ttl{font-size:20px;font-weight:700}.sub{font-size:12px;fill:#5b6675}.zl{font-size:12px;font-weight:700}.zs{font-size:10.5px;fill:#67707d}.el{font-size:10.5px;fill:#3a45060}.src{font-size:10px;fill:#77808c}</style>
+<rect x="0" y="0" width="1160" height="660" fill="#ffffff"/>
+<text class="ttl" x="26" y="34">Hình 4.3 — Thông lượng mã hóa và giải mã tải trọng qua tiến trình con age</text>
+<text class="sub" x="26" y="54">Đo trên một mẫu duy nhất: tệp 512 MiB, bản dựng release, macOS 14.6 arm64, age v1.3.1</text>
+<rect x="298" y="410" width="524" height="2" rx="7" fill="#8A94A4" stroke="#8A94A4" stroke-width="1.6"/>
+<text x="560.0" y="413.5" text-anchor="middle" font-size="8" font-weight="700" fill="#8A94A4"></text>
+<rect x="297" y="110" width="2" height="300" rx="7" fill="#8A94A4" stroke="#8A94A4" stroke-width="1.6"/>
+<text x="298.0" y="262.5" text-anchor="middle" font-size="8" font-weight="700" fill="#8A94A4"></text>
+<rect x="300" y="410.0" width="520" height="1" rx="7" fill="#DDE3EA" stroke="#DDE3EA" stroke-width="1.6"/>
+<text x="560.0" y="413.0" text-anchor="middle" font-size="8" font-weight="700" fill="#DDE3EA"></text>
+<rect x="300" y="335.0" width="520" height="1" rx="7" fill="#DDE3EA" stroke="#DDE3EA" stroke-width="1.6"/>
+<text x="560.0" y="338.0" text-anchor="middle" font-size="8" font-weight="700" fill="#DDE3EA"></text>
+<rect x="300" y="260.0" width="520" height="1" rx="7" fill="#DDE3EA" stroke="#DDE3EA" stroke-width="1.6"/>
+<text x="560.0" y="263.0" text-anchor="middle" font-size="8" font-weight="700" fill="#DDE3EA"></text>
+<rect x="300" y="185.0" width="520" height="1" rx="7" fill="#DDE3EA" stroke="#DDE3EA" stroke-width="1.6"/>
+<text x="560.0" y="188.0" text-anchor="middle" font-size="8" font-weight="700" fill="#DDE3EA"></text>
+<rect x="300" y="110.0" width="520" height="1" rx="7" fill="#DDE3EA" stroke="#DDE3EA" stroke-width="1.6"/>
+<text x="560.0" y="113.0" text-anchor="middle" font-size="8" font-weight="700" fill="#DDE3EA"></text>
+<rect x="390" y="125.75" width="150" height="284.25" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="465.0" y="272.875" text-anchor="middle" font-size="13" font-weight="700" fill="#3A1560">379 MiB/s</text>
+<rect x="630" y="182.75" width="150" height="227.25" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="705.0" y="301.375" text-anchor="middle" font-size="13" font-weight="700" fill="#0E3A19">303 MiB/s</text>
+<rect x="300" y="460" width="520" height="88" rx="7" fill="#FFFDE7" stroke="#B8A429" stroke-width="1.6"/>
+<text x="560.0" y="490.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4A4210">Hệ quả về hạn giờ</text>
+<text x="560.0" y="504.5" text-anchor="middle" font-size="10" fill="#4A4210bb">Với thông lượng này, hạn giờ tường 120 giây chỉ bị chạm ở khoảng 44 GiB khi mã hóa và 35 GiB</text>
+<text x="560.0" y="517.0" text-anchor="middle" font-size="10" fill="#4A4210bb">khi giải mã trên ổ đĩa cục bộ nhanh. Do đó hạn giờ là rủi ro ĐUÔI, không phải chế độ hỏng</text>
+<text x="560.0" y="529.5" text-anchor="middle" font-size="10" fill="#4A4210bb">thường gặp.</text>
+<rect x="850" y="460" width="270" height="88" rx="7" fill="#FCE4E4" stroke="#B3261E" stroke-width="1.6"/>
+<text x="985.0" y="490.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5E1611">Cảnh báo về phạm vi</text>
+<text x="985.0" y="504.5" text-anchor="middle" font-size="10" fill="#5E1611bb">Chỉ một cấu hình, một lần đo, một kích thước</text>
+<text x="985.0" y="517.0" text-anchor="middle" font-size="10" fill="#5E1611bb">tệp. Không đủ để rút ra đường cong thời gian</text>
+<text x="985.0" y="529.5" text-anchor="middle" font-size="10" fill="#5E1611bb">theo kích thước.</text>
+<text x="290" y="414.0" text-anchor="end" font-size="10" font-weight="400" fill="#67707d">0 MiB/s</text>
+<text x="290" y="339.0" text-anchor="end" font-size="10" font-weight="400" fill="#67707d">100 MiB/s</text>
+<text x="290" y="264.0" text-anchor="end" font-size="10" font-weight="400" fill="#67707d">200 MiB/s</text>
+<text x="290" y="189.0" text-anchor="end" font-size="10" font-weight="400" fill="#67707d">300 MiB/s</text>
+<text x="290" y="114.0" text-anchor="end" font-size="10" font-weight="400" fill="#67707d">400 MiB/s</text>
+<text x="465" y="432.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#3a4a5a">Mã hóa (age -e)</text>
+<text x="705" y="432.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#3a4a5a">Giải mã (age -d)</text>
+<text x="180" y="260.0" text-anchor="end" font-size="11.5" font-weight="700" fill="#3b4655">Thông lượng</text>
+<text class="src" x="26" y="634">Nguồn: docs/VALIDATION-RESULTS.md §H1 (mã hóa 1,35 s; giải mã 1,69 s cho 512 MiB). Đây là số đo thực tế, KHÔNG phải ước lượng.</text>
+</svg>

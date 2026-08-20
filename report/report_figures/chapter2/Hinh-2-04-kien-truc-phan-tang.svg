@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="880" viewBox="0 0 1180 880" role="img" aria-label="Hình 2.4 — Kiến trúc phân tầng của hệ thống (L0 – L5)">
+<defs>
+<marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#44506080"/></marker>
+<marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8a94a4"/></marker>
+<marker id="arwo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="none" stroke="#445060" stroke-width="1.4"/></marker>
+</defs>
+<style>text{font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1c2330}.ttl{font-size:20px;font-weight:700}.sub{font-size:12px;fill:#5b6675}.zl{font-size:12px;font-weight:700}.zs{font-size:10.5px;fill:#67707d}.el{font-size:10.5px;fill:#3a45060}.src{font-size:10px;fill:#77808c}</style>
+<rect x="0" y="0" width="1180" height="880" fill="#ffffff"/>
+<text class="ttl" x="26" y="34">Hình 2.4 — Kiến trúc phân tầng của hệ thống (L0 – L5)</text>
+<text class="sub" x="26" y="54">Khối một-mảnh có mô-đun, tiêm phụ thuộc, kiểu cổng–bộ điều hợp tại lõi mật mã</text>
+<rect x="150" y="96" width="990" height="118" rx="10" fill="#F5F8FF" stroke="#8FAEE8" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="162" y="115" fill="#3b4655">L5 — Tầng trình bày — desktop/ (bị loại khỏi workspace)</text>
+<rect x="150" y="226" width="990" height="118" rx="10" fill="#F3FAF5" stroke="#8FC8A3" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="162" y="245" fill="#3b4655">L4 — Tầng ứng dụng / IPC — sv-app (src-tauri/)</text>
+<rect x="150" y="356" width="990" height="118" rx="10" fill="#FFFAF2" stroke="#E3BC85" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="162" y="375" fill="#3b4655">L3 — Tầng nghiệp vụ — không FFI, tổng quát trên ABI</text>
+<rect x="150" y="496" width="990" height="98" rx="10" fill="#FAF5FF" stroke="#BFA0E0" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="162" y="515" fill="#3b4655">L2 — Tầng bộ điều hợp mật mã</text>
+<rect x="150" y="606" width="990" height="98" rx="10" fill="#FFF6F5" stroke="#E0A29B" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="162" y="625" fill="#3b4655">L1 — Tầng ABI và ràng buộc nguyên thủy</text>
+<rect x="150" y="716" width="990" height="78" rx="10" fill="#F4FBFB" stroke="#8CC6C6" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="162" y="735" fill="#3b4655">L0 — Hợp đồng DTO / lỗi dùng chung</text>
+<path d="M475 163.0 L500 163.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="465.305" y="136.5" width="43.39" height="17.5" rx="3" fill="#ffffffe0"/>
+<text x="487" y="147.0" text-anchor="middle" font-size="10.5" fill="#3a5060">invoke</text>
+<path d="M650.0 194 L650.0 228.0 L325.0 228.0 L325.0 262" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M475 293.0 L500 293.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M650.0 324 L650.0 373.5 L323 373.5 L323 423.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M650.0 324 L650.0 358.0 L409.0 358.0 L409.0 392" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M249.0 454 L249.0 546.0 L405.0 546.0 L405.0 638" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="194.915" y="596.5" width="110.17" height="17.5" rx="3" fill="#ffffffe0"/>
+<text x="250" y="607.0" text-anchor="middle" font-size="10.5" fill="#3a5060">tổng quát trên ABI</text>
+<path d="M409.0 454 L409.0 491.0 L405.0 491.0 L405.0 528" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M405.0 584 L405.0 611.0 L405.0 611.0 L405.0 638" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M405.0 584 L405.0 611.0 L770.0 611.0 L770.0 638" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M405.0 584 L405.0 625.0 L895 625.0 L895 666.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M887.5 584 L887.5 611.0 L405.0 611.0 L405.0 638" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="175" y="132" width="300" height="62" rx="7" fill="#E8F0FE" stroke="#3B6FD4" stroke-width="1.6"/>
+<text x="325.0" y="161.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#12305F">frontend/ — giao diện tĩnh</text>
+<text x="325.0" y="176.0" text-anchor="middle" font-size="10" fill="#12305Fbb">index.html · main.js · i18n.js · styles.css</text>
+<rect x="500" y="132" width="300" height="62" rx="7" fill="#E8F0FE" stroke="#3B6FD4" stroke-width="1.6"/>
+<text x="650.0" y="161.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#12305F">desktop/src/lib.rs — vỏ Tauri</text>
+<text x="650.0" y="176.0" text-anchor="middle" font-size="10" fill="#12305Fbb">38 #[tauri::command] · resolve_binary · run()</text>
+<rect x="825" y="132" width="290" height="62" rx="7" fill="#E8F0FE" stroke="#3B6FD4" stroke-width="1.6"/>
+<text x="970.0" y="161.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#12305F">desktop/build.rs</text>
+<text x="970.0" y="176.0" text-anchor="middle" font-size="10" fill="#12305Fbb">stage + ghim băm BLAKE3 nhị phân ngoài</text>
+<rect x="175" y="262" width="300" height="62" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="325.0" y="285.25" text-anchor="middle" font-size="12.5" font-weight="700" fill="#12401F">Năm bề mặt lệnh</text>
+<text x="325.0" y="299.75" text-anchor="middle" font-size="10" fill="#12401Fbb">CommandSurface · PlatformSurface · StegoSurface ·</text>
+<text x="325.0" y="312.25" text-anchor="middle" font-size="10" fill="#12401Fbb">MetaSurface · WatermarkSurface</text>
+<rect x="500" y="262" width="300" height="62" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="650.0" y="285.25" text-anchor="middle" font-size="12.5" font-weight="700" fill="#12401F">Gốc lắp ghép</text>
+<text x="650.0" y="299.75" text-anchor="middle" font-size="10" fill="#12401Fbb">AppVault · PlatformApp · StegoApp · MetaApp ·</text>
+<text x="650.0" y="312.25" text-anchor="middle" font-size="10" fill="#12401Fbb">WatermarkApp</text>
+<rect x="825" y="262" width="290" height="62" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="970.0" y="285.25" text-anchor="middle" font-size="12.5" font-weight="700" fill="#12401F">Kiểm soát biên IPC</text>
+<text x="970.0" y="299.75" text-anchor="middle" font-size="10" fill="#12401Fbb">IpcPassphrase (tự xóa) · ánh xạ ApiError chống</text>
+<text x="970.0" y="312.25" text-anchor="middle" font-size="10" fill="#12401Fbb">oracle</text>
+<rect x="175" y="392" width="148" height="62" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="249.0" y="421.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5A3600">sv-core</text>
+<text x="249.0" y="434.5" text-anchor="middle" font-size="10" fill="#5A3600bb">két .svault</text>
+<rect x="335" y="392" width="148" height="62" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="409.0" y="421.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5A3600">sv-platform</text>
+<text x="409.0" y="434.5" text-anchor="middle" font-size="10" fill="#5A3600bb">dịch vụ mức tệp</text>
+<rect x="495" y="392" width="148" height="62" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="569.0" y="421.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5A3600">sv-stego</text>
+<text x="569.0" y="434.5" text-anchor="middle" font-size="10" fill="#5A3600bb">giấu tin ảnh</text>
+<rect x="655" y="392" width="148" height="62" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="729.0" y="421.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5A3600">sv-meta</text>
+<text x="729.0" y="434.5" text-anchor="middle" font-size="10" fill="#5A3600bb">siêu dữ liệu</text>
+<rect x="815" y="392" width="148" height="62" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="889.0" y="421.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5A3600">sv-qr</text>
+<text x="889.0" y="434.5" text-anchor="middle" font-size="10" fill="#5A3600bb">mã QR</text>
+<rect x="975" y="392" width="148" height="62" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="1049.0" y="421.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5A3600">sv-watermark</text>
+<text x="1049.0" y="434.5" text-anchor="middle" font-size="10" fill="#5A3600bb">thủy vân</text>
+<rect x="175" y="528" width="460" height="56" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="405.0" y="554.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#3A1560">sv-crypto — bộ điều hợp cụ thể</text>
+<text x="405.0" y="569.0" text-anchor="middle" font-size="10" fill="#3A1560bb">Blake3Hasher · Argon2Kdf · SodiumMinisignSigner · SssSharer · secretbox · policy</text>
+<rect x="660" y="528" width="455" height="56" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="887.5" y="554.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#3A1560">sv-age — bộ điều hợp FileCipher</text>
+<text x="887.5" y="569.0" text-anchor="middle" font-size="10" fill="#3A1560bb">điều khiển tiến trình con age đã ghim băm</text>
+<rect x="175" y="638" width="460" height="56" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="405.0" y="664.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5E1611">sv-crypto-traits — ABI ổn định</text>
+<text x="405.0" y="679.0" text-anchor="middle" font-size="10" fill="#5E1611bb">Hasher · KeyDerivation · Kdf · Signer · SecretSharer · FileCipher + kiểu giá trị</text>
+<rect x="660" y="638" width="220" height="56" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="770.0" y="664.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5E1611">sv-sys-sodium</text>
+<text x="770.0" y="679.0" text-anchor="middle" font-size="10" fill="#5E1611bb">FFI libsodium</text>
+<rect x="895" y="638" width="220" height="56" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="1005.0" y="664.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5E1611">sv-sys-sss</text>
+<text x="1005.0" y="679.0" text-anchor="middle" font-size="10" fill="#5E1611bb">FFI Shamir (hazmat.c)</text>
+<rect x="175" y="742" width="940" height="44" rx="7" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="645.0" y="768.5" text-anchor="middle" font-size="12" font-weight="700" fill="#0A3D3D">sv-types — DTO IPC/UI + ApiError (12 mã SV-*) · tuyệt đối không chứa bí mật</text>
+<text x="96" y="130" text-anchor="start" font-size="17" font-weight="700" fill="#5b6675">L5</text>
+<text x="96" y="260" text-anchor="start" font-size="17" font-weight="700" fill="#5b6675">L4</text>
+<text x="96" y="390" text-anchor="start" font-size="17" font-weight="700" fill="#5b6675">L3</text>
+<text x="96" y="530" text-anchor="start" font-size="17" font-weight="700" fill="#5b6675">L2</text>
+<text x="96" y="640" text-anchor="start" font-size="17" font-weight="700" fill="#5b6675">L1</text>
+<text x="96" y="750" text-anchor="start" font-size="17" font-weight="700" fill="#5b6675">L0</text>
+<text x="150" y="812.0" text-anchor="start" font-size="10.8" font-weight="400" fill="#3a4a5a">sv-core không phụ thuộc sv-crypto trong đồ thị sản phẩm: nó chỉ dựa vào ABI, còn bộ điều hợp cụ thể do gốc lắp ghép tiêm vào. Nhờ vậy crate nghiệp vụ hoàn toàn không dính FFI và kiểm</text>
+<text x="150" y="825.8" text-anchor="start" font-size="10.8" font-weight="400" fill="#3a4a5a">thử được độc lập.</text>
+<text class="src" x="26" y="854">Nguon: docs/architecture/03-system-architecture.md §3.2; Cargo.toml; crates/*/Cargo.toml</text>
+</svg>

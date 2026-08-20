@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="730" viewBox="0 0 1200 730" role="img" aria-label="Hình 2.8 — Ngăn xếp nguyên thủy mật mã: cổng → bộ điều hợp → nền tảng">
+<defs>
+<marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#44506080"/></marker>
+<marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8a94a4"/></marker>
+<marker id="arwo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="none" stroke="#445060" stroke-width="1.4"/></marker>
+</defs>
+<style>text{font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1c2330}.ttl{font-size:20px;font-weight:700}.sub{font-size:12px;fill:#5b6675}.zl{font-size:12px;font-weight:700}.zs{font-size:10.5px;fill:#67707d}.el{font-size:10.5px;fill:#3a45060}.src{font-size:10px;fill:#77808c}</style>
+<rect x="0" y="0" width="1200" height="730" fill="#ffffff"/>
+<text class="ttl" x="26" y="34">Hình 2.8 — Ngăn xếp nguyên thủy mật mã: cổng → bộ điều hợp → nền tảng</text>
+<text class="sub" x="26" y="54">Không có nguyên thủy tự chế; phần logic tự viết duy nhất là mã hóa định dạng minisign và chuỗi ngữ cảnh tách miền</text>
+<path d="M290 155.0 L300 155.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M530 155.0 L540 155.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M790 155.0 L800 155.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M290 241.0 L300 241.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M530 241.0 L540 241.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M790 241.0 L800 241.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M290 327.0 L300 327.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M530 327.0 L540 327.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M790 327.0 L800 327.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M290 413.0 L300 413.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M530 413.0 L540 413.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M790 413.0 L800 413.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M290 499.0 L300 499.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M530 499.0 L540 499.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M790 499.0 L800 499.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M290 585.0 L300 585.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M530 585.0 L540 585.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M790 585.0 L800 585.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="60" y="118" width="230" height="74" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="175.0" y="159.15" text-anchor="middle" font-size="11.3" font-weight="700" fill="#5A3600">Dẫn xuất khóa từ mật khẩu</text>
+<rect x="300" y="118" width="230" height="74" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="415.0" y="159.4" text-anchor="middle" font-size="11.8" font-weight="700" fill="#5E1611">Kdf</text>
+<rect x="540" y="118" width="250" height="74" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="665.0" y="159.4" text-anchor="middle" font-size="11.8" font-weight="700" fill="#3A1560">Argon2Kdf</text>
+<rect x="800" y="118" width="340" height="74" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="970.0" y="153.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1C2330">crate argon2 (thuần Rust)</text>
+<text x="970.0" y="166.5" text-anchor="middle" font-size="10" fill="#1C2330bb">Argon2id 256 MiB / t=3 / p=1</text>
+<rect x="60" y="204" width="230" height="74" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="175.0" y="245.15" text-anchor="middle" font-size="11.3" font-weight="700" fill="#5A3600">Băm nội dung, MAC, khóa con</text>
+<rect x="300" y="204" width="230" height="74" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="415.0" y="245.4" text-anchor="middle" font-size="11.8" font-weight="700" fill="#5E1611">Hasher + KeyDerivation</text>
+<rect x="540" y="204" width="250" height="74" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="665.0" y="245.4" text-anchor="middle" font-size="11.8" font-weight="700" fill="#3A1560">Blake3Hasher</text>
+<rect x="800" y="204" width="340" height="74" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="970.0" y="239.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1C2330">crate blake3</text>
+<text x="970.0" y="252.5" text-anchor="middle" font-size="10" fill="#1C2330bb">hash · keyed_hash · derive_key</text>
+<rect x="60" y="290" width="230" height="74" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="175.0" y="331.15000000000003" text-anchor="middle" font-size="11.3" font-weight="700" fill="#5A3600">Bọc bí mật lưu trữ (AEAD)</text>
+<rect x="300" y="290" width="230" height="74" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="415.0" y="331.40000000000003" text-anchor="middle" font-size="11.8" font-weight="700" fill="#5E1611">— (hàm secretbox)</text>
+<rect x="540" y="290" width="250" height="74" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="665.0" y="331.40000000000003" text-anchor="middle" font-size="11.8" font-weight="700" fill="#3A1560">secretbox::seal / open</text>
+<rect x="800" y="290" width="340" height="74" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="970.0" y="325.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1C2330">libsodium crypto_secretbox</text>
+<text x="970.0" y="338.5" text-anchor="middle" font-size="10" fill="#1C2330bb">XSalsa20-Poly1305</text>
+<rect x="60" y="376" width="230" height="74" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="175.0" y="417.15000000000003" text-anchor="middle" font-size="11.3" font-weight="700" fill="#5A3600">Mã hóa tải trọng tệp</text>
+<rect x="300" y="376" width="230" height="74" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="415.0" y="417.40000000000003" text-anchor="middle" font-size="11.8" font-weight="700" fill="#5E1611">FileCipher</text>
+<rect x="540" y="376" width="250" height="74" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="665.0" y="417.40000000000003" text-anchor="middle" font-size="11.8" font-weight="700" fill="#3A1560">AgeCipher</text>
+<rect x="800" y="376" width="340" height="74" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="970.0" y="411.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1C2330">nhị phân age v1 đi kèm</text>
+<text x="970.0" y="424.5" text-anchor="middle" font-size="10" fill="#1C2330bb">X25519 + ChaCha20-Poly1305</text>
+<rect x="60" y="462" width="230" height="74" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="175.0" y="503.15000000000003" text-anchor="middle" font-size="11.3" font-weight="700" fill="#5A3600">Chữ ký số / xuất xứ</text>
+<rect x="300" y="462" width="230" height="74" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="415.0" y="503.40000000000003" text-anchor="middle" font-size="11.8" font-weight="700" fill="#5E1611">Signer</text>
+<rect x="540" y="462" width="250" height="74" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="665.0" y="503.40000000000003" text-anchor="middle" font-size="11.8" font-weight="700" fill="#3A1560">SodiumMinisignSigner</text>
+<rect x="800" y="462" width="340" height="74" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="970.0" y="497.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1C2330">libsodium Ed25519 + BLAKE2b</text>
+<text x="970.0" y="510.5" text-anchor="middle" font-size="10" fill="#1C2330bb">định dạng minisign tiền băm</text>
+<rect x="60" y="548" width="230" height="74" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="175.0" y="589.15" text-anchor="middle" font-size="11.3" font-weight="700" fill="#5A3600">Chia sẻ bí mật ngưỡng</text>
+<rect x="300" y="548" width="230" height="74" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="415.0" y="589.4" text-anchor="middle" font-size="11.8" font-weight="700" fill="#5E1611">SecretSharer</text>
+<rect x="540" y="548" width="250" height="74" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="665.0" y="589.4" text-anchor="middle" font-size="11.8" font-weight="700" fill="#3A1560">SssSharer</text>
+<rect x="800" y="548" width="340" height="74" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="970.0" y="583.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1C2330">sss hazmat.c (vendored)</text>
+<text x="970.0" y="596.5" text-anchor="middle" font-size="10" fill="#1C2330bb">Shamir trên GF(2⁸)</text>
+<rect x="300" y="640" width="490" height="56" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="545.0" y="666.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0E3A19">sv-crypto::policy — sàn tham số Argon2id theo OWASP</text>
+<text x="545.0" y="679.5" text-anchor="middle" font-size="10" fill="#0E3A19bb">mem ≥ 19 456 KiB · t ≥ 2 · p ≥ 1; calibrate() đo máy thật để chọn time_cost</text>
+<rect x="800" y="640" width="340" height="56" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="970.0" y="666.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0E3A19">CipherSuite::V1 — enum đóng</text>
+<text x="970.0" y="679.5" text-anchor="middle" font-size="10" fill="#0E3A19bb">một định danh duy nhất cho toàn bộ tổ hợp thuật toán</text>
+<text x="60" y="96.0" text-anchor="start" font-size="12.5" font-weight="700" fill="#3b4655">Mục đích</text>
+<text x="300" y="96.0" text-anchor="start" font-size="12.5" font-weight="700" fill="#3b4655">Cổng (trait)</text>
+<text x="540" y="96.0" text-anchor="start" font-size="12.5" font-weight="700" fill="#3b4655">Bộ điều hợp</text>
+<text x="800" y="96.0" text-anchor="start" font-size="12.5" font-weight="700" fill="#3b4655">Nền tảng thực thi</text>
+<text class="src" x="26" y="704">Nguon: crates/sv-crypto-traits/src/lib.rs; crates/sv-crypto/src/{lib,secretbox,minisign,policy}.rs; crates/sv-age/src/lib.rs; docs/architecture/06-security-design.md §6.7</text>
+</svg>

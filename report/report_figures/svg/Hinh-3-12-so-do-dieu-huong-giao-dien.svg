@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="760" viewBox="0 0 1180 760" role="img" aria-label="Hình 3.12 — Sơ đồ điều hướng của giao diện người dùng">
+<defs>
+<marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#44506080"/></marker>
+<marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8a94a4"/></marker>
+<marker id="arwo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="none" stroke="#445060" stroke-width="1.4"/></marker>
+</defs>
+<style>text{font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1c2330}.ttl{font-size:20px;font-weight:700}.sub{font-size:12px;fill:#5b6675}.zl{font-size:12px;font-weight:700}.zs{font-size:10.5px;fill:#67707d}.el{font-size:10.5px;fill:#3a45060}.src{font-size:10px;fill:#77808c}</style>
+<rect x="0" y="0" width="1180" height="760" fill="#ffffff"/>
+<text class="ttl" x="26" y="34">Hình 3.12 — Sơ đồ điều hướng của giao diện người dùng</text>
+<text class="sub" x="26" y="54">Thanh bên tổ chức theo MỤC TIÊU của người dùng chứ không theo tên thuật toán</text>
+<path d="M460 130.0 L460 165.0 L200.0 165.0 L200.0 200" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M590.0 160 L590.0 230.0 L200.0 230.0 L200.0 300" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M590.0 160 L590.0 180.0 L770.0 180.0 L770.0 200" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M590.0 160 L590.0 300.0 L770.0 300.0 L770.0 440" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M590.0 160 L590.0 330.0 L200.0 330.0 L200.0 500" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="460" y="100" width="260" height="60" rx="7" fill="#E8F0FE" stroke="#3B6FD4" stroke-width="1.6"/>
+<text x="590.0" y="128.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#12305F">Trang chủ</text>
+<text x="590.0" y="143.0" text-anchor="middle" font-size="10" fill="#12305Fbb">ba thẻ bắt đầu nhanh + lưới toàn bộ công cụ</text>
+<rect x="50" y="200" width="300" height="40" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="200.0" y="224.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#12401F">KÉT AN TOÀN</text>
+<rect x="66" y="248" width="268" height="26" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="200.0" y="264.5" text-anchor="middle" font-size="10" font-weight="500" fill="#1C2330">Két an toàn (vault)</text>
+<rect x="50" y="300" width="300" height="40" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="200.0" y="324.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#3A1560">BẢO VỆ TỆP</text>
+<rect x="66" y="348" width="268" height="26" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="200.0" y="364.5" text-anchor="middle" font-size="10" font-weight="500" fill="#1C2330">Khóa tệp (encrypt)</text>
+<rect x="66" y="378" width="268" height="26" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="200.0" y="394.5" text-anchor="middle" font-size="10" font-weight="500" fill="#1C2330">Mở khóa tệp (decrypt)</text>
+<rect x="66" y="408" width="268" height="26" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="200.0" y="424.5" text-anchor="middle" font-size="10" font-weight="500" fill="#1C2330">Giấu dữ liệu trong ảnh (hide)</text>
+<rect x="66" y="438" width="268" height="26" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="200.0" y="454.5" text-anchor="middle" font-size="10" font-weight="500" fill="#1C2330">Hiện dữ liệu ẩn (unhide)</text>
+<rect x="66" y="468" width="268" height="26" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="200.0" y="484.5" text-anchor="middle" font-size="10" font-weight="500" fill="#1C2330">Chống giả mạo tệp (watermark)</text>
+<rect x="620" y="200" width="300" height="40" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="770.0" y="224.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0E3A19">CHỨNG MINH TÍNH XÁC THỰC</text>
+<rect x="636" y="248" width="268" height="26" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="770.0" y="264.5" text-anchor="middle" font-size="10" font-weight="500" fill="#1C2330">Ký tệp (sign)</text>
+<rect x="636" y="278" width="268" height="26" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="770.0" y="294.5" text-anchor="middle" font-size="10" font-weight="500" fill="#1C2330">Kiểm tra chữ ký (verify)</text>
+<rect x="636" y="308" width="268" height="26" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="770.0" y="324.5" text-anchor="middle" font-size="10" font-weight="500" fill="#1C2330">Lấy vân tay tệp (hash)</text>
+<rect x="636" y="338" width="268" height="26" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="770.0" y="354.5" text-anchor="middle" font-size="10" font-weight="500" fill="#1C2330">Kiểm tra tệp chưa bị đổi (intact)</text>
+<rect x="636" y="368" width="268" height="26" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="770.0" y="384.5" text-anchor="middle" font-size="10" font-weight="500" fill="#1C2330">Xác minh tệp tải về (verify-integrity)</text>
+<rect x="620" y="440" width="300" height="40" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="770.0" y="464.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5A3600">SAO LƯU &amp; KHÔI PHỤC</text>
+<rect x="636" y="488" width="268" height="26" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="770.0" y="504.5" text-anchor="middle" font-size="10" font-weight="500" fill="#1C2330">Chia nhỏ bí mật (split-secret)</text>
+<rect x="636" y="518" width="268" height="26" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="770.0" y="534.5" text-anchor="middle" font-size="10" font-weight="500" fill="#1C2330">Chia nhỏ tệp (split-file)</text>
+<rect x="636" y="548" width="268" height="26" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="770.0" y="564.5" text-anchor="middle" font-size="10" font-weight="500" fill="#1C2330">Khôi phục từ các mảnh (recover-pieces)</text>
+<rect x="636" y="578" width="268" height="26" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="770.0" y="594.5" text-anchor="middle" font-size="10" font-weight="500" fill="#1C2330">Chuyển qua mã QR (qr-transfer)</text>
+<rect x="50" y="500" width="300" height="40" rx="7" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="200.0" y="524.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0A3D3D">KIỂM TRA &amp; LÀM SẠCH</text>
+<rect x="66" y="548" width="268" height="26" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="200.0" y="564.5" text-anchor="middle" font-size="10" font-weight="500" fill="#1C2330">Phát hiện dữ liệu ẩn (detect)</text>
+<rect x="66" y="578" width="268" height="26" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="200.0" y="594.5" text-anchor="middle" font-size="10" font-weight="500" fill="#1C2330">Xem siêu dữ liệu (metadata-inspect)</text>
+<rect x="66" y="608" width="268" height="26" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="200.0" y="624.5" text-anchor="middle" font-size="10" font-weight="500" fill="#1C2330">Xóa siêu dữ liệu (metadata-clean)</text>
+<rect x="66" y="638" width="268" height="26" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="200.0" y="654.5" text-anchor="middle" font-size="10" font-weight="500" fill="#1C2330">So sánh siêu dữ liệu (metadata-compare)</text>
+<rect x="460" y="620" width="500" height="80" rx="7" fill="#FFFDE7" stroke="#B8A429" stroke-width="1.6"/>
+<text x="710.0" y="652.25" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4A4210">Bản địa hóa</text>
+<text x="710.0" y="666.75" text-anchor="middle" font-size="10" fill="#4A4210bb">i18n.js với DEFAULT_LANG = &quot;vi&quot;: toàn bộ nhãn, thông điệp và mã lỗi được dịch; tiếng Anh</text>
+<text x="710.0" y="679.25" text-anchor="middle" font-size="10" fill="#4A4210bb">là ngôn ngữ dự phòng</text>
+<text x="50" y="730" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">Hai màn hình &quot;sắp có&quot; (soon-hide, soon-detect) còn sót lại trong mã HTML nhưng không được nối vào thanh điều hướng và không gọi lệnh nào — đây là mã giao diện chết đã được ghi nhận trong bảng đối</text>
+<text x="50" y="744" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">chiếu tài liệu ↔ mã nguồn (mục D-12).</text>
+<text class="src" x="26" y="734">Nguồn: desktop/frontend/index.html (data-screen), main.js showScreen/wireSidebar, i18n.js</text>
+</svg>

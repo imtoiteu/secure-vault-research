@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="810" viewBox="0 0 1200 810" role="img" aria-label="Hình 2.15 — Ánh xạ lỗi nội bộ sang mã ApiError chống dò oracle">
+<defs>
+<marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#44506080"/></marker>
+<marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8a94a4"/></marker>
+<marker id="arwo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="none" stroke="#445060" stroke-width="1.4"/></marker>
+</defs>
+<style>text{font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1c2330}.ttl{font-size:20px;font-weight:700}.sub{font-size:12px;fill:#5b6675}.zl{font-size:12px;font-weight:700}.zs{font-size:10.5px;fill:#67707d}.el{font-size:10.5px;fill:#3a45060}.src{font-size:10px;fill:#77808c}</style>
+<rect x="0" y="0" width="1200" height="810" fill="#ffffff"/>
+<text class="ttl" x="26" y="34">Hình 2.15 — Ánh xạ lỗi nội bộ sang mã ApiError chống dò oracle</text>
+<text class="sub" x="26" y="54">12 mã ổn định; mọi thất bại chứng thực hội tụ về một mã duy nhất</text>
+<rect x="50" y="96" width="430" height="250" rx="10" fill="#F7F7F8" stroke="#B9C0C9" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="62" y="115" fill="#3b4655">Lỗi nội bộ trong lõi (giàu thông tin)</text>
+<rect x="50" y="372" width="430" height="356" rx="10" fill="#F4FBF6" stroke="#9CCBA9" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="62" y="391" fill="#3b4655">Điều kiện lành tính, không bí mật</text>
+<path d="M265 425.0 L275 425.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M265 456.0 L275 456.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M265 487.0 L275 487.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M265 518.0 L275 518.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M265 549.0 L275 549.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M265 580.0 L275 580.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M265 611.0 L275 611.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M265 642.0 L275 642.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M265 673.0 L275 673.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M265 704.0 L275 704.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M265.0 182 L412.5 182 L412.5 240.0 L560 240.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M460 212.0 L510.0 212.0 L510.0 240.0 L560 240.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M460 264.0 L510.0 264.0 L510.0 240.0 L560 240.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M265.0 294 L412.5 294 L412.5 240.0 L560 240.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M690.0 290 L785.0 290 L785.0 375.0 L880 375.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M460 425.0 L670.0 425.0 L670.0 375.0 L880 375.0" fill="none" stroke="#8a94a4" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arwd)"/>
+<rect x="70" y="138" width="390" height="44" rx="7" fill="#FCE4E4" stroke="#B3261E" stroke-width="1.6"/>
+<text x="265.0" y="164.0" text-anchor="middle" font-size="11" font-weight="500" fill="#5E1611">VaultError::AuthFailed — sai mật khẩu HOẶC sai mảnh</text>
+<rect x="70" y="190" width="390" height="44" rx="7" fill="#FCE4E4" stroke="#B3261E" stroke-width="1.6"/>
+<text x="265.0" y="216.0" text-anchor="middle" font-size="11" font-weight="500" fill="#5E1611">PlatformError::AuthFailed — sai mật khẩu HOẶC bản mã bị sửa</text>
+<rect x="70" y="242" width="390" height="44" rx="7" fill="#FCE4E4" stroke="#B3261E" stroke-width="1.6"/>
+<text x="265.0" y="268.0" text-anchor="middle" font-size="11" font-weight="500" fill="#5E1611">StegoError::NoPayload | BadFrame | AuthFailed</text>
+<rect x="70" y="294" width="390" height="40" rx="7" fill="#FCE4E4" stroke="#B3261E" stroke-width="1.6"/>
+<text x="265.0" y="318.0" text-anchor="middle" font-size="11" font-weight="500" fill="#5E1611">(mọi thất bại giải mã tải trọng có khóa)</text>
+<rect x="560" y="190" width="260" height="100" rx="7" fill="#FFF0F6" stroke="#B5197F" stroke-width="1.6"/>
+<text x="690.0" y="233.0" text-anchor="middle" font-size="14" font-weight="700" fill="#5A0C3E">SV-UNAUTHORIZED</text>
+<text x="690.0" y="249.0" text-anchor="middle" font-size="10" fill="#5A0C3Ebb">một mã duy nhất — kẻ tấn công không phân biệt</text>
+<text x="690.0" y="261.5" text-anchor="middle" font-size="10" fill="#5A0C3Ebb">được nguyên nhân</text>
+<rect x="70" y="410" width="195" height="30" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="167.5" y="428.3" text-anchor="middle" font-size="9.6" font-weight="500" fill="#1C2330">NotFound</text>
+<rect x="275" y="410" width="185" height="30" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="367.5" y="428.09999999999997" text-anchor="middle" font-size="9.2" font-weight="500" fill="#0E3A19">SV-NOT-FOUND</text>
+<rect x="70" y="441" width="195" height="30" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="167.5" y="459.3" text-anchor="middle" font-size="9.6" font-weight="500" fill="#1C2330">Malformed</text>
+<rect x="275" y="441" width="185" height="30" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="367.5" y="453.0" text-anchor="middle" font-size="9.2" font-weight="500" fill="#0E3A19">SV-MALFORMED — không phải tệp két</text>
+<text x="367.5" y="465.2" text-anchor="middle" font-size="9.2" font-weight="500" fill="#0E3A19">/ ảnh không đọc được</text>
+<rect x="70" y="472" width="195" height="30" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="167.5" y="490.3" text-anchor="middle" font-size="9.6" font-weight="500" fill="#1C2330">Corrupted</text>
+<rect x="275" y="472" width="185" height="30" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="367.5" y="484.0" text-anchor="middle" font-size="9.2" font-weight="500" fill="#0E3A19">SV-CORRUPTED — đúng là két nhưng</text>
+<text x="367.5" y="496.2" text-anchor="middle" font-size="9.2" font-weight="500" fill="#0E3A19">chữ ký hỏng</text>
+<rect x="70" y="503" width="195" height="30" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="167.5" y="515.0" text-anchor="middle" font-size="9.6" font-weight="500" fill="#1C2330">IncompatibleVersion{found,supporte</text>
+<text x="167.5" y="527.6" text-anchor="middle" font-size="9.6" font-weight="500" fill="#1C2330">d}</text>
+<rect x="275" y="503" width="185" height="30" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="367.5" y="521.1" text-anchor="middle" font-size="9.2" font-weight="500" fill="#0E3A19">SV-INCOMPATIBLE-VERSION</text>
+<rect x="70" y="534" width="195" height="30" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="167.5" y="552.3000000000001" text-anchor="middle" font-size="9.6" font-weight="500" fill="#1C2330">InsufficientShares{got,need}</text>
+<rect x="275" y="534" width="185" height="30" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="367.5" y="552.1" text-anchor="middle" font-size="9.2" font-weight="500" fill="#0E3A19">SV-INSUFFICIENT-SHARES</text>
+<rect x="70" y="565" width="195" height="30" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="167.5" y="583.3000000000001" text-anchor="middle" font-size="9.6" font-weight="500" fill="#1C2330">TooLarge{limit,actual}</text>
+<rect x="275" y="565" width="185" height="30" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="367.5" y="583.1" text-anchor="middle" font-size="9.2" font-weight="500" fill="#0E3A19">SV-TOO-LARGE</text>
+<rect x="70" y="596" width="195" height="30" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="167.5" y="614.3000000000001" text-anchor="middle" font-size="9.6" font-weight="500" fill="#1C2330">Timeout</text>
+<rect x="275" y="596" width="185" height="30" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="367.5" y="614.1" text-anchor="middle" font-size="9.2" font-weight="500" fill="#0E3A19">SV-TIMEOUT</text>
+<rect x="70" y="627" width="195" height="30" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="167.5" y="645.3000000000001" text-anchor="middle" font-size="9.6" font-weight="500" fill="#1C2330">OutputExists</text>
+<rect x="275" y="627" width="185" height="30" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="367.5" y="645.1" text-anchor="middle" font-size="9.2" font-weight="500" fill="#0E3A19">SV-OUTPUT-EXISTS</text>
+<rect x="70" y="658" width="195" height="30" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="167.5" y="676.3000000000001" text-anchor="middle" font-size="9.6" font-weight="500" fill="#1C2330">Io(_)</text>
+<rect x="275" y="658" width="185" height="30" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="367.5" y="670.0" text-anchor="middle" font-size="9.2" font-weight="500" fill="#0E3A19">SV-IO — chuỗi cố định, KHÔNG kèm</text>
+<text x="367.5" y="682.2" text-anchor="middle" font-size="9.2" font-weight="500" fill="#0E3A19">đường dẫn</text>
+<rect x="70" y="689" width="195" height="30" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="167.5" y="707.3000000000001" text-anchor="middle" font-size="9.6" font-weight="500" fill="#1C2330">Crypto(_) | Internal</text>
+<rect x="275" y="689" width="185" height="30" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="367.5" y="707.1" text-anchor="middle" font-size="9.2" font-weight="500" fill="#0E3A19">SV-INTERNAL — che kín</text>
+<rect x="880" y="300" width="280" height="150" rx="7" fill="#E8F0FE" stroke="#3B6FD4" stroke-width="1.6"/>
+<text x="1020.0" y="354.75" text-anchor="middle" font-size="12.5" font-weight="700" fill="#12305F">Giao diện</text>
+<text x="1020.0" y="369.25" text-anchor="middle" font-size="10" fill="#12305Fbb">Bản đồ MESSAGES trong main.js dịch mã SV-* sang</text>
+<text x="1020.0" y="381.75" text-anchor="middle" font-size="10" fill="#12305Fbb">thông điệp đã bản địa hóa. Kiểm thử ui_contract</text>
+<text x="1020.0" y="394.25" text-anchor="middle" font-size="10" fill="#12305Fbb">khẳng định bản đồ này khớp 1:1 với</text>
+<text x="1020.0" y="406.75" text-anchor="middle" font-size="10" fill="#12305Fbb">ApiError::ALL_CODES.</text>
+<text x="50" y="756" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">Điểm tinh tế: kiểm tra SỐ LƯỢNG mảnh (InsufficientShares) là phép thử trước, không phải một lần thử chứng thực, nên nó có thể tách riêng mà không tạo ra oracle; còn việc mảnh có ĐÚNG hay không thì</text>
+<text x="50" y="770" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">luôn hợp nhất vào SV-UNAUTHORIZED.</text>
+<text class="src" x="26" y="784">Nguon: crates/sv-types/src/lib.rs (ApiError, ALL_CODES, io_generic); crates/sv-core/src/error.rs; crates/sv-platform/src/error.rs; crates/sv-stego/src/error.rs</text>
+</svg>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="720" viewBox="0 0 1180 720" role="img" aria-label="Hình 2.12 — Bố cục byte của container .svault và phạm vi chữ ký">
+<defs>
+<marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#44506080"/></marker>
+<marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8a94a4"/></marker>
+<marker id="arwo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="none" stroke="#445060" stroke-width="1.4"/></marker>
+</defs>
+<style>text{font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1c2330}.ttl{font-size:20px;font-weight:700}.sub{font-size:12px;fill:#5b6675}.zl{font-size:12px;font-weight:700}.zs{font-size:10.5px;fill:#67707d}.el{font-size:10.5px;fill:#3a45060}.src{font-size:10px;fill:#77808c}</style>
+<rect x="0" y="0" width="1180" height="720" fill="#ffffff"/>
+<text class="ttl" x="26" y="34">Hình 2.12 — Bố cục byte của container .svault và phạm vi chữ ký</text>
+<text class="sub" x="26" y="54">Định dạng tự mô tả: 4 byte MAGIC + phiên bản u16 LE, phân tích rẻ trước mọi thao tác mật mã</text>
+<path d="M545.0 214 L545.0 241.0 L485.0 241.0 L485.0 268" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M800.0 214 L800.0 241.0 L850.0 241.0 L850.0 268" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M485.0 330 L485.0 348.0 L690.0 348.0 L690.0 366" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M850.0 330 L850.0 348.0 L690.0 348.0 L690.0 366" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M690.0 432 L690.0 460" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M690.0 460 L865.0 460 L865.0 214 L1040.0 214" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="997.6975" y="316.5" width="104.605" height="17.5" rx="3" fill="#ffffffe0"/>
+<text x="1050" y="327.0" text-anchor="middle" font-size="10.5" fill="#3a5060">ghi vào phần đuôi</text>
+<rect x="50" y="130" width="120" height="84" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="110.0" y="170.15" text-anchor="middle" font-size="11.8" font-weight="700" fill="#5E1611">MAGIC</text>
+<text x="110.0" y="183.95000000000002" text-anchor="middle" font-size="10" fill="#5E1611bb">&quot;SVLT&quot;</text>
+<rect x="170" y="130" width="130" height="84" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="235.0" y="170.15" text-anchor="middle" font-size="11.8" font-weight="700" fill="#5E1611">FORMAT_VERSION</text>
+<text x="235.0" y="183.95000000000002" text-anchor="middle" font-size="10" fill="#5E1611bb">u16 LE = 1</text>
+<rect x="300" y="130" width="120" height="84" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="360.0" y="170.15" text-anchor="middle" font-size="11.8" font-weight="700" fill="#5E1611">HEADER_LEN</text>
+<text x="360.0" y="183.95000000000002" text-anchor="middle" font-size="10" fill="#5E1611bb">u32 LE</text>
+<rect x="420" y="130" width="250" height="84" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="545.0" y="170.15" text-anchor="middle" font-size="11.8" font-weight="700" fill="#5A3600">HEADER (CBOR)</text>
+<text x="545.0" y="183.95000000000002" text-anchor="middle" font-size="10" fill="#5A3600bb">≤ 1 MiB</text>
+<rect x="670" y="130" width="260" height="84" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="800.0" y="170.15" text-anchor="middle" font-size="11.8" font-weight="700" fill="#3A1560">PAYLOAD</text>
+<text x="800.0" y="183.95000000000002" text-anchor="middle" font-size="10" fill="#3A1560bb">một khối mã age</text>
+<rect x="930" y="130" width="220" height="84" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="1040.0" y="170.15" text-anchor="middle" font-size="11.8" font-weight="700" fill="#0E3A19">SIG_TRAILER</text>
+<text x="1040.0" y="183.95000000000002" text-anchor="middle" font-size="10" fill="#0E3A19bb">định dạng minisign</text>
+<rect x="300" y="268" width="370" height="62" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="485.0" y="303.0" text-anchor="middle" font-size="11" font-weight="700" fill="#3A1560">header_digest = BLAKE3(byte 0 … 10+HEADER_LEN)</text>
+<rect x="700" y="268" width="300" height="62" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="850.0" y="303.0" text-anchor="middle" font-size="11" font-weight="700" fill="#3A1560">payload_digest = BLAKE3(PAYLOAD)</text>
+<rect x="480" y="366" width="420" height="66" rx="7" fill="#FFF0F6" stroke="#B5197F" stroke-width="1.6"/>
+<text x="690.0" y="403.5" text-anchor="middle" font-size="12" font-weight="700" fill="#5A0C3E">Gốc ràng buộc = BLAKE3(header_digest ‖ payload_digest)</text>
+<rect x="480" y="460" width="420" height="62" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="690.0" y="489.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0E3A19">Chữ ký Ed25519 định dạng minisign trên gốc ràng buộc</text>
+<text x="690.0" y="502.5" text-anchor="middle" font-size="10" fill="#0E3A19bb">tiền băm BLAKE2b-512, kèm chữ ký toàn cục ràng buộc trusted comment</text>
+<rect x="50" y="268" width="220" height="254" rx="7" fill="#FFFDE7" stroke="#B8A429" stroke-width="1.6"/>
+<text x="160.0" y="362.0" text-anchor="middle" font-size="12" font-weight="700" fill="#4A4210">Không lưu hai bản tóm lược</text>
+<text x="160.0" y="376.0" text-anchor="middle" font-size="10" fill="#4A4210bb">header_digest và payload_digest được</text>
+<text x="160.0" y="388.5" text-anchor="middle" font-size="10" fill="#4A4210bb">tính lại mỗi lần đọc, không nằm trong</text>
+<text x="160.0" y="401.0" text-anchor="middle" font-size="10" fill="#4A4210bb">tệp. Vì thế header của tệp A không</text>
+<text x="160.0" y="413.5" text-anchor="middle" font-size="10" fill="#4A4210bb">thể ghép với payload của tệp B: gốc</text>
+<text x="160.0" y="426.0" text-anchor="middle" font-size="10" fill="#4A4210bb">ràng buộc thay đổi và chữ ký lập tức</text>
+<text x="160.0" y="438.5" text-anchor="middle" font-size="10" fill="#4A4210bb">sai.</text>
+<rect x="50" y="566" width="1080" height="84" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="590.0" y="606.25" text-anchor="middle" font-size="12" font-weight="700" fill="#5A3600">Bên trong PAYLOAD sau khi giải mã</text>
+<text x="590.0" y="620.25" text-anchor="middle" font-size="10" fill="#5A3600bb">DIR_LEN (u32 LE) ‖ CBOR(ItemDirectory) ‖ byte của các mục nối tiếp nhau — danh mục tệp do đó cũng được mã hóa và không lộ khi két đang khóa</text>
+<text x="50" y="122" text-anchor="start" font-size="10" font-weight="400" fill="#77808c">0</text>
+<text x="170" y="122" text-anchor="start" font-size="10" font-weight="400" fill="#77808c">4</text>
+<text x="300" y="122" text-anchor="start" font-size="10" font-weight="400" fill="#77808c">6</text>
+<text x="420" y="122" text-anchor="start" font-size="10" font-weight="400" fill="#77808c">10</text>
+<text x="670" y="122" text-anchor="start" font-size="10" font-weight="400" fill="#77808c">10 + HEADER_LEN</text>
+<text class="src" x="26" y="694">Nguon: crates/sv-core/src/format.rs (MAGIC, FORMAT_VERSION); crates/sv-core/src/container.rs (HEADER_OFFSET, MAX_HEADER_LEN, binding_root)</text>
+</svg>

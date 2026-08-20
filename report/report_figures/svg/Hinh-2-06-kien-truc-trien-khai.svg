@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="830" viewBox="0 0 1160 830" role="img" aria-label="Hình 2.6 — Kiến trúc triển khai và thực thi trên máy người dùng">
+<defs>
+<marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#44506080"/></marker>
+<marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8a94a4"/></marker>
+<marker id="arwo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="none" stroke="#445060" stroke-width="1.4"/></marker>
+</defs>
+<style>text{font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1c2330}.ttl{font-size:20px;font-weight:700}.sub{font-size:12px;fill:#5b6675}.zl{font-size:12px;font-weight:700}.zs{font-size:10.5px;fill:#67707d}.el{font-size:10.5px;fill:#3a45060}.src{font-size:10px;fill:#77808c}</style>
+<rect x="0" y="0" width="1160" height="830" fill="#ffffff"/>
+<text class="ttl" x="26" y="34">Hình 2.6 — Kiến trúc triển khai và thực thi trên máy người dùng</text>
+<text class="sub" x="26" y="54">Một tiến trình, một webview, hai họ tiến trình con, không có tiến trình nền hay cổng mạng</text>
+<rect x="50" y="80" width="1060" height="560" rx="10" fill="#F7F7F8" stroke="#B9C0C9" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="62" y="99" fill="#3b4655">Máy của người dùng (Windows / macOS / Linux)</text>
+<text class="zs" x="62" y="114">Không yêu cầu quyền quản trị; không có dịch vụ nền</text>
+<rect x="80" y="128" width="620" height="300" rx="10" fill="#F3FAF5" stroke="#8FC8A3" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="92" y="147" fill="#3b4655">Tiến trình ứng dụng Secure Vault</text>
+<rect x="740" y="128" width="340" height="300" rx="10" fill="#FFF6F5" stroke="#E0A29B" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="752" y="147" fill="#3b4655">Tài nguyên đi kèm gói cài</text>
+<text class="zs" x="752" y="162">bundle.resources: binaries/**/*</text>
+<rect x="80" y="452" width="1000" height="168" rx="10" fill="#F4FBFB" stroke="#8CC6C6" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="92" y="471" fill="#3b4655">Hệ thống tệp cục bộ</text>
+<path d="M376 218.0 L400 218.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="334.915" y="186.5" width="110.17" height="17.5" rx="3" fill="#ffffffe0"/>
+<text x="390" y="197.0" text-anchor="middle" font-size="10.5" fill="#3a5060">IPC nội tiến trình</text>
+<path d="M537.0 260 L537.0 276.0 L390.0 276.0 L390.0 292" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M390.0 292 L650.0 292 L650.0 236 L910.0 236" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="659.915" y="236.5" width="110.17" height="17.5" rx="3" fill="#ffffffe0"/>
+<text x="715" y="247.0" text-anchor="middle" font-size="10.5" fill="#3a5060">spawn có kiểm soát</text>
+<path d="M674 347.0 L720.0 347.0 L720.0 280.0 L766 280.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M910.0 324 L910.0 236" fill="none" stroke="#8a94a4" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arwo)"/>
+<rect x="882.74" y="261.5" width="54.52" height="17.5" rx="3" fill="#ffffffe0"/>
+<text x="910.0" y="272.0" text-anchor="middle" font-size="10.5" fill="#3a5060">xác minh</text>
+<path d="M390.0 402 L390.0 451.0 L216.0 451.0 L216.0 500" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M390.0 402 L390.0 451.0 L692.0 451.0 L692.0 500" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="106" y="176" width="270" height="84" rx="7" fill="#E8F0FE" stroke="#3B6FD4" stroke-width="1.6"/>
+<text x="241.0" y="210.25" text-anchor="middle" font-size="12.5" font-weight="700" fill="#12305F">Luồng WebView</text>
+<text x="241.0" y="224.75" text-anchor="middle" font-size="10" fill="#12305Fbb">WebView2 / WKWebView / WebKitGTK · CSP</text>
+<text x="241.0" y="237.25" text-anchor="middle" font-size="10" fill="#12305Fbb">default-src &#x27;self&#x27;</text>
+<rect x="400" y="176" width="274" height="84" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="537.0" y="216.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#12401F">Luồng lõi Rust</text>
+<text x="537.0" y="231.0" text-anchor="middle" font-size="10" fill="#12401Fbb">bộ điều phối lệnh Tauri (thread pool)</text>
+<rect x="106" y="292" width="568" height="110" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="390.0" y="339.25" text-anchor="middle" font-size="12.5" font-weight="700" fill="#12401F">Năm trạng thái quản lý được đăng ký lúc khởi động</text>
+<text x="390.0" y="353.75" text-anchor="middle" font-size="10" fill="#12401Fbb">Backend = AppVault&lt;AgePayloadCipher&gt; · Platform · Stego · Meta (bật/tắt an toàn) · Watermark; bảng</text>
+<text x="390.0" y="366.25" text-anchor="middle" font-size="10" fill="#12401Fbb">phiên giữ duy nhất khóa chủ theo SessionHandle</text>
+<rect x="766" y="176" width="288" height="60" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="910.0" y="204.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5E1611">age · age-keygen</text>
+<text x="910.0" y="219.0" text-anchor="middle" font-size="10" fill="#5E1611bb">bắt buộc — thiếu thì bản release lỗi build</text>
+<rect x="766" y="250" width="288" height="60" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="910.0" y="278.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5E1611">exiftool</text>
+<text x="910.0" y="293.0" text-anchor="middle" font-size="10" fill="#5E1611bb">tùy chọn — thiếu thì tắt mô-đun an toàn</text>
+<rect x="766" y="324" width="288" height="78" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="910.0" y="355.25" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0E3A19">Băm BLAKE3 được ghim lúc biên dịch</text>
+<text x="910.0" y="369.75" text-anchor="middle" font-size="10" fill="#0E3A19bb">kiểm tra lại khi khởi tạo bộ điều hợp; sai băm là</text>
+<text x="910.0" y="382.25" text-anchor="middle" font-size="10" fill="#0E3A19bb">từ chối chạy</text>
+<path d="M106 514 A110.0 14 0 0 1 326 514 L326 582 A110.0 14 0 0 1 106 582 Z" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/><path d="M106 514 A110.0 14 0 0 0 326 514" fill="none" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="216.0" y="540.25" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0A3D3D">.svault</text>
+<text x="216.0" y="554.75" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">MAGIC SVLT · header CBOR đã ký · tải</text>
+<text x="216.0" y="567.25" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">trọng age</text>
+<path d="M344 514 A110.0 14 0 0 1 564 514 L564 582 A110.0 14 0 0 1 344 582 Z" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/><path d="M344 514 A110.0 14 0 0 0 564 514" fill="none" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="454.0" y="546.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0A3D3D">.svenc / .svkey</text>
+<text x="454.0" y="561.0" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">Argon2id + secretbox</text>
+<path d="M582 514 A110.0 14 0 0 1 802 514 L802 582 A110.0 14 0 0 1 582 582 Z" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/><path d="M582 514 A110.0 14 0 0 0 802 514" fill="none" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="692.0" y="546.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0A3D3D">.svss (mảnh + tải trọng)</text>
+<text x="692.0" y="561.0" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">SVSSS 92 byte · SVSSP</text>
+<path d="M820 514 A117.0 14 0 0 1 1054 514 L1054 582 A117.0 14 0 0 1 820 582 Z" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/><path d="M820 514 A117.0 14 0 0 0 1054 514" fill="none" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="937.0" y="546.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0A3D3D">ảnh PNG / BMP / JPEG</text>
+<text x="937.0" y="561.0" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">mang dữ liệu ẩn hoặc thủy vân</text>
+<text x="50" y="672" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">Bản dựng release chỉ phân giải nhị phân từ thư mục tài nguyên của gói hoặc thư mục cạnh tệp thực thi; các biến môi trường SV_AGE_BIN / SV_AGE_KEYGEN_BIN / SV_EXIFTOOL_BIN chỉ có hiệu lực</text>
+<text x="50" y="686" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">trong bản debug. Gói phát hành hiện chưa được ký số và công chứng — đây là hạn chế đã ghi nhận (H5) và nằm ngoài phạm vi sử dụng nội bộ.</text>
+<text class="src" x="26" y="804">Nguon: desktop/tauri.conf.json (bundle.resources), desktop/src/lib.rs run()/resolve_binary, docs/DEPLOYMENT.md</text>
+</svg>

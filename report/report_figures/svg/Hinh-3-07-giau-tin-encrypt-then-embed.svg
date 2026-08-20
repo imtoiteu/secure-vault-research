@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1220" height="830" viewBox="0 0 1220 830" role="img" aria-label="Hình 3.7 — Kiến trúc giấu tin theo nguyên tắc mã hóa-rồi-nhúng">
+<defs>
+<marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#44506080"/></marker>
+<marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8a94a4"/></marker>
+<marker id="arwo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="none" stroke="#445060" stroke-width="1.4"/></marker>
+</defs>
+<style>text{font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1c2330}.ttl{font-size:20px;font-weight:700}.sub{font-size:12px;fill:#5b6675}.zl{font-size:12px;font-weight:700}.zs{font-size:10.5px;fill:#67707d}.el{font-size:10.5px;fill:#3a45060}.src{font-size:10px;fill:#77808c}</style>
+<rect x="0" y="0" width="1220" height="830" fill="#ffffff"/>
+<text class="ttl" x="26" y="34">Hình 3.7 — Kiến trúc giấu tin theo nguyên tắc mã hóa-rồi-nhúng</text>
+<text class="sub" x="26" y="54">Che giấu KHÔNG phải là bí mật: toàn bộ tính bí mật nằm ở tầng AEAD, không nằm ở tầng sóng mang</text>
+<rect x="50" y="92" width="560" height="270" rx="10" fill="#F4FBF6" stroke="#9CCBA9" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="62" y="111" fill="#3b4655">Tầng bí mật + toàn vẹn — RANH GIỚI AN TOÀN DUY NHẤT</text>
+<rect x="650" y="92" width="500" height="270" rx="10" fill="#F7F7F8" stroke="#B9C0C9" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="662" y="111" fill="#3b4655">Tầng che giấu — KHÔNG tuyên bố bất kỳ tính bí mật nào</text>
+<path d="M194.0 192 L350 241.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M314 232.0 L350 241.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M314 300.0 L350 241.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M894 164.0 L910 164.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M1018.0 192 L1018.0 198.0 L900.0 198.0 L900.0 204" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M900.0 256 L900.0 268" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M468.0 306 L468.0 353.0 L600.0 353.0 L600.0 400" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="424.045" y="370.5" width="87.91000000000001" height="17.5" rx="3" fill="#ffffffe0"/>
+<text x="468" y="381.0" text-anchor="middle" font-size="10.5" fill="#3a5060">nonce ‖ bản mã</text>
+<path d="M900.0 328 L900.0 364.0 L600.0 364.0 L600.0 400" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M600.0 490 L600.0 501.0 L315.0 501.0 L315.0 512" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M580 554.0 L620 554.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M885.0 596 L885.0 607.0 L600.0 607.0 L600.0 618" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="74" y="136" width="240" height="56" rx="7" fill="#FFF0F6" stroke="#B5197F" stroke-width="1.6"/>
+<text x="194.0" y="168.75" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A0C3E">Dữ liệu cần giấu</text>
+<rect x="74" y="204" width="240" height="56" rx="7" fill="#FFF0F6" stroke="#B5197F" stroke-width="1.6"/>
+<text x="194.0" y="236.75" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A0C3E">Mật khẩu</text>
+<rect x="74" y="272" width="240" height="56" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="194.0" y="298.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1C2330">Muối 16 byte công khai</text>
+<text x="194.0" y="313.0" text-anchor="middle" font-size="10" fill="#1C2330bb">nằm trong header SVSTEG</text>
+<rect x="350" y="176" width="236" height="130" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="468.0" y="227.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#3A1560">Argon2idSecretboxSealer</text>
+<text x="468.0" y="241.5" text-anchor="middle" font-size="10" fill="#3A1560bb">Argon2id(mật khẩu, muối) → Key32;</text>
+<text x="468.0" y="254.0" text-anchor="middle" font-size="10" fill="#3A1560bb">secretbox seal/open. Không hề có nguyên</text>
+<text x="468.0" y="266.5" text-anchor="middle" font-size="10" fill="#3A1560bb">thủy mật mã mới nào được tạo ra ở đây.</text>
+<rect x="674" y="136" width="220" height="56" rx="7" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="784.0" y="162.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0A3D3D">Ảnh bìa</text>
+<text x="784.0" y="177.0" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">PNG / BMP / JPEG</text>
+<rect x="910" y="136" width="216" height="56" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="1018.0" y="162.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A3600">Carrier</text>
+<text x="1018.0" y="177.0" text-anchor="middle" font-size="10" fill="#5A3600bb">Spatial (LSB) hoặc Jpeg (hệ số DCT)</text>
+<rect x="674" y="204" width="452" height="52" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="900.0" y="234.0" text-anchor="middle" font-size="11" font-weight="700" fill="#0E3A19">capacity::fits — chặn tải quá dung lượng TRƯỚC khi chạy Argon2id</text>
+<rect x="674" y="268" width="452" height="60" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="900.0" y="289.75" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5A3600">SiteSelector: Sequential hoặc Permuted</text>
+<text x="900.0" y="303.25" text-anchor="middle" font-size="10" fill="#5A3600bb">hoán vị Fisher–Yates một phần, hạt giống = BLAKE3(muối) — chỉ làm mờ dấu vết</text>
+<text x="900.0" y="315.75" text-anchor="middle" font-size="10" fill="#5A3600bb">thống kê</text>
+<rect x="50" y="400" width="1100" height="90" rx="7" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="600.0" y="443.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0A3D3D">Khung SVSTEG — header 54 byte cố định, số nguyên big-endian</text>
+<text x="600.0" y="458.0" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">magic &quot;SVSTEG&quot; (6) ‖ version (1) ‖ flags (1: bit0 sóng mang JPEG, bit1 hoán vị, bit2 mặt bit &gt; 0 dành riêng) ‖ kdf_alg (1) ‖ aead_alg (1) ‖ salt (16) ‖ nonce (24) ‖ ct_len u32 (4)</text>
+<rect x="50" y="512" width="530" height="84" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="315.0" y="546.25" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A3600">LsbEmbedder::write_bits</text>
+<text x="315.0" y="560.75" text-anchor="middle" font-size="10" fill="#5A3600bb">432 vị trí đầu tiên mang header theo thứ tự tuần tự (để đọc được trước khi biết lịch hoán vị);</text>
+<text x="315.0" y="573.25" text-anchor="middle" font-size="10" fill="#5A3600bb">phần thân đi theo lịch của SiteSelector</text>
+<rect x="620" y="512" width="530" height="84" rx="7" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="885.0" y="552.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0A3D3D">Ảnh chứa tin, cùng định dạng vật chứa</text>
+<text x="885.0" y="567.0" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">PNG/BMP mã hóa lại không mất mát; JPEG ghi lại ở miền hệ số lượng tử hóa</text>
+<rect x="50" y="618" width="1100" height="92" rx="7" fill="#FCE4E4" stroke="#B3261E" stroke-width="1.6"/>
+<text x="600.0" y="656.25" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5E1611">Đường trích xuất và tính chống dò oracle</text>
+<text x="600.0" y="670.75" text-anchor="middle" font-size="10" fill="#5E1611bb">Ảnh sạch, sai mật khẩu, sóng mang bị sửa và khung bị cắt cụt đều trả về NoPayload / BadFrame / AuthFailed — cả ba đều gộp thành đúng một mã SV-UNAUTHORIZED. Kẻ tấn công thậm chí không biết được một</text>
+<text x="600.0" y="683.25" text-anchor="middle" font-size="10" fill="#5E1611bb">tấm ảnh CÓ mang dữ liệu hay không. Chỉ ảnh không giải mã nổi mới là SV-MALFORMED.</text>
+<text x="50" y="748" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">Hệ quả trực tiếp của thứ tự này: nếu tầng che giấu bị phá (ai đó phát hiện có dữ liệu ẩn), tính bí mật của dữ liệu vẫn nguyên vẹn vì nó nằm sau AEAD. Ngược lại, tài liệu thiết kế của dự án nói rõ rằng</text>
+<text x="50" y="762" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">che giấu không được coi là biện pháp bảo mật.</text>
+<text class="src" x="26" y="804">Nguồn: crates/sv-stego/src/{pipeline,seal,envelope,capacity,selector,embed}.rs; crates/sv-stego/src/carrier/{spatial,jpeg}.rs</text>
+</svg>

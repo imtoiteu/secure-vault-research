@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="860" viewBox="0 0 1160 860" role="img" aria-label="Hình 2.14 — Kiến trúc phòng thủ theo chiều sâu bảo vệ dữ liệu">
+<defs>
+<marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#44506080"/></marker>
+<marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8a94a4"/></marker>
+<marker id="arwo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="none" stroke="#445060" stroke-width="1.4"/></marker>
+</defs>
+<style>text{font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1c2330}.ttl{font-size:20px;font-weight:700}.sub{font-size:12px;fill:#5b6675}.zl{font-size:12px;font-weight:700}.zs{font-size:10.5px;fill:#67707d}.el{font-size:10.5px;fill:#3a45060}.src{font-size:10px;fill:#77808c}</style>
+<rect x="0" y="0" width="1160" height="860" fill="#ffffff"/>
+<text class="ttl" x="26" y="34">Hình 2.14 — Kiến trúc phòng thủ theo chiều sâu bảo vệ dữ liệu</text>
+<text class="sub" x="26" y="54">Bảy lớp kiểm soát; mỗi lớp có cơ chế và bằng chứng mã nguồn riêng</text>
+<rect x="50" y="96" width="1060" height="76" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="580.0" y="132.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1C2330">L7 · Kỷ luật dự án</text>
+<text x="580.0" y="147.0" text-anchor="middle" font-size="10" fill="#1C2330bb">Không tự chế nguyên thủy · unsafe bị cấm toàn workspace · cargo deny/audit · CI ba hệ điều hành</text>
+<rect x="70" y="188" width="1020" height="76" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="580.0" y="224.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0E3A19">L6 · Kiểm soát tài nguyên</text>
+<text x="580.0" y="239.0" text-anchor="middle" font-size="10" fill="#0E3A19bb">Trần 2 GiB cho tệp · header ≤ 1 MiB · trần Argon2 trước xác thực · chặn bom giải nén ảnh · hạn giờ tường</text>
+<rect x="90" y="280" width="980" height="76" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="580.0" y="316.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5E1611">L5 · Làm cứng tiến trình con</text>
+<text x="580.0" y="331.0" text-anchor="middle" font-size="10" fill="#5E1611bb">Ghim băm BLAKE3 · kiểm kiến trúc lúc build · env_clear · không shell · thư mục làm việc riêng · -config &quot;&quot;</text>
+<rect x="110" y="372" width="940" height="76" rx="7" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="580.0" y="408.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0A3D3D">L4 · An toàn dữ liệu</text>
+<text x="580.0" y="423.0" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">Ghi nguyên tử temp+rename · từ chối ghi đè · khóa ghi theo két · tên tệp gốc nằm trong vùng mã hóa</text>
+<rect x="130" y="464" width="900" height="76" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="580.0" y="500.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A3600">L3 · Toàn vẹn và xuất xứ</text>
+<text x="580.0" y="515.0" text-anchor="middle" font-size="10" fill="#5A3600bb">Chữ ký Ed25519 trên gốc ràng buộc · BLAKE3 từng mục · thẻ AEAD trên mọi bản mã</text>
+<rect x="150" y="556" width="860" height="76" rx="7" fill="#FFF0F6" stroke="#B5197F" stroke-width="1.6"/>
+<text x="580.0" y="592.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A0C3E">L2 · Bí mật trong bộ nhớ</text>
+<text x="580.0" y="607.0" text-anchor="middle" font-size="10" fill="#5A0C3Ebb">Key32/SecretBytes/KeyShare tự xóa · Debug bị che · không Serialize · bí mật chỉ tồn tại theo thao tác</text>
+<rect x="170" y="648" width="820" height="76" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="580.0" y="684.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#3A1560">L1 · Bí mật khi lưu trữ</text>
+<text x="580.0" y="699.0" text-anchor="middle" font-size="10" fill="#3A1560bb">age (X25519+ChaCha20-Poly1305) cho tải trọng · Argon2id + secretbox cho khóa và tệp độc lập</text>
+<rect x="380" y="746" width="400" height="60" rx="7" fill="#FCE4E4" stroke="#B3261E" stroke-width="1.6"/>
+<text x="580.0" y="781.5" text-anchor="middle" font-size="14" font-weight="700" fill="#5E1611">DỮ LIỆU CỦA NGƯỜI DÙNG</text>
+<text x="50" y="840" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">Mô hình lỗi chống dò oracle là lớp cắt ngang: nó áp lên mọi lớp phía trên bằng cách hợp nhất mọi thất bại chứng thực về đúng một mã SV-UNAUTHORIZED, đồng thời giữ nguyên tính hành động được</text>
+<text x="50" y="854" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">của các tình huống lành tính (sai tệp, sai phiên bản, thiếu mảnh, tệp quá lớn, hết giờ, đích đã tồn tại).</text>
+<text class="src" x="26" y="834">Nguon: docs/architecture/06-security-design.md §6.1–6.8; docs/M7-HARDENING.md</text>
+</svg>

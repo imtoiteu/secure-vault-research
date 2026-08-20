@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="700" viewBox="0 0 1160 700" role="img" aria-label="Hình 4.4 — Đỉnh bộ nhớ thường trú khi thêm một tệp vào két">
+<defs>
+<marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#44506080"/></marker>
+<marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8a94a4"/></marker>
+<marker id="arwo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="none" stroke="#445060" stroke-width="1.4"/></marker>
+</defs>
+<style>text{font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1c2330}.ttl{font-size:20px;font-weight:700}.sub{font-size:12px;fill:#5b6675}.zl{font-size:12px;font-weight:700}.zs{font-size:10.5px;fill:#67707d}.el{font-size:10.5px;fill:#3a45060}.src{font-size:10px;fill:#77808c}</style>
+<rect x="0" y="0" width="1160" height="700" fill="#ffffff"/>
+<text class="ttl" x="26" y="34">Hình 4.4 — Đỉnh bộ nhớ thường trú khi thêm một tệp vào két</text>
+<text class="sub" x="26" y="54">Một điểm ĐO THẬT (1024 MiB) và các giá trị NGOẠI SUY tuyến tính theo hệ số ≈ 2,7×</text>
+<rect x="258" y="440" width="704" height="2" rx="7" fill="#8A94A4" stroke="#8A94A4" stroke-width="1.6"/>
+<text x="610.0" y="443.5" text-anchor="middle" font-size="8" font-weight="700" fill="#8A94A4"></text>
+<rect x="257" y="110" width="2" height="330" rx="7" fill="#8A94A4" stroke="#8A94A4" stroke-width="1.6"/>
+<text x="258.0" y="277.5" text-anchor="middle" font-size="8" font-weight="700" fill="#8A94A4"></text>
+<rect x="260" y="440.0" width="700" height="1" rx="7" fill="#DDE3EA" stroke="#DDE3EA" stroke-width="1.6"/>
+<text x="610.0" y="443.0" text-anchor="middle" font-size="8" font-weight="700" fill="#DDE3EA"></text>
+<rect x="260" y="385.0" width="700" height="1" rx="7" fill="#DDE3EA" stroke="#DDE3EA" stroke-width="1.6"/>
+<text x="610.0" y="388.0" text-anchor="middle" font-size="8" font-weight="700" fill="#DDE3EA"></text>
+<rect x="260" y="330.0" width="700" height="1" rx="7" fill="#DDE3EA" stroke="#DDE3EA" stroke-width="1.6"/>
+<text x="610.0" y="333.0" text-anchor="middle" font-size="8" font-weight="700" fill="#DDE3EA"></text>
+<rect x="260" y="275.0" width="700" height="1" rx="7" fill="#DDE3EA" stroke="#DDE3EA" stroke-width="1.6"/>
+<text x="610.0" y="278.0" text-anchor="middle" font-size="8" font-weight="700" fill="#DDE3EA"></text>
+<rect x="260" y="220.0" width="700" height="1" rx="7" fill="#DDE3EA" stroke="#DDE3EA" stroke-width="1.6"/>
+<text x="610.0" y="223.0" text-anchor="middle" font-size="8" font-weight="700" fill="#DDE3EA"></text>
+<rect x="260" y="165.0" width="700" height="1" rx="7" fill="#DDE3EA" stroke="#DDE3EA" stroke-width="1.6"/>
+<text x="610.0" y="168.0" text-anchor="middle" font-size="8" font-weight="700" fill="#DDE3EA"></text>
+<rect x="260" y="110.0" width="700" height="1" rx="7" fill="#DDE3EA" stroke="#DDE3EA" stroke-width="1.6"/>
+<text x="610.0" y="113.0" text-anchor="middle" font-size="8" font-weight="700" fill="#DDE3EA"></text>
+<rect x="300" y="421.575" width="96" height="18.425" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="348.0" y="435.03749999999997" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1C2330">0.67</text>
+<rect x="430" y="403.425" width="96" height="36.575" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="478.0" y="425.96250000000003" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1C2330">1.33</text>
+<rect x="560" y="366.85" width="96" height="73.15" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="608.0" y="407.675" text-anchor="middle" font-size="11.5" font-weight="700" fill="#3A1560">2.66</text>
+<rect x="690" y="294.25" width="96" height="145.75" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="738.0" y="371.375" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1C2330">5.30</text>
+<rect x="820" y="148.5" width="96" height="291.5" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="868.0" y="298.5" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1C2330">10.60</text>
+<rect x="260" y="500" width="480" height="100" rx="7" fill="#FFFDE7" stroke="#B8A429" stroke-width="1.6"/>
+<text x="500.0" y="536.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4A4210">Vì sao hệ số xấp xỉ 2,7 lần</text>
+<text x="500.0" y="550.5" text-anchor="middle" font-size="10" fill="#4A4210bb">Bốn bản sao cùng tồn tại trong bộ nhớ tại thời điểm cao nhất: bản đọc tệp nguồn, bản</text>
+<text x="500.0" y="563.0" text-anchor="middle" font-size="10" fill="#4A4210bb">sao trong kho lưu trữ đã đóng gói, vùng đệm stdin đưa vào age và vùng đệm stdout nhận</text>
+<text x="500.0" y="575.5" text-anchor="middle" font-size="10" fill="#4A4210bb">từ age. Toàn bộ đều là Vec&lt;u8&gt; nằm trong RAM.</text>
+<rect x="770" y="500" width="350" height="100" rx="7" fill="#FCE4E4" stroke="#B3261E" stroke-width="1.6"/>
+<text x="945.0" y="529.75" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5E1611">Biện pháp hiện tại là RÀO, không phải sửa gốc</text>
+<text x="945.0" y="544.25" text-anchor="middle" font-size="10" fill="#5E1611bb">Trần 2 GiB cho một mục được kiểm bằng metadata TRƯỚC khi đọc,</text>
+<text x="945.0" y="556.75" text-anchor="middle" font-size="10" fill="#5E1611bb">nên tệp quá lớn bị từ chối bằng SV-TOO-LARGE thay vì làm cạn</text>
+<text x="945.0" y="569.25" text-anchor="middle" font-size="10" fill="#5E1611bb">bộ nhớ. Cách sửa triệt để là truyền dòng, hiện chưa được thực</text>
+<text x="945.0" y="581.75" text-anchor="middle" font-size="10" fill="#5E1611bb">hiện (H1).</text>
+<text x="250" y="444.0" text-anchor="end" font-size="10" font-weight="400" fill="#67707d">0 GiB</text>
+<text x="250" y="389.0" text-anchor="end" font-size="10" font-weight="400" fill="#67707d">2 GiB</text>
+<text x="250" y="334.0" text-anchor="end" font-size="10" font-weight="400" fill="#67707d">4 GiB</text>
+<text x="250" y="279.0" text-anchor="end" font-size="10" font-weight="400" fill="#67707d">6 GiB</text>
+<text x="250" y="224.0" text-anchor="end" font-size="10" font-weight="400" fill="#67707d">8 GiB</text>
+<text x="250" y="169.0" text-anchor="end" font-size="10" font-weight="400" fill="#67707d">10 GiB</text>
+<text x="250" y="114.0" text-anchor="end" font-size="10" font-weight="400" fill="#67707d">12 GiB</text>
+<text x="348" y="460" text-anchor="middle" font-size="10" font-weight="400" fill="#3a4a5a">256 MiB</text>
+<text x="478" y="460" text-anchor="middle" font-size="10" font-weight="400" fill="#3a4a5a">512 MiB</text>
+<text x="608" y="460" text-anchor="middle" font-size="10" font-weight="700" fill="#3a4a5a">1024 MiB</text>
+<text x="608" y="474" text-anchor="middle" font-size="10" font-weight="700" fill="#3a4a5a">(ĐO THẬT)</text>
+<text x="738" y="460" text-anchor="middle" font-size="10" font-weight="400" fill="#3a4a5a">2 GiB</text>
+<text x="738" y="474" text-anchor="middle" font-size="10" font-weight="400" fill="#3a4a5a">(trần cho phép)</text>
+<text x="868" y="460" text-anchor="middle" font-size="10" font-weight="400" fill="#3a4a5a">4 GiB</text>
+<text x="868" y="474" text-anchor="middle" font-size="10" font-weight="400" fill="#3a4a5a">(bị từ chối)</text>
+<text x="150" y="275.0" text-anchor="end" font-size="11.5" font-weight="700" fill="#3b4655">Đỉnh RSS</text>
+<text x="260" y="640" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">Lưu ý phương pháp: chỉ cột 1024 MiB là số đo. Bốn cột còn lại là ngoại suy tuyến tính từ hệ số đã đo và được ghi nhãn rõ ràng; chúng KHÔNG được coi là kết</text>
+<text x="260" y="654" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">quả thực nghiệm.</text>
+<text class="src" x="26" y="674">Nguồn: docs/VALIDATION-RESULTS.md §H1: thêm tệp 1024 MiB đạt đỉnh 2 852 782 080 byte ≈ 2,66 GiB (đo bằng /usr/bin/time -l, bản dựng release)</text>
+</svg>

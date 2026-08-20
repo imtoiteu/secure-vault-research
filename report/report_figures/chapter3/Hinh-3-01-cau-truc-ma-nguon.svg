@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="860" viewBox="0 0 1180 860" role="img" aria-label="Hình 3.1 — Cấu trúc mã nguồn của workspace Secure Vault">
+<defs>
+<marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#44506080"/></marker>
+<marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8a94a4"/></marker>
+<marker id="arwo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="none" stroke="#445060" stroke-width="1.4"/></marker>
+</defs>
+<style>text{font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1c2330}.ttl{font-size:20px;font-weight:700}.sub{font-size:12px;fill:#5b6675}.zl{font-size:12px;font-weight:700}.zs{font-size:10.5px;fill:#67707d}.el{font-size:10.5px;fill:#3a45060}.src{font-size:10px;fill:#77808c}</style>
+<rect x="0" y="0" width="1180" height="860" fill="#ffffff"/>
+<text class="ttl" x="26" y="34">Hình 3.1 — Cấu trúc mã nguồn của workspace Secure Vault</text>
+<text class="sub" x="26" y="54">13 crate trong workspace + 1 crate vỏ Tauri bị loại trừ có chủ ý; ~16 300 dòng Rust</text>
+<rect x="60" y="96" width="300" height="44" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="210.0" y="123.0" text-anchor="middle" font-size="13" font-weight="700" fill="#1C2330">secure-vault-research/</text>
+<rect x="90" y="158" width="330" height="40" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="255.0" y="182.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1C2330">Cargo.toml</text>
+<rect x="90" y="202" width="330" height="40" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="255.0" y="226.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1C2330">rust-toolchain.toml · deny.toml</text>
+<rect x="130" y="246" width="330" height="40" rx="7" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="295.0" y="270.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0A3D3D">crates/sv-types</text>
+<rect x="130" y="290" width="330" height="40" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="295.0" y="314.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5E1611">crates/sv-crypto-traits</text>
+<rect x="130" y="334" width="330" height="40" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="295.0" y="358.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5E1611">crates/sv-sys-sodium</text>
+<rect x="130" y="378" width="330" height="40" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="295.0" y="402.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5E1611">crates/sv-sys-sss</text>
+<rect x="130" y="422" width="330" height="40" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="295.0" y="446.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#3A1560">crates/sv-crypto</text>
+<rect x="130" y="466" width="330" height="40" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="295.0" y="490.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#3A1560">crates/sv-age</text>
+<rect x="130" y="510" width="330" height="40" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="295.0" y="534.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5A3600">crates/sv-core</text>
+<rect x="130" y="554" width="330" height="40" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="295.0" y="578.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5A3600">crates/sv-platform</text>
+<rect x="130" y="598" width="330" height="40" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="295.0" y="622.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5A3600">crates/sv-stego</text>
+<rect x="130" y="642" width="330" height="40" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="295.0" y="666.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5A3600">crates/sv-watermark · sv-meta · sv-qr</text>
+<rect x="130" y="686" width="330" height="40" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="295.0" y="710.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#12401F">src-tauri (sv-app)</text>
+<rect x="130" y="730" width="330" height="40" rx="7" fill="#E8F0FE" stroke="#3B6FD4" stroke-width="1.6"/>
+<text x="295.0" y="754.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#12305F">desktop/</text>
+<rect x="130" y="774" width="330" height="40" rx="7" fill="#FFFDE7" stroke="#B8A429" stroke-width="1.6"/>
+<text x="295.0" y="798.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4A4210">docs/</text>
+<rect x="130" y="818" width="330" height="40" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="295.0" y="842.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0E3A19">.github/workflows/ci.yml</text>
+<text x="434" y="182.0" text-anchor="start" font-size="10.6" font-weight="400" fill="#3a4a5a">khai báo workspace, phiên bản phụ thuộc dùng chung, lint toàn cục</text>
+<text x="434" y="226.0" text-anchor="start" font-size="10.6" font-weight="400" fill="#3a4a5a">cố định phiên bản trình biên dịch và chính sách chuỗi cung ứng</text>
+<text x="474" y="270.0" text-anchor="start" font-size="10.6" font-weight="400" fill="#3a4a5a">791 dòng — DTO IPC/UI, ApiError 12 mã, nameframe</text>
+<text x="474" y="314.0" text-anchor="start" font-size="10.6" font-weight="400" fill="#3a4a5a">449 dòng — ABI: trait, kiểu giá trị bí mật, định danh thuật toán</text>
+<text x="474" y="358.0" text-anchor="start" font-size="10.6" font-weight="400" fill="#3a4a5a">214 dòng — FFI libsodium (sign, blake2b, secretbox)</text>
+<text x="474" y="402.0" text-anchor="start" font-size="10.6" font-weight="400" fill="#3a4a5a">155 dòng + hazmat.c — FFI Shamir, randombytes nối vào getrandom</text>
+<text x="474" y="446.0" text-anchor="start" font-size="10.6" font-weight="400" fill="#3a4a5a">668 dòng — Blake3Hasher, Argon2Kdf, SssSharer, minisign, secretbox, policy</text>
+<text x="474" y="490.0" text-anchor="start" font-size="10.6" font-weight="400" fill="#3a4a5a">426 dòng — bộ điều hợp FileCipher trên tiến trình con age</text>
+<text x="474" y="534.0" text-anchor="start" font-size="10.6" font-weight="400" fill="#3a4a5a">1 316 dòng — format, container, keys, service, error của két .svault</text>
+<text x="474" y="578.0" text-anchor="start" font-size="10.6" font-weight="400" fill="#3a4a5a">1 945 dòng — artifact, crypto, integrity, sharing (không phụ thuộc két)</text>
+<text x="474" y="622.0" text-anchor="start" font-size="10.6" font-weight="400" fill="#3a4a5a">≈2 490 dòng — carrier, embed, selector, envelope, seal, pipeline, detect</text>
+<text x="474" y="666.0" text-anchor="start" font-size="10.6" font-weight="400" fill="#3a4a5a">610 + 807 + 289 dòng — thủy vân, ExifTool, mã QR</text>
+<text x="474" y="710.0" text-anchor="start" font-size="10.6" font-weight="400" fill="#3a4a5a">1 990 dòng — gốc lắp ghép, 5 bề mặt lệnh, IpcPassphrase, VaultBackend</text>
+<text x="474" y="754.0" text-anchor="start" font-size="10.6" font-weight="400" fill="#3a4a5a">vỏ Tauri 2: build.rs (363 dòng), src/lib.rs (716 dòng), frontend tĩnh</text>
+<text x="474" y="798.0" text-anchor="start" font-size="10.6" font-weight="400" fill="#3a4a5a">18 tài liệu thiết kế + docs/architecture/ 10 chương kiến trúc</text>
+<text x="474" y="842.0" text-anchor="start" font-size="10.6" font-weight="400" fill="#3a4a5a">5 nhóm việc CI: check (3 hệ điều hành), msrv, desktop, supply-chain, sbom</text>
+<text x="60" y="892" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">Quy ước phân tách quan trọng nhất: thư mục desktop/ được khai báo exclude trong workspace. Nhờ vậy cây phụ thuộc rất nặng của webview không đi vào cổng kiểm toán (cargo deny / cargo audit /</text>
+<text x="60" y="906" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">cargo build --locked) của phần lõi mật mã, và phần lõi vẫn kiểm thử được trên máy không có bộ công cụ Tauri.</text>
+<text class="src" x="26" y="834">Nguồn: Cargo.toml (members, exclude), cây thư mục crates/, src-tauri/, desktop/, docs/</text>
+</svg>

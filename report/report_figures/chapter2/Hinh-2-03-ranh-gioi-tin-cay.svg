@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="900" viewBox="0 0 1240 900" role="img" aria-label="Hình 2.3 — Bốn ranh giới tin cậy và cơ chế kiểm soát trên mỗi ranh giới">
+<defs>
+<marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#44506080"/></marker>
+<marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8a94a4"/></marker>
+<marker id="arwo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="none" stroke="#445060" stroke-width="1.4"/></marker>
+</defs>
+<style>text{font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1c2330}.ttl{font-size:20px;font-weight:700}.sub{font-size:12px;fill:#5b6675}.zl{font-size:12px;font-weight:700}.zs{font-size:10.5px;fill:#67707d}.el{font-size:10.5px;fill:#3a45060}.src{font-size:10px;fill:#77808c}</style>
+<rect x="0" y="0" width="1240" height="900" fill="#ffffff"/>
+<text class="ttl" x="26" y="34">Hình 2.3 — Bốn ranh giới tin cậy và cơ chế kiểm soát trên mỗi ranh giới</text>
+<text class="sub" x="26" y="54">TB-1 … TB-4 theo docs/architecture/03-system-architecture.md §3.6</text>
+<rect x="40" y="80" width="400" height="150" rx="10" fill="#FFF5F5" stroke="#E8A6A1" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="52" y="99" fill="#3b4655">Vùng ít tin cậy — giao diện webview</text>
+<text class="zs" x="52" y="114">JavaScript / DOM, không giữ khóa</text>
+<rect x="40" y="268" width="700" height="300" rx="10" fill="#F4FBF6" stroke="#9CCBA9" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="52" y="287" fill="#3b4655">Lõi tin cậy — tiến trình Rust</text>
+<text class="zs" x="52" y="302">#![forbid(unsafe_code)] ngoài hai crate FFI</text>
+<rect x="790" y="268" width="410" height="140" rx="10" fill="#FFF6F5" stroke="#E0A29B" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="802" y="287" fill="#3b4655">Vùng tiến trình con ngoài</text>
+<text class="zs" x="802" y="302">nhị phân đi kèm, được ghim băm BLAKE3</text>
+<rect x="790" y="450" width="410" height="200" rx="10" fill="#F4FBFB" stroke="#8CC6C6" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="802" y="469" fill="#3b4655">Vùng lưu trữ tại chỗ</text>
+<text class="zs" x="802" y="484">tệp trên đĩa của người dùng</text>
+<rect x="40" y="610" width="700" height="130" rx="10" fill="#F7F7F8" stroke="#B9C0C9" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="52" y="629" fill="#3b4655">Ranh giới xây dựng — TB-4</text>
+<text class="zs" x="52" y="644">desktop/ bị loại khỏi workspace nên cây phụ thuộc webview không lọt vào cổng kiểm toán</text>
+<path d="M240.0 206 L240.0 260.5 L220.0 260.5 L220.0 315" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="164.3075" y="217.5" width="171.38500000000002" height="44.5" rx="3" fill="#ffffffe0"/>
+<text x="250" y="228.0" text-anchor="middle" font-size="10.5" fill="#3a5060">TB-1 · IPC JSON: đường dẫn +</text>
+<text x="250" y="241.5" text-anchor="middle" font-size="10.5" fill="#3a5060">DTO không bí mật; mật khẩu là</text>
+<text x="250" y="255.0" text-anchor="middle" font-size="10.5" fill="#3a5060">IpcPassphrase</text>
+<path d="M220.0 381 L220.0 400" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M220.0 466 L220.0 486" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M370 433.0 L390.0 433.0 L390.0 440.0 L410 440.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="351.045" y="396.5" width="87.91000000000001" height="17.5" rx="3" fill="#ffffffe0"/>
+<text x="395" y="407.0" text-anchor="middle" font-size="10.5" fill="#3a5060">cấp phát / xóa</text>
+<path d="M220.0 486 L517.5 486 L517.5 350.0 L815 350.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="681.525" y="443.0" width="176.95000000000002" height="31.0" rx="3" fill="#ffffffe0"/>
+<text x="770" y="453.5" text-anchor="middle" font-size="10.5" fill="#3a5060">TB-2 · env_clear, không shell,</text>
+<text x="770" y="467.0" text-anchor="middle" font-size="10.5" fill="#3a5060">hết giờ</text>
+<path d="M370 517.0 L687.5 517.0 L687.5 350.0 L1005 350.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M370 517.0 L592.5 517.0 L592.5 528.0 L815 528.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="684.3075" y="533.0" width="171.38500000000002" height="31.0" rx="3" fill="#ffffffe0"/>
+<text x="770" y="543.5" text-anchor="middle" font-size="10.5" fill="#3a5060">TB-3 · ghi nguyên tử, từ chối</text>
+<text x="770" y="557.0" text-anchor="middle" font-size="10.5" fill="#3a5060">ghi đè</text>
+<path d="M390 688.0 L410 688.0" fill="none" stroke="#8a94a4" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arwo)"/>
+<rect x="372.74" y="669.5" width="54.52" height="17.5" rx="3" fill="#ffffffe0"/>
+<text x="400.0" y="680.0" text-anchor="middle" font-size="10.5" fill="#3a5060">loại trừ</text>
+<rect x="70" y="130" width="340" height="76" rx="7" fill="#E8F0FE" stroke="#3B6FD4" stroke-width="1.6"/>
+<text x="240.0" y="166.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#12305F">Giao diện tĩnh HTML · CSS · JS</text>
+<text x="240.0" y="181.0" text-anchor="middle" font-size="10" fill="#12305Fbb">chỉ giữ SessionHandle mờ; hiển thị mã lỗi SV-*</text>
+<rect x="70" y="315" width="300" height="66" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="220.0" y="346.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#12401F">38 hàm #[tauri::command]</text>
+<text x="220.0" y="361.0" text-anchor="middle" font-size="10" fill="#12401Fbb">desktop/src/lib.rs</text>
+<rect x="70" y="400" width="300" height="66" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="220.0" y="425.25" text-anchor="middle" font-size="12.5" font-weight="700" fill="#12401F">CommandSurface + 4 bề mặt lệnh</text>
+<text x="220.0" y="439.75" text-anchor="middle" font-size="10" fill="#12401Fbb">AppVault · PlatformApp · StegoApp · MetaApp ·</text>
+<text x="220.0" y="452.25" text-anchor="middle" font-size="10" fill="#12401Fbb">WatermarkApp</text>
+<rect x="70" y="486" width="300" height="62" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="220.0" y="509.25" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A3600">Sáu crate nghiệp vụ</text>
+<text x="220.0" y="523.75" text-anchor="middle" font-size="10" fill="#5A3600bb">sv-core · sv-platform · sv-stego · sv-meta · sv-qr ·</text>
+<text x="220.0" y="536.25" text-anchor="middle" font-size="10" fill="#5A3600bb">sv-watermark</text>
+<rect x="410" y="350" width="300" height="180" rx="7" fill="#FFF0F6" stroke="#B5197F" stroke-width="1.6"/>
+<text x="560.0" y="432.25" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A0C3E">Bí mật trong bộ nhớ</text>
+<text x="560.0" y="446.75" text-anchor="middle" font-size="10" fill="#5A0C3Ebb">Key32 / SecretBytes / KeyShare — tự xóa khi hủy,</text>
+<text x="560.0" y="459.25" text-anchor="middle" font-size="10" fill="#5A0C3Ebb">Debug bị che, không Serialize</text>
+<rect x="815" y="312" width="170" height="76" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="900.0" y="348.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5E1611">age / age-keygen</text>
+<text x="900.0" y="363.0" text-anchor="middle" font-size="10" fill="#5E1611bb">hết giờ 120 s</text>
+<rect x="1005" y="312" width="170" height="76" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="1090.0" y="348.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5E1611">exiftool</text>
+<text x="1090.0" y="363.0" text-anchor="middle" font-size="10" fill="#5E1611bb">hết giờ 60 s, -config &quot;&quot;</text>
+<path d="M815 508.2 A85.0 13.2 0 0 1 985 508.2 L985 547.8 A85.0 13.2 0 0 1 815 547.8 Z" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/><path d="M815 508.2 A85.0 13.2 0 0 0 985 508.2" fill="none" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="900.0" y="526.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0A3D3D">.svault</text>
+<text x="900.0" y="541.0" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">ký + mã hóa</text>
+<path d="M1005 508.2 A85.0 13.2 0 0 1 1175 508.2 L1175 547.8 A85.0 13.2 0 0 1 1005 547.8 Z" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/><path d="M1005 508.2 A85.0 13.2 0 0 0 1175 508.2" fill="none" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="1090.0" y="518.75" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0A3D3D">.svenc · .svkey ·</text>
+<text x="1090.0" y="534.25" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0A3D3D">.svss</text>
+<text x="1090.0" y="548.75" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">AEAD</text>
+<rect x="815" y="578" width="360" height="52" rx="7" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="995.0" y="608.0" text-anchor="middle" font-size="11" font-weight="700" fill="#0A3D3D">ảnh mang dữ liệu ẩn / thủy vân (PNG · BMP · JPEG)</text>
+<rect x="70" y="655" width="320" height="66" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="230.0" y="686.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0E3A19">cargo deny + cargo audit</text>
+<text x="230.0" y="701.0" text-anchor="middle" font-size="10" fill="#0E3A19bb">chỉ soi phần lõi đã kiểm toán</text>
+<rect x="410" y="655" width="300" height="66" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="560.0" y="686.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1C2330">cây phụ thuộc webview</text>
+<text x="560.0" y="701.0" text-anchor="middle" font-size="10" fill="#1C2330bb">quét riêng, ngoài cổng giấy phép</text>
+<text x="40" y="790.0" text-anchor="start" font-size="10.8" font-weight="400" fill="#3a4a5a">TB-1: không bí mật nào nằm trong DTO; lỗi trả về là mã SV-* đã hợp nhất để chống dò oracle. TB-2: nhị phân được ghim băm BLAKE3, chạy với môi trường đã xóa, không qua shell, có hạn giờ tường. TB-3: container được</text>
+<text x="40" y="803.8" text-anchor="start" font-size="10.8" font-weight="400" fill="#3a4a5a">ký trên gốc ràng buộc và ghi bằng temp + rename. TB-4: cây phụ thuộc nặng của webview không được phép ảnh hưởng tới cổng kiểm toán của lõi.</text>
+<text class="src" x="26" y="874">Nguon: src-tauri/src/passphrase.rs; crates/sv-age/src/lib.rs:62,108,147; crates/sv-core/src/container.rs:333; Cargo.toml (exclude=[&quot;desktop&quot;])</text>
+</svg>

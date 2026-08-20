@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="760" viewBox="0 0 1180 760" role="img" aria-label="Hình 4.5 — Trạng thái bảy giả thuyết rủi ro sau chiến dịch kiểm chứng và sửa lỗi">
+<defs>
+<marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#44506080"/></marker>
+<marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8a94a4"/></marker>
+<marker id="arwo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="none" stroke="#445060" stroke-width="1.4"/></marker>
+</defs>
+<style>text{font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1c2330}.ttl{font-size:20px;font-weight:700}.sub{font-size:12px;fill:#5b6675}.zl{font-size:12px;font-weight:700}.zs{font-size:10.5px;fill:#67707d}.el{font-size:10.5px;fill:#3a45060}.src{font-size:10px;fill:#77808c}</style>
+<rect x="0" y="0" width="1180" height="760" fill="#ffffff"/>
+<text class="ttl" x="26" y="34">Hình 4.5 — Trạng thái bảy giả thuyết rủi ro sau chiến dịch kiểm chứng và sửa lỗi</text>
+<text class="sub" x="26" y="54">Mỗi giả thuyết được tái hiện hoặc bác bỏ trên đúng đường mã sản phẩm (VaultBackend + age thật)</text>
+<rect x="50" y="100" width="70" height="40" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="85.0" y="124.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1C2330">Mã</text>
+<rect x="130" y="100" width="320" height="40" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="290.0" y="124.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1C2330">Nội dung giả thuyết</text>
+<rect x="460" y="100" width="140" height="40" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="530.0" y="124.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1C2330">Mức độ</text>
+<rect x="610" y="100" width="160" height="40" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="690.0" y="124.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1C2330">Trạng thái</text>
+<rect x="780" y="100" width="350" height="40" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="955.0" y="124.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1C2330">Bằng chứng / biện pháp</text>
+<rect x="50" y="148" width="70" height="74" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="85.0" y="190.0" text-anchor="middle" font-size="13" font-weight="700" fill="#12401F">H2</text>
+<rect x="130" y="148" width="320" height="74" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="290.0" y="189.0" text-anchor="middle" font-size="11" font-weight="500" fill="#1C2330">Không xác nhận lại mật khẩu khi tạo két</text>
+<rect x="460" y="148" width="140" height="74" rx="7" fill="#FCE4E4" stroke="#B3261E" stroke-width="1.6"/>
+<text x="530.0" y="189.0" text-anchor="middle" font-size="11" font-weight="700" fill="#5E1611">Nghiêm trọng</text>
+<rect x="610" y="148" width="160" height="74" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="690.0" y="189.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0E3A19">ĐÃ SỬA</text>
+<rect x="780" y="148" width="350" height="74" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="955.0" y="188.4" text-anchor="middle" font-size="9.8" font-weight="500" fill="#1C2330">Thêm ô nhập lại và chặn tạo nếu hai ô lệch nhau</text>
+<rect x="50" y="226" width="70" height="74" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="85.0" y="268.0" text-anchor="middle" font-size="13" font-weight="700" fill="#12401F">H7</text>
+<rect x="130" y="226" width="320" height="74" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="290.0" y="267.0" text-anchor="middle" font-size="11" font-weight="500" fill="#1C2330">Ghi đồng thời làm mất dữ liệu</text>
+<rect x="460" y="226" width="140" height="74" rx="7" fill="#FCE4E4" stroke="#B3261E" stroke-width="1.6"/>
+<text x="530.0" y="267.0" text-anchor="middle" font-size="11" font-weight="700" fill="#5E1611">Cao</text>
+<rect x="610" y="226" width="160" height="74" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="690.0" y="267.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0E3A19">ĐÃ SỬA</text>
+<rect x="780" y="226" width="350" height="74" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="955.0" y="260.0" text-anchor="middle" font-size="9.8" font-weight="500" fill="#1C2330">Khóa ghi theo đường dẫn két; mất 0/12 lượt thử sau khi sửa</text>
+<text x="955.0" y="272.8" text-anchor="middle" font-size="9.8" font-weight="500" fill="#1C2330">(trước đó mất 1 trong 12/12)</text>
+<rect x="50" y="304" width="70" height="74" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="85.0" y="346.0" text-anchor="middle" font-size="13" font-weight="700" fill="#12401F">H3</text>
+<rect x="130" y="304" width="320" height="74" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="290.0" y="345.0" text-anchor="middle" font-size="11" font-weight="500" fill="#1C2330">Trích xuất âm thầm ghi đè tệp có sẵn</text>
+<rect x="460" y="304" width="140" height="74" rx="7" fill="#FCE4E4" stroke="#B3261E" stroke-width="1.6"/>
+<text x="530.0" y="345.0" text-anchor="middle" font-size="11" font-weight="700" fill="#5E1611">Cao</text>
+<rect x="610" y="304" width="160" height="74" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="690.0" y="345.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0E3A19">ĐÃ SỬA</text>
+<rect x="780" y="304" width="350" height="74" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="955.0" y="344.40000000000003" text-anchor="middle" font-size="9.8" font-weight="500" fill="#1C2330">Từ chối khi đích tồn tại và trả SV-OUTPUT-EXISTS</text>
+<rect x="50" y="382" width="70" height="74" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="85.0" y="424.0" text-anchor="middle" font-size="13" font-weight="700" fill="#12401F">H6</text>
+<rect x="130" y="382" width="320" height="74" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="290.0" y="423.0" text-anchor="middle" font-size="11" font-weight="500" fill="#1C2330">Mọi lỗi đều gộp thành SV-INTERNAL</text>
+<rect x="460" y="382" width="140" height="74" rx="7" fill="#FCE4E4" stroke="#B3261E" stroke-width="1.6"/>
+<text x="530.0" y="423.0" text-anchor="middle" font-size="11" font-weight="700" fill="#5E1611">Cao</text>
+<rect x="610" y="382" width="160" height="74" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="690.0" y="423.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0E3A19">ĐÃ SỬA</text>
+<rect x="780" y="382" width="350" height="74" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="955.0" y="416.0" text-anchor="middle" font-size="9.8" font-weight="500" fill="#1C2330">Bổ sung SV-IO, SV-TOO-LARGE, SV-TIMEOUT, SV-OUTPUT-EXISTS; chi</text>
+<text x="955.0" y="428.8" text-anchor="middle" font-size="9.8" font-weight="500" fill="#1C2330">tiết I/O không kèm đường dẫn</text>
+<rect x="50" y="460" width="70" height="74" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="85.0" y="502.0" text-anchor="middle" font-size="13" font-weight="700" fill="#12401F">H1</text>
+<rect x="130" y="460" width="320" height="74" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="290.0" y="501.0" text-anchor="middle" font-size="11" font-weight="500" fill="#1C2330">Tệp lớn gây hỏng khó hiểu</text>
+<rect x="460" y="460" width="140" height="74" rx="7" fill="#FCE4E4" stroke="#B3261E" stroke-width="1.6"/>
+<text x="530.0" y="501.0" text-anchor="middle" font-size="11" font-weight="700" fill="#5E1611">Cao</text>
+<rect x="610" y="460" width="160" height="74" rx="7" fill="#FFFDE7" stroke="#B8A429" stroke-width="1.6"/>
+<text x="690.0" y="501.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4A4210">ĐÃ GIẢM NHẸ</text>
+<rect x="780" y="460" width="350" height="74" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="955.0" y="494.0" text-anchor="middle" font-size="9.8" font-weight="500" fill="#1C2330">Trần 2 GiB kiểm trước khi đọc + mã lỗi rõ ràng; sửa gốc là</text>
+<text x="955.0" y="506.8" text-anchor="middle" font-size="9.8" font-weight="500" fill="#1C2330">truyền dòng thì CHƯA làm</text>
+<rect x="50" y="538" width="70" height="74" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="85.0" y="580.0" text-anchor="middle" font-size="13" font-weight="700" fill="#12401F">H4</text>
+<rect x="130" y="538" width="320" height="74" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="290.0" y="579.0" text-anchor="middle" font-size="11" font-weight="500" fill="#1C2330">env_clear() làm hỏng age trên Windows</text>
+<rect x="460" y="538" width="140" height="74" rx="7" fill="#EFEFEF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="530.0" y="579.0" text-anchor="middle" font-size="11" font-weight="700" fill="#1C2330">Chưa rõ → đã đóng</text>
+<rect x="610" y="538" width="160" height="74" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="690.0" y="579.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0E3A19">BÁC BỎ / ĐÃ ĐÓNG</text>
+<rect x="780" y="538" width="350" height="74" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="955.0" y="578.4" text-anchor="middle" font-size="9.8" font-weight="500" fill="#1C2330">Kiểm thử đầu-cuối chạy xanh trên windows-latest ngày 15-6-2026</text>
+<rect x="50" y="616" width="70" height="74" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="85.0" y="658.0" text-anchor="middle" font-size="13" font-weight="700" fill="#12401F">H5</text>
+<rect x="130" y="616" width="320" height="74" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="290.0" y="657.0" text-anchor="middle" font-size="11" font-weight="500" fill="#1C2330">Nhị phân đi kèm bị chặn khi cài mới</text>
+<rect x="460" y="616" width="140" height="74" rx="7" fill="#FCE4E4" stroke="#B3261E" stroke-width="1.6"/>
+<text x="530.0" y="657.0" text-anchor="middle" font-size="11" font-weight="700" fill="#5E1611">Cao (phân phối)</text>
+<rect x="610" y="616" width="160" height="74" rx="7" fill="#FCE4E4" stroke="#B3261E" stroke-width="1.6"/>
+<text x="690.0" y="657.25" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5E1611">CÒN MỞ</text>
+<rect x="780" y="616" width="350" height="74" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="955.0" y="650.0" text-anchor="middle" font-size="9.8" font-weight="500" fill="#1C2330">Gatekeeper chấm dứt bản sao bị gắn nhãn cách ly (thoát 137).</text>
+<text x="955.0" y="662.8" text-anchor="middle" font-size="9.8" font-weight="500" fill="#1C2330">Cần ký số và công chứng — nằm ngoài phạm vi sử dụng nội bộ</text>
+<text x="50" y="720" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">Kết luận về tư thế phát hành: sau đợt sửa, điểm chặn duy nhất còn lại đối với việc phân phối rộng là H5 (ký số và công chứng gói cài). Dự án khai báo rõ rằng đây là công cụ dùng nội bộ nên việc ký số</text>
+<text x="50" y="734" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">được đặt ngoài phạm vi, chứ không phải đã hoàn thành.</text>
+<text class="src" x="26" y="734">Nguồn: docs/VALIDATION-PLAN.md và docs/VALIDATION-RESULTS.md (bảng trạng thái sau khi sửa)</text>
+</svg>

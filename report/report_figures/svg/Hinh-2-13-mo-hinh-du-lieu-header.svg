@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="790" viewBox="0 0 1180 790" role="img" aria-label="Hình 2.13 — Mô hình dữ liệu của header CBOR và danh mục tệp">
+<defs>
+<marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#44506080"/></marker>
+<marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8a94a4"/></marker>
+<marker id="arwo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="none" stroke="#445060" stroke-width="1.4"/></marker>
+</defs>
+<style>text{font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1c2330}.ttl{font-size:20px;font-weight:700}.sub{font-size:12px;fill:#5b6675}.zl{font-size:12px;font-weight:700}.zs{font-size:10.5px;fill:#67707d}.el{font-size:10.5px;fill:#3a45060}.src{font-size:10px;fill:#77808c}</style>
+<rect x="0" y="0" width="1180" height="790" fill="#ffffff"/>
+<text class="ttl" x="26" y="34">Hình 2.13 — Mô hình dữ liệu của header CBOR và danh mục tệp</text>
+<text class="sub" x="26" y="54">Trường nào công khai, trường nào là bản mã: ranh giới bí mật của định dạng</text>
+<path d="M295.0 358 L522.5 358 L522.5 248 L750.0 248" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M295.0 446 L522.5 446 L522.5 248 L750.0 248" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M530 334.0 L565.0 334.0 L565.0 316.0 L600 316.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M295.0 534 L522.5 534 L522.5 460 L750.0 460" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="60" y="100" width="470" height="34" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="295.0" y="121.5" text-anchor="middle" font-size="12" font-weight="700" fill="#5A3600">VaultHeader  «CBOR, serde(deny_unknown_fields)»</text>
+<rect x="60" y="138" width="470" height="40" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="295.0" y="155.75" text-anchor="middle" font-size="11" font-weight="500" fill="#1C2330">format_version : u16</text>
+<text x="295.0" y="168.75" text-anchor="middle" font-size="10" fill="#1C2330bb">công khai</text>
+<rect x="60" y="182" width="470" height="40" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="295.0" y="199.75" text-anchor="middle" font-size="11" font-weight="500" fill="#1C2330">suite : CipherSuite = V1</text>
+<text x="295.0" y="212.75" text-anchor="middle" font-size="10" fill="#1C2330bb">công khai — enum đóng</text>
+<rect x="60" y="226" width="470" height="40" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="295.0" y="243.75" text-anchor="middle" font-size="11" font-weight="500" fill="#1C2330">vault_uuid : [u8; 16]</text>
+<text x="295.0" y="256.75" text-anchor="middle" font-size="10" fill="#1C2330bb">công khai — ràng buộc dẫn xuất khóa</text>
+<rect x="60" y="270" width="470" height="40" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="295.0" y="287.75" text-anchor="middle" font-size="11" font-weight="500" fill="#1C2330">created_unix / modified_unix : u64</text>
+<text x="295.0" y="300.75" text-anchor="middle" font-size="10" fill="#1C2330bb">công khai</text>
+<rect x="60" y="314" width="470" height="40" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="295.0" y="331.75" text-anchor="middle" font-size="11" font-weight="500" fill="#1C2330">kdf : KdfRecord { salt, params }</text>
+<text x="295.0" y="344.75" text-anchor="middle" font-size="10" fill="#1C2330bb">công khai</text>
+<rect x="60" y="358" width="470" height="40" rx="7" fill="#FFF0F6" stroke="#B5197F" stroke-width="1.6"/>
+<text x="295.0" y="375.75" text-anchor="middle" font-size="11" font-weight="500" fill="#5A0C3E">wrapped_age_identity : WrappedSecret</text>
+<text x="295.0" y="388.75" text-anchor="middle" font-size="10" fill="#5A0C3Ebb">BẢN MÃ của bí mật</text>
+<rect x="60" y="402" width="470" height="40" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="295.0" y="419.75" text-anchor="middle" font-size="11" font-weight="500" fill="#1C2330">age_recipient : AgeRecipient</text>
+<text x="295.0" y="432.75" text-anchor="middle" font-size="10" fill="#1C2330bb">công khai (khóa công khai age1…)</text>
+<rect x="60" y="446" width="470" height="40" rx="7" fill="#FFF0F6" stroke="#B5197F" stroke-width="1.6"/>
+<text x="295.0" y="463.75" text-anchor="middle" font-size="11" font-weight="500" fill="#5A0C3E">wrapped_signing_key : WrappedSecret</text>
+<text x="295.0" y="476.75" text-anchor="middle" font-size="10" fill="#5A0C3Ebb">BẢN MÃ của bí mật</text>
+<rect x="60" y="490" width="470" height="40" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="295.0" y="507.75" text-anchor="middle" font-size="11" font-weight="500" fill="#1C2330">signing_public_key : [u8; 32]</text>
+<text x="295.0" y="520.75" text-anchor="middle" font-size="10" fill="#1C2330bb">công khai — kiểm chữ ký khi chưa mở khóa</text>
+<rect x="60" y="534" width="470" height="40" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="295.0" y="551.75" text-anchor="middle" font-size="11" font-weight="500" fill="#1C2330">share_policy : Option&lt;SharePolicyRecord&gt;</text>
+<text x="295.0" y="564.75" text-anchor="middle" font-size="10" fill="#1C2330bb">công khai — chỉ là chính sách</text>
+<rect x="60" y="578" width="470" height="40" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="295.0" y="595.75" text-anchor="middle" font-size="11" font-weight="500" fill="#1C2330">content_layout : ContentLayout { payload_len }</text>
+<text x="295.0" y="608.75" text-anchor="middle" font-size="10" fill="#1C2330bb">công khai</text>
+<rect x="600" y="140" width="300" height="108" rx="7" fill="#FFF0F6" stroke="#B5197F" stroke-width="1.6"/>
+<text x="750.0" y="180.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A0C3E">WrappedSecret</text>
+<text x="750.0" y="194.5" text-anchor="middle" font-size="10" fill="#5A0C3Ebb">nonce : Vec&lt;u8&gt; (24 byte) ciphertext : Vec&lt;u8&gt; (bản</text>
+<text x="750.0" y="207.0" text-anchor="middle" font-size="10" fill="#5A0C3Ebb">mã + thẻ Poly1305 16 byte) → libsodium</text>
+<text x="750.0" y="219.5" text-anchor="middle" font-size="10" fill="#5A0C3Ebb">crypto_secretbox</text>
+<rect x="600" y="268" width="300" height="96" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="750.0" y="308.25" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1C2330">KdfRecord</text>
+<text x="750.0" y="322.75" text-anchor="middle" font-size="10" fill="#1C2330bb">salt : Salt([u8; 16]) params : KdfParams::Argon2id {</text>
+<text x="750.0" y="335.25" text-anchor="middle" font-size="10" fill="#1C2330bb">mem_kib, time_cost, parallelism }</text>
+<rect x="600" y="384" width="300" height="76" rx="7" fill="#FFFFFF" stroke="#5B6675" stroke-width="1.6"/>
+<text x="750.0" y="414.25" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1C2330">SharePolicyRecord</text>
+<text x="750.0" y="428.75" text-anchor="middle" font-size="10" fill="#1C2330bb">shares_total : u8 threshold : u8 — mảnh KHÔNG nằm</text>
+<text x="750.0" y="441.25" text-anchor="middle" font-size="10" fill="#1C2330bb">trong két</text>
+<rect x="600" y="486" width="480" height="34" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="840.0" y="507.5" text-anchor="middle" font-size="12" font-weight="700" fill="#5A3600">ItemDirectory  «nằm bên trong PAYLOAD đã mã hóa»</text>
+<rect x="600" y="524" width="480" height="40" rx="7" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="840.0" y="541.75" text-anchor="middle" font-size="11" font-weight="500" fill="#0A3D3D">item_id : [u8; 16]</text>
+<text x="840.0" y="554.75" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">định danh ổn định</text>
+<rect x="600" y="568" width="480" height="40" rx="7" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="840.0" y="585.75" text-anchor="middle" font-size="11" font-weight="500" fill="#0A3D3D">name : String</text>
+<text x="840.0" y="598.75" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">tên hiển thị — bí mật khi két khóa</text>
+<rect x="600" y="612" width="480" height="40" rx="7" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="840.0" y="629.75" text-anchor="middle" font-size="11" font-weight="500" fill="#0A3D3D">plaintext_offset / plaintext_len : u64</text>
+<text x="840.0" y="642.75" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">vị trí trong vùng byte nội dung</text>
+<rect x="600" y="656" width="480" height="40" rx="7" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="840.0" y="673.75" text-anchor="middle" font-size="11" font-weight="500" fill="#0A3D3D">plaintext_blake3 : [u8; 32]</text>
+<text x="840.0" y="686.75" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">vân tay nội dung từng mục</text>
+<rect x="600" y="700" width="480" height="40" rx="7" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="840.0" y="717.75" text-anchor="middle" font-size="11" font-weight="500" fill="#0A3D3D">added_unix : u64</text>
+<text x="840.0" y="730.75" text-anchor="middle" font-size="10" fill="#0A3D3Dbb">thời điểm thêm</text>
+<text x="60" y="630" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">Header hoàn toàn KHÔNG chứa danh mục tệp. Mọi thông tin về nội dung — tên tệp, kích thước,</text>
+<text x="60" y="644" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">số lượng — đều nằm trong vùng đã mã hóa. Đây là quyết định thiết kế H3 của lược đồ M5.</text>
+<text x="60" y="700" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">deny_unknown_fields là lớp phòng vệ bổ sung phía trên chữ ký: một header có trường lạ bị</text>
+<text x="60" y="714" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">từ chối ngay ở bước giải mã CBOR.</text>
+<text class="src" x="26" y="764">Nguon: crates/sv-core/src/format.rs (VaultHeader, KdfRecord, WrappedSecret, SharePolicyRecord, ContentLayout, ItemDirectory, ItemEntry)</text>
+</svg>

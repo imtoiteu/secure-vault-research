@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="780" viewBox="0 0 1200 780" role="img" aria-label="Hình 2.16 — Vòng đời của bí mật trong bộ nhớ và cơ chế xóa">
+<defs>
+<marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#44506080"/></marker>
+<marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8a94a4"/></marker>
+<marker id="arwo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="none" stroke="#445060" stroke-width="1.4"/></marker>
+</defs>
+<style>text{font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1c2330}.ttl{font-size:20px;font-weight:700}.sub{font-size:12px;fill:#5b6675}.zl{font-size:12px;font-weight:700}.zs{font-size:10.5px;fill:#67707d}.el{font-size:10.5px;fill:#3a45060}.src{font-size:10px;fill:#77808c}</style>
+<rect x="0" y="0" width="1200" height="780" fill="#ffffff"/>
+<text class="ttl" x="26" y="34">Hình 2.16 — Vòng đời của bí mật trong bộ nhớ và cơ chế xóa</text>
+<text class="sub" x="26" y="54">Bí mật duy nhất tồn tại suốt phiên là khóa chủ; mọi bí mật khác chỉ sống trong một thao tác</text>
+<rect x="50" y="96" width="1100" height="120" rx="10" fill="#F7F7F8" stroke="#B9C0C9" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="62" y="115" fill="#3b4655">Nhập</text>
+<rect x="50" y="232" width="1100" height="120" rx="10" fill="#F7F7F8" stroke="#B9C0C9" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="62" y="251" fill="#3b4655">Dẫn xuất</text>
+<rect x="50" y="368" width="1100" height="120" rx="10" fill="#F7F7F8" stroke="#B9C0C9" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="62" y="387" fill="#3b4655">Sử dụng</text>
+<rect x="50" y="504" width="1100" height="120" rx="10" fill="#F7F7F8" stroke="#B9C0C9" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text class="zl" x="62" y="523" fill="#3b4655">Hủy</text>
+<path d="M230.0 202 L230.0 234.0 L230.0 234.0 L230.0 266" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="152.74" y="234.5" width="54.52" height="17.5" rx="3" fill="#ffffffe0"/>
+<text x="180" y="245.0" text-anchor="middle" font-size="10.5" fill="#3a5060">Argon2id</text>
+<path d="M955.0 202 L955.0 234.0 L955.0 234.0 L955.0 266" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M380 302.0 L410 302.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="342.6975" y="276.5" width="104.605" height="17.5" rx="3" fill="#ffffffe0"/>
+<text x="395" y="287.0" text-anchor="middle" font-size="10.5" fill="#3a5060">BLAKE3 derive_key</text>
+<path d="M230.0 338 L230.0 370.0 L230.0 370.0 L230.0 402" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M570.0 338 L570.0 370.0 L570.0 370.0 L570.0 402" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="523.2625" y="370.5" width="93.47500000000001" height="17.5" rx="3" fill="#ffffffe0"/>
+<text x="570" y="381.0" text-anchor="middle" font-size="10.5" fill="#3a5060">secretbox::open</text>
+<path d="M730 438.0 L760 438.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="723.305" y="414.5" width="43.39" height="17.5" rx="3" fill="#ffffffe0"/>
+<text x="745" y="425.0" text-anchor="middle" font-size="10.5" fill="#3a5060">age -d</text>
+<path d="M230.0 474 L230.0 506.0 L230.0 506.0 L230.0 538" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M570.0 474 L570.0 506.0 L570.0 506.0 L570.0 538" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M955.0 474 L955.0 506.0 L955.0 506.0 L955.0 538" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="80" y="130" width="300" height="72" rx="7" fill="#FFF0F6" stroke="#B5197F" stroke-width="1.6"/>
+<text x="230.0" y="158.25" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A0C3E">IpcPassphrase</text>
+<text x="230.0" y="172.75" text-anchor="middle" font-size="10" fill="#5A0C3Ebb">tự xóa khi hủy; Debug bị che; chuyển sang</text>
+<text x="230.0" y="185.25" text-anchor="middle" font-size="10" fill="#5A0C3Ebb">SecretBytes ngay dòng đầu của handler</text>
+<rect x="410" y="130" width="320" height="72" rx="7" fill="#FCE4E4" stroke="#B3261E" stroke-width="1.6"/>
+<text x="570.0" y="164.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5E1611">Bản sao thượng nguồn của Tauri/serde</text>
+<text x="570.0" y="179.0" text-anchor="middle" font-size="10" fill="#5E1611bb">RỦI RO TỒN ĐỌNG N1 — nằm ngoài tầm với của ứng dụng</text>
+<rect x="760" y="130" width="390" height="72" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="955.0" y="164.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0E3A19">getrandom (CSPRNG hệ điều hành)</text>
+<text x="955.0" y="179.0" text-anchor="middle" font-size="10" fill="#0E3A19bb">uuid · muối · nonce · session_id · DEK · group_id</text>
+<rect x="80" y="266" width="300" height="72" rx="7" fill="#FFF0F6" stroke="#B5197F" stroke-width="1.6"/>
+<text x="230.0" y="300.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A0C3E">Key32 — khóa chủ</text>
+<text x="230.0" y="315.0" text-anchor="middle" font-size="10" fill="#5A0C3Ebb">ZeroizeOnDrop, không Serialize</text>
+<rect x="410" y="266" width="320" height="72" rx="7" fill="#FFF0F6" stroke="#B5197F" stroke-width="1.6"/>
+<text x="570.0" y="300.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A0C3E">Key32 — khóa bọc theo trường</text>
+<text x="570.0" y="315.0" text-anchor="middle" font-size="10" fill="#5A0C3Ebb">sinh lại mỗi thao tác, không lưu ở đâu</text>
+<rect x="760" y="266" width="390" height="72" rx="7" fill="#FFF0F6" stroke="#B5197F" stroke-width="1.6"/>
+<text x="955.0" y="300.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A0C3E">SecretBytes / KeyShare</text>
+<text x="955.0" y="315.0" text-anchor="middle" font-size="10" fill="#5A0C3Ebb">Box&lt;[u8]&gt; không dư dung lượng nên không thể tái cấp phát rồi rò rỉ</text>
+<rect x="80" y="402" width="300" height="72" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="230.0" y="436.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#12401F">SessionState { master_key, vault_path }</text>
+<text x="230.0" y="451.0" text-anchor="middle" font-size="10" fill="#12401Fbb">tra cứu theo session_id mờ; UI chỉ giữ chuỗi handle</text>
+<rect x="410" y="402" width="320" height="72" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="570.0" y="436.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#3A1560">Danh tính age tạm thời</text>
+<text x="570.0" y="451.0" text-anchor="middle" font-size="10" fill="#3A1560bb">ghi ra tệp tạm 0600 chỉ trong một lệnh age -d</text>
+<rect x="760" y="402" width="390" height="72" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="955.0" y="436.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A3600">UnpackedArchive.item_bytes</text>
+<text x="955.0" y="451.0" text-anchor="middle" font-size="10" fill="#5A3600bb">vùng dữ liệu rõ của các mục</text>
+<rect x="80" y="538" width="300" height="72" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="230.0" y="572.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0E3A19">vault_lock</text>
+<text x="230.0" y="587.0" text-anchor="middle" font-size="10" fill="#0E3A19bb">xóa khỏi bảng phiên ⇒ Key32 bị ghi 0</text>
+<rect x="410" y="538" width="320" height="72" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="570.0" y="572.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0E3A19">Drop của SecureIdentityFile</text>
+<text x="570.0" y="587.0" text-anchor="middle" font-size="10" fill="#0E3A19bb">ghi đè bằng 0 rồi unlink (nỗ lực tối đa)</text>
+<rect x="760" y="538" width="390" height="72" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="955.0" y="572.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0E3A19">Drop của UnpackedArchive</text>
+<text x="955.0" y="587.0" text-anchor="middle" font-size="10" fill="#0E3A19bb">zeroize vùng byte nội dung; pack_archive cũng xóa vùng nháp</text>
+<text x="50" y="652" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">Giới hạn được thừa nhận: dự án KHÔNG khóa trang bộ nhớ (mlock/VirtualLock) vì việc đó đòi hỏi mã unsafe theo nền tảng, trái với tư thế #![forbid(unsafe_code)] của các crate nghiệp vụ. Biện pháp thay</text>
+<text x="50" y="666" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">thế được khuyến nghị là mã hóa toàn đĩa và mã hóa vùng swap ở mức hệ điều hành. Một kẻ tấn công đọc được bộ nhớ tiến trình nằm NGOÀI mô hình đe dọa.</text>
+<text class="src" x="26" y="754">Nguon: crates/sv-crypto-traits/src/lib.rs (Key32/SecretBytes/KeyShare); src-tauri/src/{passphrase,service}.rs; crates/sv-core/src/container.rs (UnpackedArchive::drop)</text>
+</svg>

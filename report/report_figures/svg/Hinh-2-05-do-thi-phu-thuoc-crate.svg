@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="760" viewBox="0 0 1160 760" role="img" aria-label="Hình 2.5 — Đồ thị phụ thuộc giữa các crate trong bản dựng sản phẩm">
+<defs>
+<marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#44506080"/></marker>
+<marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8a94a4"/></marker>
+<marker id="arwo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="none" stroke="#445060" stroke-width="1.4"/></marker>
+</defs>
+<style>text{font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1c2330}.ttl{font-size:20px;font-weight:700}.sub{font-size:12px;fill:#5b6675}.zl{font-size:12px;font-weight:700}.zs{font-size:10.5px;fill:#67707d}.el{font-size:10.5px;fill:#3a45060}.src{font-size:10px;fill:#77808c}</style>
+<rect x="0" y="0" width="1160" height="760" fill="#ffffff"/>
+<text class="ttl" x="26" y="34">Hình 2.5 — Đồ thị phụ thuộc giữa các crate trong bản dựng sản phẩm</text>
+<text class="sub" x="26" y="54">Mũi tên hướng từ crate phụ thuộc sang crate được phụ thuộc</text>
+<path d="M580.0 238 L580.0 283.5 L250 283.5 L250 329.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M580.0 238 L580.0 269.0 L363.0 269.0 L363.0 300" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M580.0 238 L580.0 269.0 L571.0 269.0 L571.0 300" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M580.0 238 L580.0 269.0 L779.0 269.0 L779.0 300" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M580.0 238 L580.0 283.5 L892 283.5 L892 329.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M580.0 238 L580.0 309.0 L987.0 309.0 L987.0 380" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M580.0 138 L580.0 180" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M580.0 238 L580.0 339.0 L155.0 339.0 L155.0 440" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M580.0 238 L580.0 339.0 L418.0 339.0 L418.0 440" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M363.0 358 L363.0 399.0 L418.0 399.0 L418.0 440" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M571.0 358 L571.0 399.0 L418.0 399.0 L418.0 440" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M779.0 358 L779.0 399.0 L418.0 399.0 L418.0 440" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M418.0 498 L418.0 560" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M418.0 498 L418.0 529.0 L710.0 529.0 L710.0 560" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M418.0 498 L418.0 543.5 L830 543.5 L830 589.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M155.0 498 L155.0 529.0 L418.0 529.0 L418.0 560" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M155.0 358 L155.0 459.0 L418.0 459.0 L418.0 560" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="72.655" y="516.5" width="154.69" height="17.5" rx="3" fill="#ffffffe0"/>
+<text x="150" y="527.0" text-anchor="middle" font-size="10.5" fill="#3a5060">chỉ ABI, không bộ điều hợp</text>
+<path d="M155.0 358 L155.0 511.5 L539.0 511.5 L539.0 665" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M363.0 358 L363.0 511.5 L539.0 511.5 L539.0 665" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M568 589.0 L568 589.0 L610 589.0 L610 589.0" fill="none" stroke="#8a94a4" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arwd)"/>
+<path d="M155.0 358 L155.0 509.0 L155.0 509.0 L155.0 660" fill="none" stroke="#8a94a4" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arwd)"/>
+<rect x="70.47999999999999" y="616.5" width="99.04" height="17.5" rx="3" fill="#ffffffe0"/>
+<text x="120" y="627.0" text-anchor="middle" font-size="10.5" fill="#3a5060">chỉ khi kiểm thử</text>
+<rect x="430" y="80" width="300" height="58" rx="7" fill="#E8F0FE" stroke="#3B6FD4" stroke-width="1.6"/>
+<text x="580.0" y="107.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#12305F">secure-vault-desktop (desktop/)</text>
+<text x="580.0" y="122.0" text-anchor="middle" font-size="10" fill="#12305Fbb">loại khỏi workspace · vỏ Tauri 2</text>
+<rect x="430" y="180" width="300" height="58" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="580.0" y="207.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#12401F">sv-app (src-tauri/)</text>
+<text x="580.0" y="222.0" text-anchor="middle" font-size="10" fill="#12401Fbb">gốc lắp ghép + IPC</text>
+<rect x="60" y="300" width="190" height="58" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="155.0" y="327.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A3600">sv-core</text>
+<text x="155.0" y="342.0" text-anchor="middle" font-size="10" fill="#5A3600bb">két .svault</text>
+<rect x="268" y="300" width="190" height="58" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="363.0" y="327.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A3600">sv-platform</text>
+<text x="363.0" y="342.0" text-anchor="middle" font-size="10" fill="#5A3600bb">dịch vụ mức tệp</text>
+<rect x="476" y="300" width="190" height="58" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="571.0" y="327.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A3600">sv-stego</text>
+<text x="571.0" y="342.0" text-anchor="middle" font-size="10" fill="#5A3600bb">giấu tin</text>
+<rect x="684" y="300" width="190" height="58" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="779.0" y="327.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A3600">sv-watermark</text>
+<text x="779.0" y="342.0" text-anchor="middle" font-size="10" fill="#5A3600bb">thủy vân</text>
+<rect x="892" y="300" width="190" height="58" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="987.0" y="327.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A3600">sv-meta</text>
+<text x="987.0" y="342.0" text-anchor="middle" font-size="10" fill="#5A3600bb">siêu dữ liệu</text>
+<rect x="892" y="380" width="190" height="50" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="987.0" y="403.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5A3600">sv-qr</text>
+<text x="987.0" y="418.0" text-anchor="middle" font-size="10" fill="#5A3600bb">mã QR</text>
+<rect x="268" y="440" width="300" height="58" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="418.0" y="467.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#3A1560">sv-crypto</text>
+<text x="418.0" y="482.0" text-anchor="middle" font-size="10" fill="#3A1560bb">bộ điều hợp</text>
+<rect x="60" y="440" width="190" height="58" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="155.0" y="467.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#3A1560">sv-age</text>
+<text x="155.0" y="482.0" text-anchor="middle" font-size="10" fill="#3A1560bb">tiến trình con age</text>
+<rect x="268" y="560" width="300" height="58" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="418.0" y="587.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5E1611">sv-crypto-traits</text>
+<text x="418.0" y="602.0" text-anchor="middle" font-size="10" fill="#5E1611bb">ABI (traits + kiểu giá trị)</text>
+<rect x="610" y="560" width="200" height="58" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="710.0" y="587.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5E1611">sv-sys-sodium</text>
+<text x="710.0" y="602.0" text-anchor="middle" font-size="10" fill="#5E1611bb">FFI libsodium</text>
+<rect x="830" y="560" width="200" height="58" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="930.0" y="587.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5E1611">sv-sys-sss</text>
+<text x="930.0" y="602.0" text-anchor="middle" font-size="10" fill="#5E1611bb">FFI hazmat.c</text>
+<rect x="268" y="665" width="542" height="50" rx="7" fill="#EAF6F6" stroke="#0F7B7B" stroke-width="1.6"/>
+<text x="539.0" y="694.75" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0A3D3D">sv-types — DTO + ApiError</text>
+<rect x="60" y="660" width="190" height="58" rx="7" fill="#FFFDE7" stroke="#B8A429" stroke-width="1.6"/>
+<text x="155.0" y="680.5" text-anchor="middle" font-size="11" font-weight="700" fill="#4A4210">sv-crypto (dev-dep)</text>
+<text x="155.0" y="693.5" text-anchor="middle" font-size="10" fill="#4A4210bb">chỉ dùng cho kiểm thử của sv-</text>
+<text x="155.0" y="706.0" text-anchor="middle" font-size="10" fill="#4A4210bb">core</text>
+<text x="60" y="745.0" text-anchor="start" font-size="10.8" font-weight="400" fill="#3a4a5a">Hai điểm quan trọng: (1) sv-core chỉ phụ thuộc ABI trong bản dựng sản phẩm; (2) tiến trình con age chỉ được nối dây ở gốc lắp ghép, nên phụ thuộc nhị phân ngoài không lan vào tầng nghiệp vụ.</text>
+<text class="src" x="26" y="734">Nguon: Cargo.toml và crates/*/Cargo.toml, src-tauri/Cargo.toml, desktop/Cargo.toml</text>
+</svg>

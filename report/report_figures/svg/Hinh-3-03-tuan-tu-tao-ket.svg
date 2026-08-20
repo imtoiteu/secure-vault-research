@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="830" viewBox="0 0 1280 830" role="img" aria-label="Hình 3.3 — Biểu đồ tuần tự khởi tạo két mới (lệnh vault_create)">
+<defs>
+<marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#44506080"/></marker>
+<marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8a94a4"/></marker>
+<marker id="arwo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="none" stroke="#445060" stroke-width="1.4"/></marker>
+</defs>
+<style>text{font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1c2330}.ttl{font-size:20px;font-weight:700}.sub{font-size:12px;fill:#5b6675}.zl{font-size:12px;font-weight:700}.zs{font-size:10.5px;fill:#67707d}.el{font-size:10.5px;fill:#3a45060}.src{font-size:10px;fill:#77808c}</style>
+<rect x="0" y="0" width="1280" height="830" fill="#ffffff"/>
+<text class="ttl" x="26" y="34">Hình 3.3 — Biểu đồ tuần tự khởi tạo két mới (lệnh vault_create)</text>
+<text class="sub" x="26" y="54">Mọi vật liệu khóa được sinh mới; két rỗng vẫn được ký và ghi nguyên tử</text>
+<path d="M127 176.0 L323 176.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M337 263.0 L543 263.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M337 350.0 L753 350.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M753 382.0 L337 382.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M337 414.0 L963 414.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M337 530.0 L1183 530.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M337 562.0 L1183 562.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M337 594.0 L1183 594.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<path d="M323 626.0 L127 626.0" fill="none" stroke="#5b6675" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="40" y="92" width="160" height="46" rx="7" fill="#E8F0FE" stroke="#3B6FD4" stroke-width="1.6"/>
+<text x="120.0" y="119.14999999999999" text-anchor="middle" font-size="11.3" font-weight="700" fill="#12305F">Giao diện</text>
+<rect x="250" y="92" width="160" height="46" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="330.0" y="119.14999999999999" text-anchor="middle" font-size="11.3" font-weight="700" fill="#12401F">VaultBackend</text>
+<rect x="470" y="92" width="160" height="46" rx="7" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="550.0" y="119.14999999999999" text-anchor="middle" font-size="11.3" font-weight="700" fill="#0E3A19">getrandom</text>
+<rect x="680" y="92" width="160" height="46" rx="7" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="760.0" y="119.14999999999999" text-anchor="middle" font-size="11.3" font-weight="700" fill="#5E1611">age-keygen</text>
+<rect x="890" y="92" width="160" height="46" rx="7" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="970.0" y="119.14999999999999" text-anchor="middle" font-size="11.3" font-weight="700" fill="#3A1560">SodiumMinisignSigner</text>
+<rect x="1110" y="92" width="160" height="46" rx="7" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="1190.0" y="119.14999999999999" text-anchor="middle" font-size="11.3" font-weight="700" fill="#5A3600">container</text>
+<rect x="113" y="169" width="14" height="14" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="120.0" y="178.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12401F"></text>
+<rect x="323" y="169" width="14" height="14" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="330.0" y="178.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12401F"></text>
+<rect x="321" y="213" width="18" height="18" rx="7" fill="#FFFDE7" stroke="#B8A429" stroke-width="1.6"/>
+<text x="330.0" y="224.5" text-anchor="middle" font-size="8" font-weight="700" fill="#4A4210"></text>
+<rect x="323" y="256" width="14" height="14" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="330.0" y="265.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12401F"></text>
+<rect x="543" y="256" width="14" height="14" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="550.0" y="265.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12401F"></text>
+<rect x="321" y="300" width="18" height="18" rx="7" fill="#FFFDE7" stroke="#B8A429" stroke-width="1.6"/>
+<text x="330.0" y="311.5" text-anchor="middle" font-size="8" font-weight="700" fill="#4A4210"></text>
+<rect x="323" y="343" width="14" height="14" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="330.0" y="352.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12401F"></text>
+<rect x="753" y="343" width="14" height="14" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="760.0" y="352.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12401F"></text>
+<rect x="753" y="375" width="14" height="14" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="760.0" y="384.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12401F"></text>
+<rect x="323" y="375" width="14" height="14" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="330.0" y="384.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12401F"></text>
+<rect x="323" y="407" width="14" height="14" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="330.0" y="416.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12401F"></text>
+<rect x="963" y="407" width="14" height="14" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="970.0" y="416.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12401F"></text>
+<rect x="321" y="438" width="18" height="18" rx="7" fill="#FFFDE7" stroke="#B8A429" stroke-width="1.6"/>
+<text x="330.0" y="449.5" text-anchor="middle" font-size="8" font-weight="700" fill="#4A4210"></text>
+<rect x="321" y="480" width="18" height="18" rx="7" fill="#FFFDE7" stroke="#B8A429" stroke-width="1.6"/>
+<text x="330.0" y="491.5" text-anchor="middle" font-size="8" font-weight="700" fill="#4A4210"></text>
+<rect x="323" y="523" width="14" height="14" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="330.0" y="532.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12401F"></text>
+<rect x="1183" y="523" width="14" height="14" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="1190.0" y="532.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12401F"></text>
+<rect x="323" y="555" width="14" height="14" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="330.0" y="564.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12401F"></text>
+<rect x="1183" y="555" width="14" height="14" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="1190.0" y="564.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12401F"></text>
+<rect x="323" y="587" width="14" height="14" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="330.0" y="596.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12401F"></text>
+<rect x="1183" y="587" width="14" height="14" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="1190.0" y="596.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12401F"></text>
+<rect x="323" y="619" width="14" height="14" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="330.0" y="628.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12401F"></text>
+<rect x="113" y="619" width="14" height="14" rx="7" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="120.0" y="628.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12401F"></text>
+<rect x="113" y="138" width="14" height="546" rx="5" fill="#E8F0FE" stroke="#3B6FD4" stroke-width="1.6"/>
+<text x="120.0" y="413.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12305F"></text>
+<rect x="323" y="138" width="14" height="546" rx="5" fill="#E6F4EA" stroke="#2E7D46" stroke-width="1.6"/>
+<text x="330.0" y="413.5" text-anchor="middle" font-size="8" font-weight="700" fill="#12401F"></text>
+<rect x="543" y="138" width="14" height="546" rx="5" fill="#E3F5E7" stroke="#1E7B34" stroke-width="1.6"/>
+<text x="550.0" y="413.5" text-anchor="middle" font-size="8" font-weight="700" fill="#0E3A19"></text>
+<rect x="753" y="138" width="14" height="546" rx="5" fill="#FDE8E8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="760.0" y="413.5" text-anchor="middle" font-size="8" font-weight="700" fill="#5E1611"></text>
+<rect x="963" y="138" width="14" height="546" rx="5" fill="#F3E8FD" stroke="#7A3FBF" stroke-width="1.6"/>
+<text x="970.0" y="413.5" text-anchor="middle" font-size="8" font-weight="700" fill="#3A1560"></text>
+<rect x="1183" y="138" width="14" height="546" rx="5" fill="#FFF4E5" stroke="#C77700" stroke-width="1.6"/>
+<text x="1190.0" y="413.5" text-anchor="middle" font-size="8" font-weight="700" fill="#5A3600"></text>
+<text x="132" y="155.5" text-anchor="start" font-size="10.4" font-weight="400" fill="#2f3d4c">vault_create(path, IpcPassphrase,</text>
+<text x="132" y="168.9" text-anchor="start" font-size="10.4" font-weight="400" fill="#2f3d4c">Option&lt;SharePolicy&gt;)</text>
+<text x="348" y="220.0" text-anchor="start" font-size="10.4" font-weight="400" fill="#2f3d4c">Kiểm tra chính sách chia mảnh: 2 ≤ shares_total, 1 ≤ threshold ≤ shares_total</text>
+<text x="342" y="242.5" text-anchor="start" font-size="10.4" font-weight="400" fill="#2f3d4c">Sinh vault_uuid 16 byte và muối</text>
+<text x="342" y="255.9" text-anchor="start" font-size="10.4" font-weight="400" fill="#2f3d4c">Argon2id 16 byte</text>
+<text x="348" y="307.0" text-anchor="start" font-size="10.4" font-weight="400" fill="#2f3d4c">Argon2id(mật khẩu, muối, tham số mặc định 256 MiB / t=3 / p=1) → khóa chủ MK</text>
+<text x="342" y="342.0" text-anchor="start" font-size="10.4" font-weight="400" fill="#2f3d4c">generate_identity(): chạy age-keygen với môi trường đã xóa</text>
+<text x="342" y="374.0" text-anchor="start" font-size="10.4" font-weight="400" fill="#2f3d4c">(AGE-SECRET-KEY-1…, age1… ) — danh tính bí mật và người nhận công khai</text>
+<text x="342" y="406.0" text-anchor="start" font-size="10.4" font-weight="400" fill="#2f3d4c">generate(): sinh cặp khóa Ed25519 64 byte / 32 byte</text>
+<text x="348" y="445.0" text-anchor="start" font-size="10.4" font-weight="400" fill="#2f3d4c">Bọc hai bí mật: derive_wrap_key(MK, &lt;trường&gt;, uuid) rồi secretbox::seal</text>
+<text x="348" y="487.0" text-anchor="start" font-size="10.4" font-weight="400" fill="#2f3d4c">Dựng VaultHeader: suite V1, uuid, kdf, hai khối đã bọc, khóa công khai ký, chính sách</text>
+<text x="342" y="522.0" text-anchor="start" font-size="10.4" font-weight="400" fill="#2f3d4c">pack_archive(danh sách mục rỗng) → DIR_LEN ‖ CBOR(ItemDirectory rỗng)</text>
+<text x="342" y="554.0" text-anchor="start" font-size="10.4" font-weight="400" fill="#2f3d4c">encrypt(archive, recipient) rồi encode(): tính gốc ràng buộc và ký</text>
+<text x="342" y="586.0" text-anchor="start" font-size="10.4" font-weight="400" fill="#2f3d4c">write_atomic(path): tệp tạm cùng thư mục → fsync → rename</text>
+<text x="132" y="593.0" text-anchor="start" font-size="10.4" font-weight="400" fill="#2f3d4c">VaultMeta { vault_uuid,</text>
+<text x="132" y="606.4" text-anchor="start" font-size="10.4" font-weight="400" fill="#2f3d4c">format_version, item_count = 0, kdf,</text>
+<text x="132" y="619.8" text-anchor="start" font-size="10.4" font-weight="400" fill="#2f3d4c">share_policy }</text>
+<text x="40" y="70" text-anchor="start" font-size="11" font-weight="400" fill="#3a4a5a">Nếu chính sách khôi phục được bật, các mảnh KHÔNG được sinh ở bước này: két chỉ ghi lại chính sách (n, k); mảnh thật chỉ được cắt khi người dùng gọi keys_split trên một phiên đã mở khóa.</text>
+<text class="src" x="26" y="804">Nguồn: src-tauri/src/service.rs create(); src-tauri/src/payload.rs generate_identity(); crates/sv-crypto/src/lib.rs SodiumMinisignSigner::generate</text>
+</svg>
