@@ -36,6 +36,10 @@
     "lang.vi": "Tiếng Việt",
     "lang.en": "English",
 
+    // ---- shared disclosure labels ----
+    "common.moreInfo": "More info",
+    "common.details": "Details",
+
     // ---- sidebar groups + items ----
     "nav.group.vaults": "Vaults",
     "nav.group.protect": "Protect a file",
@@ -199,7 +203,7 @@
     "enc.confirmWarn": "A typo here is unrecoverable — the file could never be opened.",
     "enc.step3": "3  Where to save the locked file",
     "enc.ph.output": "/path/to/file.svenc",
-    "enc.tech": "▸ Technical details: Argon2id key derivation + secretbox (XSalsa20-Poly1305).",
+    "enc.tech": "Technical details: Argon2id key derivation + secretbox (XSalsa20-Poly1305).",
     "enc.btn": "Lock file",
 
     // ---- unlock a file (decrypt) ----
@@ -219,7 +223,7 @@
     "hide.when.body": "To tuck a small encrypted file inside an ordinary-looking image. The hiding place is <strong>not</strong> the protection — your <strong>password</strong> is. Concealment only makes the data less obvious; anyone who suspects it still cannot read it without the password.",
     "hide.step1": "1  Choose the cover image (PNG, BMP, or JPEG)",
     "hide.ph.cover": "Drop a PNG/BMP/JPEG here, or Browse…",
-    "hide.cover.tech": "▸ Lossless <strong>PNG/BMP</strong> are the most discreet covers. <strong>JPEG</strong> works too (concealed in its DCT coefficients) but is <strong>inherently more detectable</strong> by steganalysis — prefer PNG/BMP when stealth matters. The output keeps the cover's format.",
+    "hide.cover.tech": "Lossless <strong>PNG/BMP</strong> are the most discreet covers. <strong>JPEG</strong> works too (concealed in its DCT coefficients) but is <strong>inherently more detectable</strong> by steganalysis — prefer PNG/BMP when stealth matters. The output keeps the cover's format.",
     "hide.step2": "2  Choose the file to hide",
     "hide.ph.payload": "Drop the secret file here, or Browse…",
     "hide.step3": "3  Set a password",
@@ -227,7 +231,7 @@
     "hide.confirmWarn": "A typo here is unrecoverable — the hidden data could never be read.",
     "hide.step4": "4  Where to save the image with hidden data",
     "hide.ph.output": "/path/to/output.png",
-    "hide.out.tech": "▸ Saved in the cover's format. Technical details: encrypt-then-embed — Argon2id + secretbox, then LSB concealment.",
+    "hide.out.tech": "Saved in the cover's format. Technical details: encrypt-then-embed — Argon2id + secretbox, then LSB concealment.",
     "hide.randomize": "Scatter the data across the image (recommended)",
     "hide.btn": "Hide data",
 
@@ -249,7 +253,7 @@
     "detect.when.body": "For a quick, best-effort read on whether an image might carry concealed data (an appended file, LSB tampering). A low result means “nothing these tests caught” — <strong>not</strong> a guarantee the image is clean.",
     "detect.step1": "1  Choose the image to scan (PNG, BMP, or JPEG)",
     "detect.ph.input": "Drop a PNG/BMP/JPEG here, or Browse…",
-    "detect.tech": "▸ For JPEG, the scan covers appended data (after the <code>EOI</code> marker) and DCT-coefficient LSB statistics; for PNG/BMP, appended data and pixel-LSB statistics.",
+    "detect.tech": "For JPEG, the scan covers appended data (after the <code>EOI</code> marker) and DCT-coefficient LSB statistics; for PNG/BMP, appended data and pixel-LSB statistics.",
     "detect.btn": "Scan image",
 
     // ---- sign a file ----
@@ -301,10 +305,10 @@
     "wm.embed.step1": "1  Choose the image to mark (PNG or BMP)",
     "wm.embed.ph.input": "Drop a PNG/BMP here, or Browse…",
     "wm.embed.step2": "2  Set a password (the key for the mark)",
-    "wm.embed.pass.tech": "▸ You'll need the same password to check for tampering later. Use a strong one — the mark's forgery-resistance depends on it.",
+    "wm.embed.pass.tech": "You'll need the same password to check for tampering later. Use a strong one — the mark's forgery-resistance depends on it.",
     "wm.embed.step3": "3  Where to save the marked image (PNG or BMP)",
     "wm.embed.ph.output": "/path/to/marked.png",
-    "wm.embed.out.tech": "▸ Saved losslessly. Technical details: a per-block BLAKE3 keyed-MAC of the image content, keyed by Argon2id, embedded in the pixel LSBs. Your original is never changed.",
+    "wm.embed.out.tech": "Saved losslessly. Technical details: a per-block BLAKE3 keyed-MAC of the image content, keyed by Argon2id, embedded in the pixel LSBs. Your original is never changed.",
     "wm.embed.btn": "Add tamper-proof mark",
     "wm.verify.title": "🔍 Check for tampering",
     "wm.verify.purpose": "Verify a marked image against your password.",
@@ -350,7 +354,7 @@
     "ss.ph.secret": "Type or paste the secret (password, key, recovery phrase…)",
     "ss.secretNote": "Stays on this device. It isn't shown again after you split it.",
     "ss.step2": "2  Save the pieces to a folder",
-    "ss.tech": "▸ Technical details: a random key is Shamir-split; the secret is sealed with secretbox (XSalsa20-Poly1305).",
+    "ss.tech": "Technical details: a random key is Shamir-split; the secret is sealed with secretbox (XSalsa20-Poly1305).",
     "ss.btn": "Split into pieces",
 
     // ---- split a file ----
@@ -383,7 +387,7 @@
     "qr.make.when.body": "After <strong>Split a secret</strong>, to carry the pieces by phone camera or print instead of copy-paste. Each QR holds <strong>one piece</strong> — non-secret on its own; a threshold of them <strong>plus the payload file</strong> rebuilds the secret. The payload file is <strong>not</strong> in the QR codes; move it alongside them.",
     "qr.make.step1": "1  Paste piece codes to turn into QR images (one per line)",
     "qr.make.ph.codes": "Paste the Base64 piece codes from “Split a secret”, one per line",
-    "qr.make.tech": "▸ These are the same copy-paste codes shown after splitting a secret. Each line becomes one QR PNG.",
+    "qr.make.tech": "These are the same copy-paste codes shown after splitting a secret. Each line becomes one QR PNG.",
     "qr.make.step2": "2  Save the QR images to a folder",
     "qr.make.btn": "Make QR images",
     "qr.recover.title": "🔗 Recover from QR images",
@@ -414,7 +418,7 @@
     "mi.when.body": "Before sharing a photo or document, to see what it quietly reveals about you — GPS coordinates, your name, the device, edit history. Reading is safe and never changes the file.",
     "mi.step1": "1  Choose the file to inspect",
     "mi.ph.file": "Drop any file here, or Browse…",
-    "mi.tech": "▸ Works for images, PDFs, Office documents, audio, video, and more. Read-only.",
+    "mi.tech": "Works for images, PDFs, Office documents, audio, video, and more. Read-only.",
     "mi.btn": "Inspect",
 
     // ---- remove metadata ----
@@ -423,10 +427,10 @@
     "mc.when.body": "Before publishing a photo or document, to scrub identifying metadata (GPS, device, author, software). Your original is never touched — a new, cleaned copy is written.",
     "mc.step1": "1  Choose the file to clean",
     "mc.ph.input": "Drop a file here, or Browse…",
-    "mc.tech1": "▸ Images and WAV/AVI/MOV/MP4 are <strong>fully stripped</strong>. <strong>PDF</strong> is a best-effort scrub (the old metadata can still be recovered). Office documents, archives, and MP3/FLAC/MKV are <strong>inspect-only</strong> and will be refused here.",
+    "mc.tech1": "Images and WAV/AVI/MOV/MP4 are <strong>fully stripped</strong>. <strong>PDF</strong> is a best-effort scrub (the old metadata can still be recovered). Office documents, archives, and MP3/FLAC/MKV are <strong>inspect-only</strong> and will be refused here.",
     "mc.step2": "2  Where to save the cleaned copy",
     "mc.ph.output": "/path/to/cleaned-file",
-    "mc.tech2": "▸ Keep the same file extension as the original so apps still open it. Technical details: <code>exiftool -all=</code> writes a fresh file; the input is never modified in place.",
+    "mc.tech2": "Keep the same file extension as the original so apps still open it. Technical details: <code>exiftool -all=</code> writes a fresh file; the input is never modified in place.",
     "mc.btn": "Remove metadata",
 
     // ---- compare metadata ----
@@ -783,6 +787,10 @@
     "lang.vi": "Tiếng Việt",
     "lang.en": "English",
 
+    // ---- shared disclosure labels ----
+    "common.moreInfo": "Thông tin thêm",
+    "common.details": "Chi tiết",
+
     // ---- sidebar groups + items ----
     "nav.group.vaults": "Két an toàn",
     "nav.group.protect": "Bảo vệ tệp",
@@ -946,7 +954,7 @@
     "enc.confirmWarn": "Gõ sai ở đây là không thể khôi phục — tệp sẽ không bao giờ mở được.",
     "enc.step3": "3  Nơi lưu tệp đã khóa",
     "enc.ph.output": "/đường-dẫn/tới/tệp.svenc",
-    "enc.tech": "▸ Chi tiết kỹ thuật: dẫn xuất khóa Argon2id + secretbox (XSalsa20-Poly1305).",
+    "enc.tech": "Chi tiết kỹ thuật: dẫn xuất khóa Argon2id + secretbox (XSalsa20-Poly1305).",
     "enc.btn": "Khóa tệp",
 
     // ---- unlock a file (decrypt) ----
@@ -966,7 +974,7 @@
     "hide.when.body": "Để giấu một tệp nhỏ đã mã hóa bên trong một ảnh trông bình thường. Nơi giấu <strong>không phải</strong> là sự bảo vệ — <strong>mật khẩu</strong> của bạn mới là. Việc che giấu chỉ làm dữ liệu bớt lộ; ai nghi ngờ vẫn không đọc được nếu không có mật khẩu.",
     "hide.step1": "1  Chọn ảnh nền (PNG, BMP hoặc JPEG)",
     "hide.ph.cover": "Kéo thả PNG/BMP/JPEG vào đây, hoặc Duyệt…",
-    "hide.cover.tech": "▸ Ảnh nền <strong>PNG/BMP</strong> không mất dữ liệu là kín đáo nhất. <strong>JPEG</strong> cũng được (giấu trong các hệ số DCT) nhưng <strong>vốn dễ bị phát hiện hơn</strong> bằng phân tích giấu tin — hãy ưu tiên PNG/BMP khi cần kín đáo. Kết quả giữ nguyên định dạng của ảnh nền.",
+    "hide.cover.tech": "Ảnh nền <strong>PNG/BMP</strong> không mất dữ liệu là kín đáo nhất. <strong>JPEG</strong> cũng được (giấu trong các hệ số DCT) nhưng <strong>vốn dễ bị phát hiện hơn</strong> bằng phân tích giấu tin — hãy ưu tiên PNG/BMP khi cần kín đáo. Kết quả giữ nguyên định dạng của ảnh nền.",
     "hide.step2": "2  Chọn tệp cần giấu",
     "hide.ph.payload": "Kéo thả tệp bí mật vào đây, hoặc Duyệt…",
     "hide.step3": "3  Đặt mật khẩu",
@@ -974,7 +982,7 @@
     "hide.confirmWarn": "Gõ sai ở đây là không thể khôi phục — dữ liệu giấu sẽ không bao giờ đọc được.",
     "hide.step4": "4  Nơi lưu ảnh có dữ liệu giấu",
     "hide.ph.output": "/đường-dẫn/tới/ket-qua.png",
-    "hide.out.tech": "▸ Lưu theo định dạng của ảnh nền. Chi tiết kỹ thuật: mã hóa rồi nhúng — Argon2id + secretbox, sau đó giấu theo bit LSB.",
+    "hide.out.tech": "Lưu theo định dạng của ảnh nền. Chi tiết kỹ thuật: mã hóa rồi nhúng — Argon2id + secretbox, sau đó giấu theo bit LSB.",
     "hide.randomize": "Rải dữ liệu khắp ảnh (khuyên dùng)",
     "hide.btn": "Giấu dữ liệu",
 
@@ -996,7 +1004,7 @@
     "detect.when.body": "Để có một đánh giá nhanh, theo khả năng tốt nhất, về việc ảnh có thể chứa dữ liệu ẩn hay không (tệp nối thêm, can thiệp LSB). Kết quả thấp nghĩa là “những phép thử này không bắt được gì” — <strong>không</strong> phải đảm bảo ảnh sạch.",
     "detect.step1": "1  Chọn ảnh cần quét (PNG, BMP hoặc JPEG)",
     "detect.ph.input": "Kéo thả PNG/BMP/JPEG vào đây, hoặc Duyệt…",
-    "detect.tech": "▸ Với JPEG, phép quét xét dữ liệu nối thêm (sau dấu <code>EOI</code>) và thống kê LSB của hệ số DCT; với PNG/BMP, xét dữ liệu nối thêm và thống kê LSB của điểm ảnh.",
+    "detect.tech": "Với JPEG, phép quét xét dữ liệu nối thêm (sau dấu <code>EOI</code>) và thống kê LSB của hệ số DCT; với PNG/BMP, xét dữ liệu nối thêm và thống kê LSB của điểm ảnh.",
     "detect.btn": "Quét ảnh",
 
     // ---- sign a file ----
@@ -1048,10 +1056,10 @@
     "wm.embed.step1": "1  Chọn ảnh cần đánh dấu (PNG hoặc BMP)",
     "wm.embed.ph.input": "Kéo thả PNG/BMP vào đây, hoặc Duyệt…",
     "wm.embed.step2": "2  Đặt mật khẩu (khóa cho dấu)",
-    "wm.embed.pass.tech": "▸ Bạn sẽ cần đúng mật khẩu này để kiểm tra giả mạo sau. Hãy dùng mật khẩu mạnh — khả năng chống làm giả của dấu phụ thuộc vào nó.",
+    "wm.embed.pass.tech": "Bạn sẽ cần đúng mật khẩu này để kiểm tra giả mạo sau. Hãy dùng mật khẩu mạnh — khả năng chống làm giả của dấu phụ thuộc vào nó.",
     "wm.embed.step3": "3  Nơi lưu ảnh đã đánh dấu (PNG hoặc BMP)",
     "wm.embed.ph.output": "/đường-dẫn/tới/anh-da-danh-dau.png",
-    "wm.embed.out.tech": "▸ Lưu không mất dữ liệu. Chi tiết kỹ thuật: một MAC khóa BLAKE3 theo từng khối của nội dung ảnh, khóa bằng Argon2id, nhúng vào bit LSB của điểm ảnh. Ảnh gốc của bạn không bao giờ bị thay đổi.",
+    "wm.embed.out.tech": "Lưu không mất dữ liệu. Chi tiết kỹ thuật: một MAC khóa BLAKE3 theo từng khối của nội dung ảnh, khóa bằng Argon2id, nhúng vào bit LSB của điểm ảnh. Ảnh gốc của bạn không bao giờ bị thay đổi.",
     "wm.embed.btn": "Thêm dấu chống giả mạo",
     "wm.verify.title": "🔍 Kiểm tra giả mạo",
     "wm.verify.purpose": "Xác minh một ảnh đã đánh dấu với mật khẩu của bạn.",
@@ -1097,7 +1105,7 @@
     "ss.ph.secret": "Gõ hoặc dán bí mật (mật khẩu, khóa, cụm từ khôi phục…)",
     "ss.secretNote": "Ở lại trên thiết bị này. Nó sẽ không hiện lại sau khi bạn chia.",
     "ss.step2": "2  Lưu các mảnh vào một thư mục",
-    "ss.tech": "▸ Chi tiết kỹ thuật: một khóa ngẫu nhiên được chia Shamir; bí mật được niêm phong bằng secretbox (XSalsa20-Poly1305).",
+    "ss.tech": "Chi tiết kỹ thuật: một khóa ngẫu nhiên được chia Shamir; bí mật được niêm phong bằng secretbox (XSalsa20-Poly1305).",
     "ss.btn": "Chia thành các mảnh",
 
     // ---- split a file ----
@@ -1130,7 +1138,7 @@
     "qr.make.when.body": "Sau <strong>Chia nhỏ bí mật</strong>, để mang các mảnh bằng camera điện thoại hoặc in ra thay vì sao chép-dán. Mỗi QR chứa <strong>một mảnh</strong> — tự nó không bí mật; một ngưỡng số mảnh <strong>cùng tệp dữ liệu (payload)</strong> sẽ dựng lại bí mật. Tệp payload <strong>không</strong> nằm trong các mã QR; hãy chuyển nó kèm theo.",
     "qr.make.step1": "1  Dán mã mảnh để biến thành ảnh QR (mỗi dòng một mã)",
     "qr.make.ph.codes": "Dán mã mảnh Base64 từ “Chia nhỏ bí mật”, mỗi dòng một mã",
-    "qr.make.tech": "▸ Đây là cùng các mã sao chép-dán hiện ra sau khi chia bí mật. Mỗi dòng trở thành một ảnh QR PNG.",
+    "qr.make.tech": "Đây là cùng các mã sao chép-dán hiện ra sau khi chia bí mật. Mỗi dòng trở thành một ảnh QR PNG.",
     "qr.make.step2": "2  Lưu các ảnh QR vào một thư mục",
     "qr.make.btn": "Tạo ảnh QR",
     "qr.recover.title": "🔗 Khôi phục từ ảnh QR",
@@ -1161,7 +1169,7 @@
     "mi.when.body": "Trước khi chia sẻ một ảnh hay tài liệu, để xem nó âm thầm tiết lộ gì về bạn — tọa độ GPS, tên bạn, thiết bị, lịch sử chỉnh sửa. Việc đọc là an toàn và không bao giờ thay đổi tệp.",
     "mi.step1": "1  Chọn tệp cần xem",
     "mi.ph.file": "Kéo thả bất kỳ tệp nào vào đây, hoặc Duyệt…",
-    "mi.tech": "▸ Hoạt động với ảnh, PDF, tài liệu Office, âm thanh, video, và nhiều hơn nữa. Chỉ đọc.",
+    "mi.tech": "Hoạt động với ảnh, PDF, tài liệu Office, âm thanh, video, và nhiều hơn nữa. Chỉ đọc.",
     "mi.btn": "Xem",
 
     // ---- remove metadata ----
@@ -1170,10 +1178,10 @@
     "mc.when.body": "Trước khi công bố một ảnh hay tài liệu, để loại bỏ siêu dữ liệu nhận dạng (GPS, thiết bị, tác giả, phần mềm). Tệp gốc của bạn không bao giờ bị động đến — một bản sao mới đã làm sạch được ghi ra.",
     "mc.step1": "1  Chọn tệp cần làm sạch",
     "mc.ph.input": "Kéo thả tệp vào đây, hoặc Duyệt…",
-    "mc.tech1": "▸ Ảnh và WAV/AVI/MOV/MP4 được <strong>loại bỏ hoàn toàn</strong>. <strong>PDF</strong> là làm sạch theo nỗ lực tốt nhất (siêu dữ liệu cũ vẫn có thể khôi phục được). Tài liệu Office, kho nén, và MP3/FLAC/MKV là <strong>chỉ xem</strong> và sẽ bị từ chối ở đây.",
+    "mc.tech1": "Ảnh và WAV/AVI/MOV/MP4 được <strong>loại bỏ hoàn toàn</strong>. <strong>PDF</strong> là làm sạch theo nỗ lực tốt nhất (siêu dữ liệu cũ vẫn có thể khôi phục được). Tài liệu Office, kho nén, và MP3/FLAC/MKV là <strong>chỉ xem</strong> và sẽ bị từ chối ở đây.",
     "mc.step2": "2  Nơi lưu bản sao đã làm sạch",
     "mc.ph.output": "/đường-dẫn/tới/tệp-da-lam-sach",
-    "mc.tech2": "▸ Hãy giữ nguyên phần mở rộng tệp như bản gốc để các ứng dụng vẫn mở được. Chi tiết kỹ thuật: <code>exiftool -all=</code> ghi một tệp mới; tệp đầu vào không bao giờ bị sửa tại chỗ.",
+    "mc.tech2": "Hãy giữ nguyên phần mở rộng tệp như bản gốc để các ứng dụng vẫn mở được. Chi tiết kỹ thuật: <code>exiftool -all=</code> ghi một tệp mới; tệp đầu vào không bao giờ bị sửa tại chỗ.",
     "mc.btn": "Xóa siêu dữ liệu",
 
     // ---- compare metadata ----
