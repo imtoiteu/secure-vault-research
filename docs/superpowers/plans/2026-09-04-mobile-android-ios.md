@@ -434,18 +434,42 @@ must be tested against the **real Go binary**, not asserted.
 - Consumes: `sv_age_rs::{RustAgeCipher, generate_identity}` from Task 2
 - Produces: an ignored-by-default integration test `interop_go_to_rust` / `interop_rust_to_go`, run explicitly when the `age` binary is available.
 
-- [ ] **Step 1: Fetch the real `age` binaries**
+- [ ] **Step 1: Fetch the real `age` binaries, and record what was fetched**
+
+This project BLAKE3-pins these binaries as a documented tamper-evidence control
+(`docs/M7-HARDENING.md`), so pulling an unverified executable off the network would
+contradict its own threat model. age publishes **Sigsum transparency proofs** (`.proof`)
+rather than plain checksums; full verification needs `sigsum-verify`, which is out of scope
+here. The proportionate substitute: fetch the proof alongside the tarball, record the digest
+of exactly what was downloaded, and keep both so a reviewer can verify independently later.
 
 ```bash
 cd /root/imtoiteu/SecureVault/secure-vault-research
 mkdir -p app/binaries
-curl -sSL -o /tmp/age.tgz https://github.com/FiloSottile/age/releases/download/v1.2.1/age-v1.2.1-linux-amd64.tar.gz
+BASE=https://github.com/FiloSottile/age/releases/download/v1.2.1
+curl -sSL -o /tmp/age.tgz       "$BASE/age-v1.2.1-linux-amd64.tar.gz"
+curl -sSL -o /tmp/age.tgz.proof "$BASE/age-v1.2.1-linux-amd64.tar.gz.proof"
+
+# Record the digest of what actually arrived, before anything is extracted or executed.
+sha256sum /tmp/age.tgz | tee app/binaries/DOWNLOADED-SHA256
+cp /tmp/age.tgz.proof app/binaries/age-v1.2.1-linux-amd64.tar.gz.proof
+
 tar -xzf /tmp/age.tgz -C /tmp
 cp /tmp/age/age /tmp/age/age-keygen app/binaries/
 chmod +x app/binaries/age app/binaries/age-keygen
 app/binaries/age --version && app/binaries/age-keygen --version
+sha256sum app/binaries/age app/binaries/age-keygen | tee -a app/binaries/DOWNLOADED-SHA256
 ```
-Expected: both print `v1.2.1`. `app/binaries/` is already gitignored — confirm with `git check-ignore app/binaries/age`; if it is not ignored, add `app/binaries/age*` to `app/.gitignore` (binaries must never be committed).
+Expected: both print `v1.2.1`, and `DOWNLOADED-SHA256` records the tarball and both extracted
+binaries.
+
+The authoritative control remains the project's own: `app/build.rs` BLAKE3-hashes these at
+build time and embeds the pin, and a release build refuses to run unpinned. This step only
+ensures we know precisely which bytes entered that process.
+
+`app/binaries/` is already gitignored — confirm with `git check-ignore app/binaries/age`. The
+binaries must never be committed, but **do** commit `DOWNLOADED-SHA256` and the `.proof` file
+(add a negated ignore rule if needed): they are the provenance record, not the payload.
 
 - [ ] **Step 2: Write the failing interop test**
 
