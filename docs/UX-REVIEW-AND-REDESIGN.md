@@ -1,5 +1,11 @@
 # UX/UI Review & Redesign — Security & Privacy Toolkit
 
+> **Path note (2026-09-04):** the Tauri shell directory `desktop/` was renamed `app/` when it
+> became the shared desktop + Android + iOS crate. Paths cited below are the ones that existed
+> when this document was written and are left unchanged, so the record stays accurate; read
+> `desktop/...` as today's `app/...`.
+
+
 Status: **review + proposal. No code, no backend/crypto/IPC/format/architecture change.** Grounded in
 the shipped frontend (`desktop/frontend/{index.html,main.js,styles.css}`) and the real command
 surface. Audience lens: a **non-technical end user** who wants to get a task done, not learn

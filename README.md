@@ -27,9 +27,10 @@ are documented (see [`docs/M5-SCHEMA-DECISIONS.md`](docs/M5-SCHEMA-DECISIONS.md)
   zeroization, a **fuzz-style parser robustness** sweep, adaptive **Argon2 calibration**, a
   documented threat model + constant-time audit, and reasoned deferrals (mlock, dedicated
   passphrase channel, minisign-CLI interop gate).
-- **Desktop shell:** [`desktop/`](desktop/) is the Tauri 2 GUI over the command surface —
+- **App shell:** [`app/`](app/) is the Tauri 2 GUI over the command surface —
   scaffolded and isolated from the core workspace (it builds on a machine with the Tauri/webview
-  toolchain via `cargo tauri dev`; see [`desktop/README.md`](desktop/README.md)).
+  toolchain via `cargo tauri dev`; see [`app/README.md`](app/README.md)). Named `app/` rather
+  than `desktop/` because it is becoming the single shell for every platform.
 
 FFI crates `sv-sys-sss`/`sv-sys-sodium` require a C toolchain to build; `sv-age`'s
 end-to-end tests need an `age` binary (set `SV_AGE_BIN`/`SV_AGE_KEYGEN_BIN`; they skip
@@ -49,7 +50,7 @@ crates/sv-sys-sss     libsss hazmat FFI (vendored hazmat.c; getrandom-backed ran
 crates/sv-sys-sodium  libsodium FFI (libsodium-sys-stable): sign/blake2b/secretbox
 src-tauri (sv-app)    composition root: VaultBackend (VaultService) + CommandSurface
                       (IpcPassphrase, sessions, age PayloadCipher)
-desktop/              Tauri 2 GUI shell — #[tauri::command] wrappers + static frontend.
+app/                  Tauri 2 GUI shell — #[tauri::command] wrappers + static frontend.
                       Workspace-EXCLUDED (keeps the webview dep tree out of the core gates).
 ```
 

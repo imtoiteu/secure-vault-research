@@ -87,7 +87,7 @@ graph LR
 | FR-A4 | Report whether the Analysis module is available (fail-closed) | `metadata_available` | [src-tauri/src/meta.rs:70](../../src-tauri/src/meta.rs#L70) |
 
 **Total: 38 IPC commands** registered in the Tauri invoke handler
-([desktop/src/lib.rs](../../desktop/src/lib.rs) `generate_handler!`).
+([app/src/lib.rs](../../app/src/lib.rs) `generate_handler!`).
 
 ## 2.3 Non-functional requirements
 
@@ -98,13 +98,13 @@ graph LR
 | NFR-3 | **Integrity/Authenticity** | Containers are authenticated (signed) and tamper-evident | Binding root `BLAKE3(header‖payload)` signed by Ed25519-minisign ([crates/sv-core/src/container.rs:231](../../crates/sv-core/src/container.rs#L231)) |
 | NFR-4 | **Oracle-safety** | Credential failures are indistinguishable; benign conditions stay actionable | `AuthFailed → Unauthorized` merge ([crates/sv-core/src/error.rs:68](../../crates/sv-core/src/error.rs#L68)); stego no-payload/bad-frame/auth all → `Unauthorized` ([crates/sv-stego/src/error.rs](../../crates/sv-stego/src/error.rs)) |
 | NFR-5 | **Availability / DoS resistance** | Bounded memory; refuse oversized inputs; bound wall-clock on subprocesses | `MAX_PLAINTEXT_BYTES = 2 GiB` ([crates/sv-platform/src/lib.rs:41](../../crates/sv-platform/src/lib.rs#L41)); `MAX_ITEM_BYTES = 2 GiB` ([src-tauri/src/service.rs:53](../../src-tauri/src/service.rs#L53)); age timeout 120 s ([crates/sv-age/src/lib.rs:50](../../crates/sv-age/src/lib.rs#L50)); decompression-bomb guards in image modules |
-| NFR-6 | **Supply-chain integrity** | External binaries are byte-pinned; resolution surface is closed in release | BLAKE3 pins via `build.rs` `emit_pin`; release ignores `SV_*_BIN` overrides ([desktop/src/lib.rs:513](../../desktop/src/lib.rs#L513)) |
+| NFR-6 | **Supply-chain integrity** | External binaries are byte-pinned; resolution surface is closed in release | BLAKE3 pins via `build.rs` `emit_pin`; release ignores `SV_*_BIN` overrides ([app/src/lib.rs:513](../../app/src/lib.rs#L513)) |
 | NFR-7 | **Least privilege** | Subprocesses run with cleared environment, no shell, fixed working dir | `env_clear()` + Windows allow-list ([crates/sv-age/src/lib.rs:108](../../crates/sv-age/src/lib.rs#L108)); ExifTool `-config ""` disables config-as-code ([crates/sv-meta/src/lib.rs](../../crates/sv-meta/src/lib.rs)) |
-| NFR-8 | **Offline-first** | No network dependency; CSP `default-src 'self'` | [desktop/tauri.conf.json:23](../../desktop/tauri.conf.json#L23) |
+| NFR-8 | **Offline-first** | No network dependency; CSP `default-src 'self'` | [app/tauri.conf.json:23](../../app/tauri.conf.json#L23) |
 | NFR-9 | **Portability** | Builds + tests on Linux, macOS, Windows; MSRV 1.96 | CI 3-OS matrix ([.github/workflows/ci.yml](../../.github/workflows/ci.yml)); `rust-version = "1.96"` ([Cargo.toml](../../Cargo.toml)) |
 | NFR-10 | **Data safety** | Never silently overwrite; atomic writes | `refuse_existing` → `OutputExists` ([crates/sv-platform/src/lib.rs:146](../../crates/sv-platform/src/lib.rs#L146)); same-dir temp + rename ([crates/sv-core/src/container.rs:333](../../crates/sv-core/src/container.rs#L333)) |
-| NFR-11 | **Auditability** | Audited core is isolated from the heavy webview tree; `cargo deny`/`audit` gated | `desktop` excluded from workspace ([Cargo.toml](../../Cargo.toml) `exclude`); supply-chain CI job |
-| NFR-12 | **Internationalization** | UI fully localized (Vietnamese default, English fallback) | [desktop/frontend/i18n.js](../../desktop/frontend/i18n.js) `DEFAULT_LANG = "vi"` |
+| NFR-11 | **Auditability** | Audited core is isolated from the heavy webview tree; `cargo deny`/`audit` gated | `app` excluded from workspace ([Cargo.toml](../../Cargo.toml) `exclude`); supply-chain CI job |
+| NFR-12 | **Internationalization** | UI fully localized (Vietnamese default, English fallback) | [app/frontend/i18n.js](../../app/frontend/i18n.js) `DEFAULT_LANG = "vi"` |
 | NFR-13 | **Crypto agility** | Algorithm identity is explicit at the trait boundary and on disk | `KdfAlg`/`HashAlg`/`AeadAlg`/`FileCipherAlg`/`SigAlg` enums + `CipherSuite::V1` ([crates/sv-crypto-traits/src/lib.rs:39](../../crates/sv-crypto-traits/src/lib.rs#L39), [crates/sv-core/src/format.rs:41](../../crates/sv-core/src/format.rs#L41)) |
 
 ## 2.4 Constraints (design rules, enforced)

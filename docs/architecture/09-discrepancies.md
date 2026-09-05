@@ -87,7 +87,7 @@ H5 = signing). The frozen design docs scope these explicitly, but a casual reade
 These were verified to **match** the implementation and are recorded so they are not re-flagged:
 
 - **`bundle.active: true`, `targets: "all"`, `resources: ["binaries/**/*"]`** in
-  [desktop/tauri.conf.json](../../desktop/tauri.conf.json) — matches `SIGNING-REQUIREMENTS.md`,
+  [app/tauri.conf.json](../../app/tauri.conf.json) — matches `SIGNING-REQUIREMENTS.md`,
   `DEPLOYMENT.md`, `CI-VALIDATION.md` after the M-7 reconciliation.
 - **The Cryptography module's Encrypt/Decrypt File uses Argon2id + `secretbox` (`SVENC`), not `age`.**
   This matches `docs/TOOLKIT-PHASE1-DESIGN.md` ("Option A") and `PRODUCT-VISION.md`; `age` is a
@@ -101,7 +101,7 @@ These were verified to **match** the implementation and are recorded so they are
   `CLAUDE.md` and `PRODUCT-VISION.md`; the vault uses its own `sv-core` hash/sign/verify paths. Correct
   as documented.
 - **`SV_*_BIN` runtime overrides are debug-only** — `DEPLOYMENT.md` and `binaries/README.md` match
-  [desktop/src/lib.rs:513](../../desktop/src/lib.rs#L513) after the M-3 doc ripple.
+  [app/src/lib.rs:513](../../app/src/lib.rs#L513) after the M-3 doc ripple.
 
 ---
 
@@ -116,13 +116,13 @@ decision (a tracked design gap, **not a defect**). Severity is editorial except 
 
 | ID | Where | Finding | Class | Recommendation (not yet applied) |
 |----|-------|---------|-------|----------------------------------|
-| D-6 | [src-tauri/src/lib.rs:5](../../src-tauri/src/lib.rs#L5) | Comment "Each method becomes a `#[tauri::command]` once the frontend lands" describes a pre-frontend state; the 38 `#[tauri::command]`s now live in `desktop/src/lib.rs`. | Stale comment | Reword to note the surface is realized in the `desktop/` crate. |
-| D-7 | [src-tauri/tauri.conf.json:1](../../src-tauri/tauri.conf.json#L1) | A 6-line stub (`"milestone": "wiring deferred to M6"`); the live Tauri config is [desktop/tauri.conf.json](../../desktop/tauri.conf.json). A reader auditing only `src-tauri/` would miss the real composition root + config. | Stale/placeholder | Add a one-line pointer to `desktop/` as the live root, or remove the stub. |
+| D-6 | [src-tauri/src/lib.rs:5](../../src-tauri/src/lib.rs#L5) | Comment "Each method becomes a `#[tauri::command]` once the frontend lands" describes a pre-frontend state; the 38 `#[tauri::command]`s now live in `app/src/lib.rs`. | Stale comment | Reword to note the surface is realized in the `app/` crate. |
+| D-7 | [src-tauri/tauri.conf.json:1](../../src-tauri/tauri.conf.json#L1) | A 6-line stub (`"milestone": "wiring deferred to M6"`); the live Tauri config is [app/tauri.conf.json](../../app/tauri.conf.json). A reader auditing only `src-tauri/` would miss the real composition root + config. | Stale/placeholder | Add a one-line pointer to `app/` as the live root, or remove the stub. |
 | D-8 | [crates/sv-age/src/lib.rs:18](../../crates/sv-age/src/lib.rs#L18) | Module doc says "there is no wall-clock spawn timeout yet (M7)"; the timeout **is** implemented (`:50`, `:92-97`, `:147-159`) with a passing abort test. | Stale comment (contradicts code) | Delete the "no timeout yet" sentence. |
 | D-9 | [crates/sv-crypto/src/secretbox.rs:5](../../crates/sv-crypto/src/secretbox.rs#L5) | Key-wrap uses a random nonce and **no AAD**; binding wrapped secrets to `vault_uuid ‖ field ‖ version` (header-schema **H2**) is still deferred. Domain separation is currently provided by per-field BLAKE3-derived wrap keys (a wrong context derives a wrong key → MAC fails), so this is defense-in-depth deferral, **not an exploitable gap**. | Deferred design (H2) | Track under the M5 header-schema; add AAD when the suite block lands. |
 | D-10 | [crates/sv-crypto-traits/src/lib.rs:52](../../crates/sv-crypto-traits/src/lib.rs#L52) | `AeadAlg::XSalsa20Poly1305` is declared as a suite id but not wired into the `secretbox` functions (which take a raw `[u8;32]` key, no alg tag). | Loose end | Wire the id when H2's suite block is added, or annotate as reserved. |
 | D-11 | [crates/sv-crypto-traits/src/lib.rs:275](../../crates/sv-crypto-traits/src/lib.rs#L275) | `CryptoError::NotImplemented` is never constructed (no stub impls remain). | Dead variant | Remove, or annotate as reserved for future adapters. |
-| D-12 | [desktop/frontend/index.html:748](../../desktop/frontend/index.html#L748), [:1083](../../desktop/frontend/index.html#L1083) | Two "Coming soon" screens (`soon-hide`, `soon-detect`) have no nav/tile wiring and no `invoke`; `soon-detect` is superseded by the live `detect` screen. | Dead UI markup | Remove the orphaned sections. |
+| D-12 | [app/frontend/index.html:748](../../app/frontend/index.html#L748), [:1083](../../app/frontend/index.html#L1083) | Two "Coming soon" screens (`soon-hide`, `soon-detect`) have no nav/tile wiring and no `invoke`; `soon-detect` is superseded by the live `detect` screen. | Dead UI markup | Remove the orphaned sections. |
 
 ### Re-confirmed as correct (not discrepancies)
 

@@ -20,11 +20,12 @@ members = [
     "crates/sv-sys-sodium",
     "src-tauri",
 ]
-# The Tauri desktop shell is intentionally OUT of this workspace: its heavy, platform-specific
+# The Tauri shell is intentionally OUT of this workspace: its heavy, platform-specific
 # (webview) dependency tree must not enter the audited core's build/lock/deny gates. It is a
-# standalone crate that depends on the core via path; build it from `desktop/` with the Tauri
-# toolchain (`cargo tauri dev`). See desktop/README.md.
-exclude = ["desktop"]
+# standalone crate that depends on the core via path; build it from `app/` with the Tauri
+# toolchain (`cargo tauri dev`, `cargo tauri android dev`). One crate serves desktop, Android
+# and iOS — see app/README.md.
+exclude = ["app"]
 
 [workspace.package]
 version = "0.0.0"

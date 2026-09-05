@@ -1,5 +1,11 @@
 # Secure Vault — CI Cross-Platform Validation Report
 
+> **Path note (2026-09-04):** the Tauri shell directory `desktop/` was renamed `app/` when it
+> became the shared desktop + Android + iOS crate. Paths cited below are the ones that existed
+> when this document was written and are left unchanged, so the record stays accurate; read
+> `desktop/...` as today's `app/...`.
+
+
 **Date:** 2026-06-15
 **Repository:** https://github.com/imtoiteu/secure-vault-research (public)
 **Git root:** the `secure-vault/` product directory (the workflow at `.github/workflows/ci.yml`

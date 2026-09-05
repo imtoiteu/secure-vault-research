@@ -1,5 +1,11 @@
 # Secure Vault — H1–H7 Experimental Validation Results
 
+> **Path note (2026-09-04):** the Tauri shell directory `desktop/` was renamed `app/` when it
+> became the shared desktop + Android + iOS crate. Paths cited below are the ones that existed
+> when this document was written and are left unchanged, so the record stays accurate; read
+> `desktop/...` as today's `app/...`.
+
+
 Status: **evidence-based findings.** Each hypothesis was reproduced or falsified against the **real
 production code path** (`VaultBackend` + `AgePayloadCipher` driving the actual `age`/`age-keygen`
 subprocesses), not the in-memory test stub. *(Update: the H1/H2/H3/H6/H7 findings below were

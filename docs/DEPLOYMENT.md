@@ -14,18 +14,18 @@ and is **not** applied to the committed defaults — the default state keeps `ca
 ## 0. Architecture recap (what already exists)
 
 - The audited core is a Cargo workspace (`crates/*` + `src-tauri` = the `sv-app` crate). The
-  Tauri GUI lives in [`desktop/`](../desktop/), which is **`exclude`d** from the workspace
-  ([`Cargo.toml`](../Cargo.toml) `exclude = ["desktop"]`) so the webview dependency tree never
+  Tauri GUI lives in [`app/`](../app/), which is **`exclude`d** from the workspace
+  ([`Cargo.toml`](../Cargo.toml) `exclude = ["app"]`) so the webview dependency tree never
   enters the core's `build`/`test`/`deny` gates.
 - The `age` toolchain is an **external dependency**, not first-party code. It is:
-  1. **hashed at build time** — [`desktop/build.rs`](../desktop/build.rs) BLAKE3-hashes
+  1. **hashed at build time** — [`app/build.rs`](../app/build.rs) BLAKE3-hashes
      `binaries/age` and `binaries/age-keygen` (or the `SV_AGE_BIN_SRC` / `SV_AGE_KEYGEN_BIN_SRC`
      overrides) and embeds each as a compile-time pin (`SV_AGE_BLAKE3_PIN`,
      `SV_AGE_KEYGEN_BLAKE3_PIN`). A missing binary emits the `dev-unpinned` sentinel + a warning.
   2. **bundled as a resource** — `bundle.resources: ["binaries/**/*"]` in
-     [`tauri.conf.json`](../desktop/tauri.conf.json) (the recursive glob also carries ExifTool's
+     [`tauri.conf.json`](../app/tauri.conf.json) (the recursive glob also carries ExifTool's
      sibling `lib/` tree; see below).
-  3. **verified at runtime** — [`desktop/src/lib.rs`](../desktop/src/lib.rs) resolves each binary
+  3. **verified at runtime** — [`app/src/lib.rs`](../app/src/lib.rs) resolves each binary
      (the `SV_AGE_BIN` / `SV_AGE_KEYGEN_BIN` env override **in debug builds only** → Tauri resource
      dir → next to the executable), ensures it is executable, and checks its BLAKE3 against the pin
      (`AgeCipher::new_pinned` for `age`; an explicit check for `age-keygen`) before first use.
@@ -39,7 +39,7 @@ and is **not** applied to the committed defaults — the default state keeps `ca
   on Windows), source = the in-repo `metadata/exiftool` clone or `SV_EXIFTOOL_DIST_SRC`. It is then
   BLAKE3-pinned into `SV_EXIFTOOL_BLAKE3_PIN` and bundled via `bundle.resources` (`binaries/**/*`,
   which carries the whole `lib/` tree as a sibling of the script). At runtime
-  [`desktop/src/lib.rs`](../desktop/src/lib.rs) `build_meta` resolves it (the `SV_EXIFTOOL_BIN`
+  [`app/src/lib.rs`](../app/src/lib.rs) `build_meta` resolves it (the `SV_EXIFTOOL_BIN`
   override is honored first **in debug builds only**, then the **bundled resource dir**, then next to
   the executable — a release build resolves solely from the bundle) and verifies it via
   `sv_meta::ExifTool::new_pinned`. The hardened runner adds `-config ""` (disables
@@ -57,12 +57,12 @@ and is **not** applied to the committed defaults — the default state keeps `ca
 
 | Axis | Source of truth | Meaning |
 | --- | --- | --- |
-| App version | `desktop/Cargo.toml` `version` + `tauri.conf.json` `version` (`0.1.0`) | marketing/installer version |
+| App version | `app/Cargo.toml` `version` + `tauri.conf.json` `version` (`0.1.0`) | marketing/installer version |
 | `FORMAT_VERSION` | `sv_core::format` | `.svault` container structure |
 | `CipherSuite` / `SUITE_VERSION` | `sv_core` | crypto suite |
 | `CONTRACT_VERSION` | `sv_types` (`1`) | IPC/DTO contract |
 
-Keep `desktop/Cargo.toml` and `tauri.conf.json` `version` fields in lock-step on every release.
+Keep `app/Cargo.toml` and `tauri.conf.json` `version` fields in lock-step on every release.
 
 ---
 
@@ -127,14 +127,14 @@ build-time BLAKE3 pin (§2.3) becomes the *internal* integrity anchor for the bu
 
 ### 2.3 Place + pin
 
-Copy the two executables into [`desktop/binaries/`](../desktop/binaries/) (git-ignored — see that
+Copy the two executables into [`app/binaries/`](../app/binaries/) (git-ignored — see that
 folder's README):
 
 ```sh
 # macOS arm64 example
 tar xzf age-v1.2.1-darwin-arm64.tar.gz
-cp age/age age/age-keygen desktop/binaries/
-chmod +x desktop/binaries/age desktop/binaries/age-keygen
+cp age/age age/age-keygen app/binaries/
+chmod +x app/binaries/age app/binaries/age-keygen
 ```
 
 On the next `cargo tauri build`/`dev`, `build.rs` hashes them and embeds the pins; the bundler
@@ -147,7 +147,7 @@ build time.
 ## 3. macOS build
 
 ```sh
-cd desktop
+cd app
 
 # Dev (debug, unpinned-OK): see the Quickstart in §8 for the binary/env setup.
 cargo tauri dev
@@ -156,8 +156,8 @@ cargo tauri dev
 cargo tauri build
 ```
 
-- Output app: `desktop/target/release/bundle/macos/Secure Vault.app`
-- Output disk image (when `dmg` is a target): `desktop/target/release/bundle/dmg/Secure Vault_0.1.0_aarch64.dmg`
+- Output app: `app/target/release/bundle/macos/Secure Vault.app`
+- Output disk image (when `dmg` is a target): `app/target/release/bundle/dmg/Secure Vault_0.1.0_aarch64.dmg`
 - **Architecture:** the artifact is single-arch matching the host (`aarch64` on Apple Silicon).
   For a universal app, build `--target universal-apple-darwin` **and** bundle a universal `age`
   binary (`lipo`-merged arm64+amd64), since a single-arch `age` would break on the other arch.
@@ -169,14 +169,14 @@ cargo tauri build
 ## 4. Windows build
 
 ```powershell
-cd desktop
+cd app
 cargo tauri dev                 # debug, unpinned-OK
 cargo tauri build               # release + installers (icons + §5 config required)
 ```
 
 - MSI (WiX): `desktop\target\release\bundle\msi\Secure Vault_0.1.0_x64_en-US.msi`
 - NSIS:      `desktop\target\release\bundle\nsis\Secure Vault_0.1.0_x64-setup.exe`
-- `desktop/src/main.rs` already sets `windows_subsystem = "windows"` for release (no console
+- `app/src/main.rs` already sets `windows_subsystem = "windows"` for release (no console
   window). Ship/assume the **WebView2 runtime**; for Windows 10 targets configure
   `bundle.windows.webviewInstallMode` to embed or download the bootstrapper.
 
@@ -188,7 +188,7 @@ Bundling is **enabled** (`bundle.active: true`), so `cargo tauri build` produces
 this is what the local ExifTool/age end-to-end verification and internal distribution use. **The
 emitted installers are unsigned until H5 (signing/notarization) is addressed; do not distribute them
 externally** (see [SIGNING-REQUIREMENTS.md](SIGNING-REQUIREMENTS.md)). The `bundle` block in
-[`desktop/tauri.conf.json`](../desktop/tauri.conf.json) currently reads:
+[`app/tauri.conf.json`](../app/tauri.conf.json) currently reads:
 
 ```jsonc
 "bundle": {
@@ -202,7 +202,7 @@ externally** (see [SIGNING-REQUIREMENTS.md](SIGNING-REQUIREMENTS.md)). The `bund
 }
 ```
 
-The icon set is wired (real `.png`/`.icns`/`.ico` files in `desktop/icons/`, an **interim** brand
+The icon set is wired (real `.png`/`.icns`/`.ico` files in `app/icons/`, an **interim** brand
 set — regenerate with `cargo tauri icon path/to/Secure-Vault-1024.png` when final art lands). `targets: "all"`
 emits whatever the **host** OS supports (you cannot emit a `.dmg` on Windows or an `.msi` on macOS);
 narrow it to e.g. `["dmg", "app"]` if you want a specific subset.
@@ -228,7 +228,7 @@ distribution outside a controlled test group, sign + (macOS) notarize.
   1. Sign them in a pre-bundle step with the same Developer ID, *then* let Tauri sign the app, **or**
   2. Migrate them from `bundle.resources` to **`bundle.externalBin` (sidecars)**, which Tauri
      signs as part of the app — note this renames binaries with the target triple and would
-     require updating `resolve_binary` in `desktop/src/lib.rs`, so treat it as a tracked
+     require updating `resolve_binary` in `app/src/lib.rs`, so treat it as a tracked
      follow-up, not a release-day change.
 - Verify post-build: `codesign --verify --deep --strict "Secure Vault.app"` and
   `spctl -a -vv "Secure Vault.app"`; confirm `xcrun notarytool history` shows `Accepted` and the
@@ -320,11 +320,11 @@ SV_AGE_BIN=$(command -v age) SV_AGE_KEYGEN_BIN=$(command -v age-keygen) \
 
 ### 8.3 Pinning / fail-closed checks (the deployment-specific gate)
 
-1. **Release refuses unpinned:** build a release bundle with `desktop/binaries/` empty → launching
+1. **Release refuses unpinned:** build a release bundle with `app/binaries/` empty → launching
    it must refuse to start (fail-closed). Confirms `require_dev_build` blocks release.
 2. **Tamper rejection:** in a *pinned* build, replace the bundled `age` with a different binary →
    startup must fail with a hash-mismatch error. Confirms `new_pinned` enforces the pin.
-3. **Pin provenance:** the BLAKE3 pin printed by `build.rs` matches `b3sum desktop/binaries/age`
+3. **Pin provenance:** the BLAKE3 pin printed by `build.rs` matches `b3sum app/binaries/age`
    (and matches the value in `RELEASE_NOTES.md`).
 4. **Signing (if applied):** §6 verification commands pass (`spctl`/`stapler` on macOS;
    `signtool verify /pa` on Windows).
@@ -336,7 +336,7 @@ SV_AGE_BIN=$(command -v age) SV_AGE_KEYGEN_BIN=$(command -v age-keygen) \
 A debug `cargo tauri dev` build runs the age toolchain **unpinned** by design (the runtime
 fail-closed only applies to *release* builds), so you can launch before any signing/pinning work.
 The app resolves the binaries via `SV_AGE_BIN` / `SV_AGE_KEYGEN_BIN` first, so env overrides are the
-fastest dev path — no need to copy anything into `desktop/binaries/`.
+fastest dev path — no need to copy anything into `app/binaries/`.
 
 ### macOS
 Prereqs on a typical Apple-Silicon box: Xcode Command Line Tools (`xcode-select --install`), Rust,
@@ -347,14 +347,14 @@ cargo install tauri-cli --version '^2' --locked      # one-time
 export SV_AGE_BIN="$(command -v age)"
 export SV_AGE_KEYGEN_BIN="$(command -v age-keygen)"
 # Analysis module: nothing to do. build.rs auto-stages ExifTool (script + lib/) from the in-repo
-# metadata/exiftool clone into desktop/binaries/ on first build, and the runtime resolves it from
+# metadata/exiftool clone into app/binaries/ on first build, and the runtime resolves it from
 # there. Override the staging source with SV_EXIFTOOL_DIST_SRC, or skip staging by pointing
 # SV_EXIFTOOL_BIN at any in-tree `exiftool` script. Needs system Perl (`/usr/bin/perl`, on macOS).
-cd desktop && cargo tauri dev
+cd app && cargo tauri dev
 ```
 
 > The Analysis module is **self-contained**: `build.rs` `stage_exiftool` copies ExifTool into
-> `desktop/binaries/` (default source: the `metadata/exiftool/` clone one level above the product
+> `app/binaries/` (default source: the `metadata/exiftool/` clone one level above the product
 > root `secure-vault/`; override with `SV_EXIFTOOL_DIST_SRC`). A debug build runs it **unpinned**
 > (enabled with a warning); a **release** `cargo tauri build` pins the staged binary and bundles it
 > (with its `lib/` tree) into the app package, so the packaged app resolves it from app resources
@@ -371,15 +371,15 @@ age`). Then, in **PowerShell**:
 cargo install tauri-cli --version "^2" --locked      # one-time
 $env:SV_AGE_BIN        = "C:\path\to\age.exe"
 $env:SV_AGE_KEYGEN_BIN = "C:\path\to\age-keygen.exe"
-cd desktop ; cargo tauri dev
+cd app ; cargo tauri dev
 ```
 
 Notes (both OSes): the first `cargo tauri dev` compiles the full Tauri dependency tree (slow, needs
 network) and `build.rs` prints a `dev-unpinned` warning (expected when using env overrides).
 
 **Icons are a hard build requirement** (verified by building the app): `tauri::generate_context!()`
-panics at compile time without `desktop/icons/icon.png` —
-`failed to open icon …/desktop/icons/icon.png`. The repo ships a real **interim** icon set
+panics at compile time without `app/icons/icon.png` —
+`failed to open icon …/app/icons/icon.png`. The repo ships a real **interim** icon set
 (`icons/{icon,32x32,128x128,128x128@2x}.png` plus the `.icns`/`.ico` and Windows Square* tiles) so the
 app compiles, runs, and bundles out of the box. **Replace it with final branding before a public
 release** via `cargo tauri icon path/to/logo.png` (which regenerates `icon.icns`/`icon.ico` and the

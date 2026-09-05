@@ -1,5 +1,11 @@
 # FIGURE_INDEX — Chỉ mục hình vẽ và truy vết tới mã nguồn
 
+> **Ghi chú đường dẫn (04-09-2026):** thư mục vỏ Tauri `desktop/` đã được đổi tên thành `app/`
+> khi nó trở thành crate dùng chung cho desktop + Android + iOS. Các đường dẫn trích dẫn bên dưới
+> là đường dẫn tại thời điểm viết tài liệu và được giữ nguyên để bảo toàn tính chính xác của hồ sơ;
+> hãy đọc `desktop/...` là `app/...` của hiện tại.
+
+
 Tài liệu này gắn **từng hình** trong báo cáo `BAO_CAO_DE_TAI_SECURE_VAULT_RESEARCH.docx` với **tệp mã nguồn** đã được đọc để dựng hình đó, cùng đường dẫn tới bản Draw.io chỉnh sửa được và bản SVG dùng để chèn vào Word.
 
 Nguyên tắc áp dụng khi dựng hình:

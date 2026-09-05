@@ -34,10 +34,10 @@ maps to one or more IPC commands and one or more UI screens.
 
 | Layer | Choice | Evidence |
 |-------|--------|----------|
-| Desktop shell | **Tauri 2** | [desktop/Cargo.toml](../../desktop/Cargo.toml), [desktop/tauri.conf.json:2](../../desktop/tauri.conf.json#L2) |
-| Frontend | Static HTML/CSS/JS, **`withGlobalTauri: true`** (no bundler), CSP forbids inline scripts | [desktop/tauri.conf.json:10](../../desktop/tauri.conf.json#L10), [:23](../../desktop/tauri.conf.json#L23) |
+| Desktop shell | **Tauri 2** | [app/Cargo.toml](../../app/Cargo.toml), [app/tauri.conf.json:2](../../app/tauri.conf.json#L2) |
+| Frontend | Static HTML/CSS/JS, **`withGlobalTauri: true`** (no bundler), CSP forbids inline scripts | [app/tauri.conf.json:10](../../app/tauri.conf.json#L10), [:23](../../app/tauri.conf.json#L23) |
 | Core language | **Rust**, edition 2021, **MSRV 1.96** | [Cargo.toml](../../Cargo.toml) `rust-version = "1.96"` |
-| Workspace | Cargo workspace, 13 members; `desktop/` **excluded** | [Cargo.toml](../../Cargo.toml) `members` / `exclude = ["desktop"]` |
+| Workspace | Cargo workspace, 13 members; `app/` **excluded** | [Cargo.toml](../../Cargo.toml) `members` / `exclude = ["app"]` |
 | Serialization | **CBOR** (`ciborium`) for the authenticated vault header; `serde` JSON over IPC | [Cargo.toml](../../Cargo.toml), [crates/sv-core/src/format.rs](../../crates/sv-core/src/format.rs) |
 | Hashing / KDF | **BLAKE3** (`blake3`), **Argon2id** (`argon2`) | [crates/sv-crypto/Cargo.toml](../../crates/sv-crypto/Cargo.toml) |
 | AEAD / signing / sharing | **libsodium** `secretbox` (XSalsa20-Poly1305) + Ed25519; **Shamir** (`sss` hazmat) — both via FFI | [crates/sv-sys-sodium](../../crates/sv-sys-sodium), [crates/sv-sys-sss](../../crates/sv-sys-sss) |
@@ -74,20 +74,20 @@ graph TB
 **Key context facts**
 
 - **Fully offline.** There is no network client in the application graph; the CSP is `default-src
-  'self'` ([desktop/tauri.conf.json:23](../../desktop/tauri.conf.json#L23)). All operations are local
+  'self'` ([app/tauri.conf.json:23](../../app/tauri.conf.json#L23)). All operations are local
   file operations and local subprocesses.
 - **Single user, single machine.** No server, no accounts, no sync. The unit of sharing is a file
   (a `.svault` container, an encrypted artifact, or Shamir pieces) the user moves manually.
 - **External binaries are part of the bundle**, not system dependencies: `age`, `age-keygen`, and
   `exiftool` are bundled and **BLAKE3-hash-pinned** at build time
-  ([desktop/build.rs](../../desktop/build.rs)) and resolved from app resources at runtime
-  ([desktop/src/lib.rs](../../desktop/src/lib.rs)).
+  ([app/build.rs](../../app/build.rs)) and resolved from app resources at runtime
+  ([app/src/lib.rs](../../app/src/lib.rs)).
 
 ## 1.5 High-level component map
 
 ```mermaid
 graph TD
-    subgraph desktop["desktop/ (excluded from workspace) — Tauri runtime"]
+    subgraph desktop["app/ (excluded from workspace) — Tauri runtime"]
         FE["frontend/ — UI (index.html, main.js, i18n.js, styles.css)"]
         DLIB["src/lib.rs — #[tauri::command] handlers, resolve_binary, run()"]
         BRS["build.rs — stage + BLAKE3-pin external binaries"]
@@ -137,11 +137,11 @@ A detailed dependency graph and the rationale for each boundary are in
 
 ## 1.6 Deployment posture
 
-- **Build:** `cargo tauri build` from `desktop/` produces a per-OS bundle; `build.rs` stages and
+- **Build:** `cargo tauri build` from `app/` produces a per-OS bundle; `build.rs` stages and
   pins the external binaries, which ship via `bundle.resources: ["binaries/**/*"]`
-  ([desktop/tauri.conf.json:36](../../desktop/tauri.conf.json#L36)).
-- **`bundle.active: true`, `targets: "all"`** ([:27](../../desktop/tauri.conf.json#L27),
-  [:28](../../desktop/tauri.conf.json#L28)) — bundling is enabled.
+  ([app/tauri.conf.json:36](../../app/tauri.conf.json#L36)).
+- **`bundle.active: true`, `targets: "all"`** ([:27](../../app/tauri.conf.json#L27),
+  [:28](../../app/tauri.conf.json#L28)) — bundling is enabled.
 - **Internal-use posture.** The emitted bundle is **unsigned/unnotarized** (carry-forward blocker
   **H5**). Signing/notarization for public distribution is explicitly **out of scope** for this
   internal-use tool; see [docs/SIGNING-REQUIREMENTS.md](../SIGNING-REQUIREMENTS.md).

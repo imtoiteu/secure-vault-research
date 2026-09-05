@@ -31,7 +31,7 @@ A direct scan of the current tree (`#[test]` / `#[tokio::test]` annotations) giv
 | `sv-sys-sss` | 4 | Shamir FFI round-trip |
 | `sv-sys-sodium` | 3 | libsodium FFI bindings |
 | **Workspace total** | **253** | 249 pass + 4 `#[ignore]` env-gated e2e (verified `cargo test --workspace`, 2026-06-17) |
-| `desktop` | 1 | **`ui_contract`** — `MESSAGES` map ↔ `ApiError::ALL_CODES` parity |
+| `app` | 1 | **`ui_contract`** — `MESSAGES` map ↔ `ApiError::ALL_CODES` parity |
 
 > **Currency note (measured 2026-06-17).** A local `cargo test --workspace` reports **249 passed,
 > 0 failed, 4 ignored** — i.e. **253 test functions**, of which 4 are `#[ignore]` env-gated `age`/
@@ -54,7 +54,7 @@ A direct scan of the current tree (`#[test]` / `#[tokio::test]` annotations) giv
 | **DoS / bounds** | decode-bounded guards (sv-stego/qr/watermark); pre-auth Argon2 ceilings (sv-platform); oversized-source rejection (sv-app, H1) | Decompression bombs and oversized inputs are refused before allocation |
 | **Data safety** | overwrite-refusal (H3), per-vault write-lock (H7) (sv-app) | No silent overwrite; concurrent writers don't lose updates |
 | **Watermark semantics** | single-pixel-edit localization; global-alteration → Tampered not NotWatermarked (H2); JPEG refused (H3) (sv-watermark) | Fragility + correct verdict ladder |
-| **UI contract** | `ui_contract` (desktop) | Frontend message map exactly covers `ApiError` codes — no orphan codes or stale keys |
+| **UI contract** | `ui_contract` (app) | Frontend message map exactly covers `ApiError` codes — no orphan codes or stale keys |
 
 ## 8.4 CI gates
 
@@ -77,7 +77,7 @@ graph LR
 ```
 
 Per [docs/CI-VALIDATION.md](../CI-VALIDATION.md) (commit `780444d`, 2026-06-15), **all jobs were
-green** across the matrix (counting matrix expansion: `check`×3 + `desktop`×3 + `msrv` + `deny` +
+green** across the matrix (counting matrix expansion: `check`×3 + `app`×3 + `msrv` + `deny` +
 `sbom` = 9 job runs). Notable points from that run:
 
 - **Windows-first validation of H4** — `age_backed_lifecycle_roundtrips` passed on `windows-latest`,
@@ -85,7 +85,7 @@ green** across the matrix (counting matrix expansion: `check`×3 + `desktop`×3 
   allow-list does not break the age CSPRNG / DLL loader.
 - The Linux/Windows test-count delta (127 vs 126 in that run) was a single `#[cfg(unix)]`-only test
   in `sv-age` — expected, not a failure.
-- Five first-run failures were fixed (committed `desktop/Cargo.lock`, forced MSRV toolchain,
+- Five first-run failures were fixed (committed `app/Cargo.lock`, forced MSRV toolchain,
   `randombytes` symbol-clash rename, MSVC VLA fix in `hazmat.c`, `setup-go` for `age` on macOS) — all
   portability fixes, **no algorithm change** (`sv-sys-sss` behavior-preserving).
 
@@ -104,7 +104,7 @@ cargo deny check
 ```
 
 The desktop crate is gated separately (it is workspace-excluded): `cargo fmt`/`clippy -D
-warnings`/`test` run from `desktop/`. The `age` e2e tests require `SV_AGE_BIN` + `SV_AGE_KEYGEN_BIN`.
+warnings`/`test` run from `app/`. The `age` e2e tests require `SV_AGE_BIN` + `SV_AGE_KEYGEN_BIN`.
 
 ## 8.6 Validation campaigns (documented)
 

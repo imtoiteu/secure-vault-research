@@ -502,7 +502,7 @@ fn require_dev_build(what: &str) -> Result<(), String> {
         Ok(())
     } else {
         Err(format!(
-            "refusing to run with an unpinned {what} in a release build; bundle the pinned binary (see desktop/binaries/README.md)"
+            "refusing to run with an unpinned {what} in a release build; bundle the pinned binary (see app/binaries/README.md)"
         ))
     }
 }

@@ -18,6 +18,11 @@
 - New dependency licences must be on the `deny.toml` allowlist: MIT, Apache-2.0, Apache-2.0 WITH LLVM-exception, BSD-2-Clause, BSD-3-Clause, ISC, Unicode-3.0, Unicode-DFS-2016, CC0-1.0, Zlib, MPL-2.0.
 - **No changes to `crates/sv-core`, `sv-crypto`, `sv-crypto-traits`, `sv-types`, `sv-platform`, `sv-stego`, `sv-qr`, `sv-watermark`.** The M0 contract is frozen.
 - **Never** store passphrases, session keys, or age identities in Keystore/Keychain (spec D3).
+- **Build host has 7.8 GB RAM, 4 CPUs, 2.1 GB swap, and no `/dev/kvm`.** `cargo test --workspace`
+  at default parallelism was killed by the OOM killer. Every cargo invocation in this plan must
+  cap jobs: `cargo … -j 2` (or `CARGO_BUILD_JOBS=2`). For the Gradle tasks, also set
+  `org.gradle.jvmargs=-Xmx2g` and `org.gradle.daemon=false` in `app/gen/android/gradle.properties`,
+  and do not run a cargo build concurrently with a Gradle build.
 - Android NDK path: `/root/android/android-ndk-r28c`. API level 24.
 - Android cross-compile env (every Android cargo invocation):
   ```

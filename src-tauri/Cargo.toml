@@ -1,6 +1,6 @@
 [package]
 name = "sv-app"
-description = "Application/IPC command surface + composition root. Backend-only (no `tauri` dep); the Tauri runtime shell lives in the workspace-excluded desktop/ crate."
+description = "Application/IPC command surface + composition root. Backend-only (no `tauri` dep); the Tauri runtime shell lives in the workspace-excluded app/ crate."
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true

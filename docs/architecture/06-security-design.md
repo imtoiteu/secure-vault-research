@@ -59,8 +59,8 @@ graph TD
 | **Core ↔ age subprocess** | Wrong/hostile binary, hang, env leakage | BLAKE3 pin; `env_clear` + Win allow-list; 120 s timeout; secret identity in `0600` temp, zeroized | [crates/sv-age/src/lib.rs:62](../../crates/sv-age/src/lib.rs#L62), [:108](../../crates/sv-age/src/lib.rs#L108), [:147](../../crates/sv-age/src/lib.rs#L147) |
 | **Core ↔ ExifTool subprocess** | RCE via config, hang, env leakage | `-config ""`; `env_clear`; no shell; fresh cwd; 60 s timeout; BLAKE3 pin; fail-closed | [crates/sv-meta/src/lib.rs](../../crates/sv-meta/src/lib.rs) |
 | **Core ↔ filesystem** | Tamper, partial write, overwrite | Signed+encrypted container; atomic temp+rename; refuse-existing | [crates/sv-core/src/container.rs:333](../../crates/sv-core/src/container.rs#L333), [crates/sv-platform/src/lib.rs:146](../../crates/sv-platform/src/lib.rs#L146) |
-| **Build ↔ runtime (binary resolution)** | Redirect to out-of-bundle toolchain | Release ignores `SV_*_BIN`; resolves only from bundle / next-to-exe | [desktop/src/lib.rs:513](../../desktop/src/lib.rs#L513) |
-| **Audited core ↔ webview deps** | Unaudited transitive crates | `desktop/` excluded from workspace; `cargo deny`/`audit` gate the core (+ a separate desktop scan) | [Cargo.toml](../../Cargo.toml), [.github/workflows/ci.yml](../../.github/workflows/ci.yml) |
+| **Build ↔ runtime (binary resolution)** | Redirect to out-of-bundle toolchain | Release ignores `SV_*_BIN`; resolves only from bundle / next-to-exe | [app/src/lib.rs:513](../../app/src/lib.rs#L513) |
+| **Audited core ↔ webview deps** | Unaudited transitive crates | `app/` excluded from workspace; `cargo deny`/`audit` gate the core (+ a separate app-crate scan) | [Cargo.toml](../../Cargo.toml), [.github/workflows/ci.yml](../../.github/workflows/ci.yml) |
 
 ## 6.4 Oracle-safe error model
 
@@ -134,7 +134,7 @@ flowchart LR
     spawn --> bound["wall-clock timeout → kill on hang"]
 ```
 
-- **Pinning** ([desktop/build.rs](../../desktop/build.rs) `emit_pin`): age/age-keygen are
+- **Pinning** ([app/build.rs](../../app/build.rs) `emit_pin`): age/age-keygen are
   `Mandatory::Yes` — a *release* build with one missing **panics the build**; exiftool is
   `Mandatory::No` — its absence disables the Analysis module fail-closed.
 - **Architecture check** (`detect_staged_target` + `check_staged_arch`): reads Mach-O/ELF/PE headers

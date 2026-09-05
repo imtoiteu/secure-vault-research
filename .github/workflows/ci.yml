@@ -76,11 +76,11 @@ jobs:
         run: cargo build --workspace --locked
 
   # ---- desktop crate gates --------------------------------------------------
-  # The Tauri shell (`desktop/`) is workspace-excluded so the webview dep tree never enters the
+  # The Tauri shell (`app/`) is workspace-excluded so the webview dep tree never enters the
   # audited-core gates above. It still must pass fmt/clippy/test on its own and have its (much
   # larger) dependency tree audited. Runs the OS matrix because the webview backend is per-OS.
-  desktop:
-    name: desktop build+test (${{ matrix.os }})
+  app:
+    name: app shell build+test (${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:
@@ -88,7 +88,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     defaults:
       run:
-        working-directory: desktop
+        working-directory: app
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -124,11 +124,11 @@ jobs:
         run: cargo audit
       # The desktop crate is workspace-excluded, so its ~400-package webview tree would otherwise
       # escape advisory/audit scanning entirely. Scan it too (advisories + yanked).
-      - name: cargo-deny — desktop webview tree (advisories + bans + sources)
-        working-directory: desktop
+      - name: cargo-deny — app shell webview tree (advisories + bans + sources)
+        working-directory: app
         run: cargo deny check advisories bans sources
       - name: cargo-audit — desktop webview tree (RUSTSEC)
-        working-directory: desktop
+        working-directory: app
         run: cargo audit
 
   # ---- SBOM stub ------------------------------------------------------------

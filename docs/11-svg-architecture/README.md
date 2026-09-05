@@ -54,13 +54,13 @@ editor (plain `<rect>` / `<text>` / `<line>`, a shared `<style>` block, one arro
 All paths are relative to `secure-vault/`. These were read directly during the audit that produced
 this package (the same audit behind `docs/architecture/10-report-diagrams.md`).
 
-- **Composition / IPC / deployment:** `desktop/src/lib.rs` (the real Tauri composition root — 5
+- **Composition / IPC / deployment:** `app/src/lib.rs` (the real Tauri composition root — 5
   `.manage(...)` states, 38 `#[tauri::command]`s, `build_backend` / `build_meta` binary resolution +
-  BLAKE3 pin), `desktop/tauri.conf.json` (`frontendDist`, `withGlobalTauri`, CSP, `bundle.resources:
-  ["binaries/**/*"]`, `targets: all`), `desktop/build.rs` (`emit_pin` for `age` / `age-keygen`
-  (mandatory) and `stage_exiftool` + pin (optional); release fail-closed), `desktop/capabilities/default.json`
+  BLAKE3 pin), `app/tauri.conf.json` (`frontendDist`, `withGlobalTauri`, CSP, `bundle.resources:
+  ["binaries/**/*"]`, `targets: all`), `app/build.rs` (`emit_pin` for `age` / `age-keygen`
+  (mandatory) and `stage_exiftool` + pin (optional); release fail-closed), `app/capabilities/default.json`
   (the webview allowlist), `src-tauri/src/{lib,service,platform,meta,stego,watermark,payload,passphrase}.rs`.
-- **Frontend:** `desktop/frontend/{index.html,main.js,i18n.js,styles.css}`.
+- **Frontend:** `app/frontend/{index.html,main.js,i18n.js,styles.css}`.
 - **Crypto platform:** `crates/sv-crypto-traits/src/lib.rs`, `crates/sv-crypto/src/{lib,minisign,secretbox,policy}.rs`,
   `crates/sv-sys-sodium/src/lib.rs`, `crates/sv-sys-sss/src/{lib.rs,build.rs}`, `crates/sv-age/src/lib.rs`.
 - **Vault & services:** `crates/sv-core/src/{lib,container,format,keys,service,error}.rs`,
@@ -85,7 +85,7 @@ the code shows.
    binary**: `sv-crypto`, `sv-core`, `sv-platform`, `sv-sys-sodium`, `sv-sys-sss`, `sv-age`, and the
    bundled `age` / `libsodium` paths. This is an editorial classification using that stated criterion.
 3. **ARCH-04 omitted edges (disclosed on-diagram).** For legibility, `sv-app`'s direct dependencies on
-   `sv-crypto-traits` / `sv-crypto` / `sv-types`, and `desktop`'s dependencies on `sv-age` / `sv-meta`
+   `sv-crypto-traits` / `sv-crypto` / `sv-types`, and `app`'s dependencies on `sv-age` / `sv-meta`
    / `sv-types`, are **not drawn** — they exist in the manifests. Every other edge is exact.
 4. **Two encryption mechanisms (ARCH-03).** The Vault payload uses **age**; standalone file encryption
    uses **Argon2id + secretbox (SVENC)**. They are drawn as separate lanes because they are separate
