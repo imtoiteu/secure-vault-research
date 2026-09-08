@@ -417,6 +417,17 @@ fn watermark_verify(
 /// # Panics
 /// Panics if the Tauri runtime fails to start. Backend-init failures (missing/again-pinned
 /// binaries) abort startup with a clear message via the `setup` error.
+/// Điểm vào cho Android và iOS.
+///
+/// Vỏ ứng dụng gốc do Tauri sinh ra nạp thư viện native rồi gọi các hàm JNI mà macro này
+/// tạo ra. Trên máy tính để bàn, `main.rs` gọi thẳng `run()` nên không cần điểm vào này.
+/// Cả hai đường đều dẫn về cùng một hàm `run()`, tức cùng một bề mặt lệnh và cùng một lõi.
+#[cfg(mobile)]
+#[tauri::mobile_entry_point]
+fn mobile_entry_point() {
+    run();
+}
+
 pub fn run() {
     use tauri::Manager;
     tauri::Builder::default()

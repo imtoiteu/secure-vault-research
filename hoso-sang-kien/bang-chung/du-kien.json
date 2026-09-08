@@ -1,0 +1,139 @@
+{
+  "lenh_ipc": {
+    "so_luong": 38,
+    "danh_sach": [
+      "app_info",
+      "vault_create",
+      "vault_unlock",
+      "vault_lock",
+      "vault_change_passphrase",
+      "vault_meta",
+      "export_signing_public_key",
+      "item_list",
+      "item_add",
+      "item_extract",
+      "integrity_check",
+      "integrity_hash",
+      "sign_file",
+      "verify_file",
+      "keys_split",
+      "keys_recover",
+      "integrity_hash_file",
+      "integrity_verify_signature",
+      "integrity_verify_integrity",
+      "crypto_encrypt_file",
+      "crypto_decrypt_file",
+      "crypto_generate_signing_keypair",
+      "crypto_sign_file",
+      "shares_split_secret",
+      "shares_split_file",
+      "shares_recover_secret",
+      "shares_export_qr",
+      "shares_recover_from_qr",
+      "copy_file",
+      "stego_hide",
+      "stego_extract",
+      "stego_detect",
+      "metadata_inspect",
+      "metadata_sanitize",
+      "metadata_diff",
+      "metadata_available",
+      "watermark_embed",
+      "watermark_verify"
+    ]
+  },
+  "crate": {
+    "so_luong": 14,
+    "danh_sach": [
+      "crates/sv-age",
+      "crates/sv-age-rs",
+      "crates/sv-core",
+      "crates/sv-crypto",
+      "crates/sv-crypto-traits",
+      "crates/sv-meta",
+      "crates/sv-platform",
+      "crates/sv-qr",
+      "crates/sv-stego",
+      "crates/sv-sys-sodium",
+      "crates/sv-sys-sss",
+      "crates/sv-types",
+      "crates/sv-watermark",
+      "src-tauri"
+    ]
+  },
+  "argon2id": {
+    "min_mem_kib": 19456,
+    "min_time_cost": 2,
+    "min_parallelism": 1
+  },
+  "thuat_toan": {
+    "kdf": "Argon2id",
+    "hash": "BLAKE3",
+    "aead_vault": "age v1 (X25519 + ChaCha20-Poly1305)",
+    "aead_field": "XSalsa20-Poly1305 (libsodium secretbox)",
+    "chu_ky": "Ed25519 (định dạng minisign)",
+    "chia_se_bi_mat": "Shamir k-trong-n (sss hazmat.c)"
+  },
+  "test_trong_nguon": {
+    "sv-age": 6,
+    "sv-age-rs": 7,
+    "sv-core": 22,
+    "sv-crypto": 20,
+    "sv-crypto-traits": 6,
+    "sv-meta": 10,
+    "sv-platform": 46,
+    "sv-qr": 8,
+    "sv-stego": 74,
+    "sv-sys-sodium": 3,
+    "sv-sys-sss": 4,
+    "sv-types": 4,
+    "sv-watermark": 11,
+    "sv-app": 46
+  },
+  "git": {
+    "commit": "e3dac27",
+    "branch": "feat/mobile-android-ios",
+    "so_commit": "22"
+  },
+  "ket_qua_kiem_thu": {
+    "host_toan_bo": {
+      "suites": 30,
+      "passed": 258,
+      "failed": 0,
+      "ignored": 9,
+      "hoan_tat": true
+    },
+    "arm64_loi_mat_ma": {
+      "suites": 10,
+      "passed": 146,
+      "failed": 0,
+      "ignored": 2,
+      "hoan_tat": false
+    },
+    "interop_age": {
+      "suites": 1,
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0,
+      "hoan_tat": true
+    },
+    "interop_vault": {
+      "suites": 1,
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0,
+      "hoan_tat": true
+    }
+  },
+  "toolchain": {
+    "ndk": "r28c",
+    "clang": "19.0.1",
+    "target_android": [
+      "aarch64-linux-android",
+      "armv7-linux-androideabi",
+      "i686-linux-android",
+      "x86_64-linux-android"
+    ],
+    "rust_msrv": "1.96"
+  }
+}

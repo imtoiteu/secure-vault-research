@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="620" viewBox="0 0 1040 620" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+<rect width="1040" height="620" fill="#FFFFFF"/>
+<defs><marker id="ah" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#55607A"/></marker></defs>
+<text x="520.0" y="34" font-size="20" font-weight="700" text-anchor="middle" fill="#12203A">Hình 6. Các mức kiểm chứng đã đạt được và phần còn lại</text>
+<text x="520.0" y="56" font-size="13" text-anchor="middle" fill="#5A6779">Phân biệt rõ điều đã chứng minh bằng máy và điều còn phải kiểm tra trên thiết bị thật</text>
+<line x1="520" y1="162" x2="520" y2="178" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<line x1="520" y1="244" x2="520" y2="260" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<line x1="520" y1="326" x2="520" y2="342" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<line x1="520" y1="408" x2="520" y2="424" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<line x1="520" y1="490" x2="520" y2="506" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<rect x="240" y="96" width="560" height="66" rx="7" fill="#E7F4EC" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="520.0" y="124.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#14432A">Mức 1 — Kiểm thử đơn vị trên máy chủ: 258 test, 0 lỗi</text>
+<text x="520.0" y="141.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">toàn bộ lõi mật mã và nghiệp vụ</text>
+<rect x="240" y="178" width="560" height="66" rx="7" fill="#E7F4EC" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="520.0" y="206.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#14432A">Mức 2 — Tương thích định dạng: 5 phép đối chứng</text>
+<text x="520.0" y="223.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">hai chiều với age v1.2.1 thật, và mở chéo tệp .svault</text>
+<rect x="240" y="260" width="560" height="66" rx="7" fill="#E7F4EC" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="520.0" y="288.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#14432A">Mức 3 — Biên dịch chéo: 14 thành phần sang aarch64-linux-android</text>
+<text x="520.0" y="305.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">kiểm chứng tệp đối tượng thực sự là mã ARM64</text>
+<rect x="240" y="342" width="560" height="66" rx="7" fill="#E7F4EC" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="520.0" y="370.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#14432A">Mức 4 — Thực thi trên ARM64 (giả lập QEMU): 146 test, 0 lỗi trên 10 bộ kiểm thử</text>
+<text x="520.0" y="387.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">chạy thật mã lệnh ARM64 của lõi mật mã</text>
+<rect x="240" y="424" width="560" height="66" rx="7" fill="#FDF0E3" stroke="#C4772B" stroke-width="1.6"/>
+<text x="520.0" y="452.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#6B3E10">Mức 5 — Đóng gói APK và kiểm tra tĩnh</text>
+<text x="520.0" y="469.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">thư viện .so đúng kiến trúc, không khai báo quyền mạng</text>
+<rect x="240" y="506" width="560" height="66" rx="7" fill="#FBE9E9" stroke="#B3403A" stroke-width="1.6" stroke-dasharray="7,4"/>
+<text x="520.0" y="534.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#5F1B17">Mức 6 — CHƯA THỰC HIỆN: chạy trên điện thoại Android thật</text>
+<text x="520.0" y="551.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">cần thiết bị vật lý; máy chủ xây dựng không có ảo hoá lồng nhau</text>
+<text x="60" y="596" font-size="12.5" font-weight="700" text-anchor="start" fill="#12325B">Nguyên tắc của hồ sơ: mỗi tuyên bố kỹ thuật đều gắn với một mức kiểm chứng cụ thể ở trên.</text>
+</svg>

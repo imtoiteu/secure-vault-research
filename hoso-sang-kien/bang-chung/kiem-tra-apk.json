@@ -1,0 +1,27 @@
+{
+  "co_apk": true,
+  "duong_dan": "app/gen/android/app/build/outputs/apk/arm64/debug/app-arm64-debug.apk",
+  "kich_thuoc_byte": 47391883,
+  "sha256": "1eb5ebad01eb3a9f74b4d33a3f4c8f3cc77dd371b4be7bc4e6e74c7aac67560f",
+  "thu_vien_native": {
+    "lib/arm64-v8a/libsecure_vault_desktop_lib.so": "64-bit ARM aarch64"
+  },
+  "co_thu_vien_arm64": true,
+  "assets_roi_trong_goi": [
+    "assets/tauri.conf.json"
+  ],
+  "tai_nguyen_giao_dien_nhung_trong_so": [
+    "/i18n.js",
+    "/index.html",
+    "/main.js",
+    "/styles.css"
+  ],
+  "giao_dien_da_nhung": true,
+  "quyen_khai_bao": [],
+  "khong_co_quyen_mang": true,
+  "aapt2_permissions": [
+    "package: org.secure_vault.desktop",
+    "permission: org.secure_vault.desktop.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+    "uses-permission: name='org.secure_vault.desktop.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'"
+  ]
+}

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="640" viewBox="0 0 1040 640" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+<rect width="1040" height="640" fill="#FFFFFF"/>
+<defs><marker id="ah" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#55607A"/></marker></defs>
+<text x="520.0" y="34" font-size="20" font-weight="700" text-anchor="middle" fill="#12203A">Hình 2. Kiến trúc phân lớp của SecureVault Mobile (Android)</text>
+<text x="520.0" y="56" font-size="13" text-anchor="middle" fill="#5A6779">Sáu lớp, phụ thuộc một chiều từ trên xuống; lõi mật mã không phụ thuộc giao diện</text>
+<line x1="520" y1="148" x2="520" y2="168" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<line x1="520" y1="230" x2="520" y2="250" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<line x1="520" y1="312" x2="520" y2="332" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<line x1="520" y1="394" x2="520" y2="414" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<line x1="520" y1="476" x2="520" y2="496" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<rect x="120" y="86" width="800" height="62" rx="7" fill="#EEF3FB" stroke="#3A6EA5" stroke-width="1.6"/>
+<text x="520.0" y="112.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#12325B">L1 — Giao diện (WebView): HTML/CSS/JS tĩnh, song ngữ Việt–Anh</text>
+<text x="520.0" y="129.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">ngăn kéo điều hướng, vùng chạm ≥ 44px, không có mã nội tuyến (CSP)</text>
+<rect x="120" y="168" width="800" height="62" rx="7" fill="#FDF0E3" stroke="#C4772B" stroke-width="1.6"/>
+<text x="520.0" y="194.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#6B3E10">L2 — Vỏ ứng dụng (Tauri 2, thư mục app/): 38 lệnh #[tauri::command]</text>
+<text x="520.0" y="211.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">gốc hợp thành riêng cho Android (compose/mobile.rs)</text>
+<rect x="120" y="250" width="800" height="62" rx="7" fill="#E7F4EC" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="520.0" y="276.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#14432A">L3 — Bề mặt lệnh (sv-app): CommandSurface, Platform/Stego/Meta/Watermark</text>
+<text x="520.0" y="293.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">IpcPassphrase, SessionHandle mờ, lỗi có mã an toàn (oracle-safe)</text>
+<rect x="120" y="332" width="800" height="62" rx="7" fill="#E7F4EC" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="520.0" y="358.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#14432A">L4 — Nghiệp vụ: sv-core (.svault), sv-platform, sv-stego, sv-qr, sv-watermark</text>
+<text x="520.0" y="375.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">không phụ thuộc backend cụ thể — chỉ phụ thuộc trait</text>
+<rect x="120" y="414" width="800" height="62" rx="7" fill="#E7F4EC" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="520.0" y="440.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#14432A">L5 — Bộ điều hợp mật mã: sv-crypto (BLAKE3, Argon2id, Shamir, minisign)</text>
+<text x="520.0" y="457.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">sv-age-rs (age v1 thuần Rust — thay thế tiến trình con trên di động)</text>
+<rect x="120" y="496" width="800" height="62" rx="7" fill="#E7F4EC" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="520.0" y="522.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#14432A">L6 — Nguyên hàm/FFI: libsodium (secretbox, Ed25519), hazmat.c (Shamir)</text>
+<text x="520.0" y="539.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">biên dịch chéo sang aarch64-linux-android bằng NDK r28c / clang 19</text>
+<text x="60" y="600" font-size="12" font-weight="400" text-anchor="start" fill="#4B5768">Vùng xanh = lõi dùng chung, đã kiểm chứng bằng kiểm thử tự động; vùng cam = thành phần riêng cho di động</text>
+</svg>

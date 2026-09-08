@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="560" viewBox="0 0 1040 560" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+<rect width="1040" height="560" fill="#FFFFFF"/>
+<defs><marker id="ah" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#55607A"/></marker></defs>
+<text x="520.0" y="34" font-size="20" font-weight="700" text-anchor="middle" fill="#12203A">Hình 5. Luồng xử lý tệp trên Android và ranh giới tin cậy</text>
+<text x="520.0" y="56" font-size="13" text-anchor="middle" fill="#5A6779">Mọi xử lý diễn ra trên thiết bị; không có kết nối mạng trong toàn bộ luồng</text>
+<line x1="280" y1="152" x2="330" y2="152" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<line x1="570" y1="152" x2="620" y2="152" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<line x1="790" y1="194" x2="790" y2="250" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<line x1="620" y1="288" x2="570" y2="288" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<rect x="60" y="110" width="220" height="84" rx="7" fill="#FDF0E3" stroke="#C4772B" stroke-width="1.6"/>
+<text x="170.0" y="139.0" font-size="13.5" font-weight="600" text-anchor="middle" fill="#6B3E10">Bộ chọn tệp Android (SAF)</text>
+<text x="170.0" y="156.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">trả về content:// URI</text>
+<text x="170.0" y="173.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">người dùng cấp quyền từng tệp</text>
+<rect x="330" y="110" width="240" height="84" rx="7" fill="#FDF0E3" stroke="#C4772B" stroke-width="1.6"/>
+<text x="450.0" y="139.0" font-size="13.5" font-weight="600" text-anchor="middle" fill="#6B3E10">Vùng đệm riêng của ứng dụng</text>
+<text x="450.0" y="156.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">sao chép tạm để lõi</text>
+<text x="450.0" y="173.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">đọc bằng đường dẫn thật</text>
+<rect x="620" y="110" width="340" height="84" rx="7" fill="#E7F4EC" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="790.0" y="139.0" font-size="13.5" font-weight="600" text-anchor="middle" fill="#14432A">Lõi bảo mật (Rust)</text>
+<text x="790.0" y="156.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">mã hoá / giải mã / ký / kiểm tra</text>
+<text x="790.0" y="173.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">ghi tệp nguyên tử (tạm rồi đổi tên)</text>
+<rect x="620" y="250" width="340" height="76" rx="7" fill="#FDF0E3" stroke="#C4772B" stroke-width="1.6"/>
+<text x="790.0" y="275.0" font-size="13.5" font-weight="600" text-anchor="middle" fill="#6B3E10">Kết quả trả về người dùng</text>
+<text x="790.0" y="292.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">lưu qua SAF hoặc chia sẻ</text>
+<text x="790.0" y="309.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">bằng cơ chế của hệ điều hành</text>
+<rect x="330" y="250" width="240" height="76" rx="7" fill="#FBE9E9" stroke="#B3403A" stroke-width="1.6"/>
+<text x="450.0" y="275.0" font-size="13.5" font-weight="600" text-anchor="middle" fill="#5F1B17">Xoá vùng đệm</text>
+<text x="450.0" y="292.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">ghi đè rồi huỷ tệp tạm</text>
+<text x="450.0" y="309.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">ngay khi thao tác kết thúc</text>
+<text x="520" y="380" font-size="12.5" font-weight="400" text-anchor="middle" fill="#4B5768">Ranh giới tin cậy: toàn bộ khối trên nằm trong vùng lưu trữ riêng của ứng dụng,</text>
+<text x="520" y="400" font-size="12.5" font-weight="400" text-anchor="middle" fill="#4B5768">được hệ điều hành cách ly và mã hoá ở mức tệp (File-Based Encryption).</text>
+<text x="520" y="440" font-size="13.5" font-weight="700" text-anchor="middle" fill="#2E7D4F">Ứng dụng KHÔNG khai báo quyền truy cập mạng (INTERNET).</text>
+<text x="520" y="470" font-size="12" font-weight="400" text-anchor="middle" fill="#B3403A">Điểm cần ghi nhận trung thực: bản sao tạm ở dạng rõ tồn tại trong vùng đệm</text>
+<text x="520" y="490" font-size="12" font-weight="400" text-anchor="middle" fill="#B3403A">trong thời gian thao tác — đã được ghi nhận trong mô hình mối đe doạ.</text>
+</svg>

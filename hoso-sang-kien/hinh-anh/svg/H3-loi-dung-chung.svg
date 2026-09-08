@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="650" viewBox="0 0 1040 650" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+<rect width="1040" height="650" fill="#FFFFFF"/>
+<defs><marker id="ah" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#55607A"/></marker></defs>
+<text x="520.0" y="34" font-size="20" font-weight="700" text-anchor="middle" fill="#12203A">Hình 3. Một lõi bảo mật, hai gốc hợp thành theo nền tảng</text>
+<text x="520.0" y="56" font-size="13" text-anchor="middle" fill="#5A6779">Rào cản kỹ thuật và cách giải quyết đã được kiểm chứng bằng thực nghiệm</text>
+<line x1="430" y1="176" x2="280" y2="244" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<line x1="610" y1="176" x2="760" y2="244" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<line x1="280" y1="304" x2="280" y2="330" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<line x1="760" y1="304" x2="760" y2="330" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<line x1="760" y1="438" x2="760" y2="462" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<line x1="280" y1="438" x2="280" y2="462" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<line x1="280" y1="528" x2="400" y2="556" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<line x1="760" y1="528" x2="640" y2="556" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<rect x="300" y="92" width="440" height="84" rx="7" fill="#E7F4EC" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="520.0" y="121.0" font-size="13.5" font-weight="600" text-anchor="middle" fill="#14432A">Lõi bảo mật dùng chung (14 thành phần Rust)</text>
+<text x="520.0" y="138.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">định dạng .svault, phân cấp khoá, mật mã, phân loại lỗi</text>
+<text x="520.0" y="155.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">GIỐNG HỆT NHAU trên mọi nền tảng</text>
+<rect x="90" y="244" width="380" height="60" rx="7" fill="#F2F3F5" stroke="#6B7280" stroke-width="1.6"/>
+<text x="280.0" y="278.0" font-size="13" font-weight="600" text-anchor="middle" fill="#1F2933">Biên dịch với cfg = desktop</text>
+<rect x="570" y="244" width="380" height="60" rx="7" fill="#FDF0E3" stroke="#C4772B" stroke-width="1.6"/>
+<text x="760.0" y="278.0" font-size="13" font-weight="600" text-anchor="middle" fill="#6B3E10">Biên dịch với cfg = mobile (Android)</text>
+<rect x="90" y="330" width="380" height="108" rx="7" fill="#F2F3F5" stroke="#6B7280" stroke-width="1.6" stroke-dasharray="7,4"/>
+<text x="280.0" y="362.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#1F2933">compose/desktop.rs</text>
+<text x="280.0" y="379.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">tiến trình con age/age-keygen được ghim băm BLAKE3</text>
+<text x="280.0" y="396.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">ExifTool cho phân tích siêu dữ liệu</text>
+<text x="280.0" y="413.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">(không thuộc phạm vi hồ sơ này)</text>
+<rect x="570" y="330" width="380" height="108" rx="7" fill="#FDF0E3" stroke="#C4772B" stroke-width="1.6"/>
+<text x="760.0" y="362.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#6B3E10">compose/mobile.rs</text>
+<text x="760.0" y="379.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">RustAgePayloadCipher — mã hoá trong tiến trình</text>
+<text x="760.0" y="396.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">MetaApp::disabled() — mô-đun siêu dữ liệu tắt an toàn</text>
+<text x="760.0" y="413.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">không sinh tiến trình con</text>
+<rect x="570" y="462" width="380" height="66" rx="7" fill="#FBE9E9" stroke="#B3403A" stroke-width="1.6"/>
+<text x="760.0" y="482.0" font-size="13.5" font-weight="600" text-anchor="middle" fill="#5F1B17">Vì sao bắt buộc phải thay đổi:</text>
+<text x="760.0" y="499.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">iOS cấm sinh tiến trình; Android chặn thực thi</text>
+<text x="760.0" y="516.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">tệp nhị phân trong vùng ghi được của ứng dụng</text>
+<rect x="90" y="462" width="380" height="66" rx="7" fill="#FBE9E9" stroke="#B3403A" stroke-width="1.6"/>
+<text x="280.0" y="482.0" font-size="13.5" font-weight="600" text-anchor="middle" fill="#5F1B17">Hệ quả nếu không xử lý:</text>
+<text x="280.0" y="499.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">toàn bộ chức năng két sẽ không hoạt động</text>
+<text x="280.0" y="516.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">trên thiết bị di động</text>
+<rect x="90" y="556" width="860" height="56" rx="7" fill="#E7F4EC" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="520.0" y="579.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#14432A">Bằng chứng tương thích định dạng: tệp .svault tạo bằng bộ mã hoá này mở được bằng bộ kia và ngược lại</text>
+<text x="520.0" y="596.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">5 kiểm thử đối chứng với age v1.2.1 thật — chi tiết tại Bảng 3</text>
+</svg>
