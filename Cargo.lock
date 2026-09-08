@@ -1865,6 +1865,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sv-age",
+ "sv-age-rs",
  "sv-core",
  "sv-crypto",
  "sv-crypto-traits",

@@ -24,7 +24,7 @@ mod watermark;
 
 pub use meta::{MetaApp, MetaSurface};
 pub use passphrase::IpcPassphrase;
-pub use payload::{AgePayloadCipher, PayloadCipher};
+pub use payload::{AgePayloadCipher, PayloadCipher, RustAgePayloadCipher};
 pub use platform::{PlatformApp, PlatformSurface};
 pub use service::VaultBackend;
 pub use stego::{StegoApp, StegoSurface};
