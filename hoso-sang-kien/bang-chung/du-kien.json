@@ -43,7 +43,7 @@
     ]
   },
   "crate": {
-    "so_luong": 14,
+    "so_luong": 15,
     "danh_sach": [
       "crates/sv-age",
       "crates/sv-age-rs",
@@ -51,6 +51,7 @@
       "crates/sv-crypto",
       "crates/sv-crypto-traits",
       "crates/sv-meta",
+      "crates/sv-meta-rs",
       "crates/sv-platform",
       "crates/sv-qr",
       "crates/sv-stego",
@@ -81,6 +82,7 @@
     "sv-crypto": 20,
     "sv-crypto-traits": 6,
     "sv-meta": 10,
+    "sv-meta-rs": 5,
     "sv-platform": 46,
     "sv-qr": 8,
     "sv-stego": 74,
@@ -91,14 +93,14 @@
     "sv-app": 46
   },
   "git": {
-    "commit": "e3dac27",
+    "commit": "6014f11",
     "branch": "feat/mobile-android-ios",
-    "so_commit": "22"
+    "so_commit": "23"
   },
   "ket_qua_kiem_thu": {
     "host_toan_bo": {
-      "suites": 30,
-      "passed": 258,
+      "suites": 33,
+      "passed": 263,
       "failed": 0,
       "ignored": 9,
       "hoan_tat": true

@@ -19,6 +19,17 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Cm, Pt, RGBColor
 
+# Bộ đếm bảng và hình. Đánh số thủ công đã ba lần gây lệch số hiệu khi chèn thêm nội dung
+# vào giữa tài liệu; đếm tự động theo thứ tự gọi hàm sẽ luôn đúng, kể cả khi sắp xếp lại mục.
+_DEM = {"bang": 0, "hinh": 0}
+
+
+def dat_lai_dem():
+    """Gọi ở đầu mỗi văn bản để bắt đầu đếm lại từ 1."""
+    _DEM["bang"] = 0
+    _DEM["hinh"] = 0
+
+
 FONT = "Times New Roman"
 SIZE = Pt(13)
 
@@ -191,7 +202,9 @@ def caption(doc, text, *, above=False):
 
 
 def hinh(doc, path, caption_text, width_cm=15.0):
-    """Chèn hình kèm chú thích phía dưới."""
+    """Chèn hình kèm chú thích phía dưới; số hiệu "Hình N." được thêm tự động."""
+    _DEM["hinh"] += 1
+    caption_text = f"Hình {_DEM['hinh']}. {caption_text}"
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.paragraph_format.space_before = Pt(8)
@@ -206,15 +219,15 @@ def placeholder_hinh(doc, ten_hinh, mo_ta, chieu_cao_cm=6.0):
     t = doc.add_table(rows=1, cols=1)
     t.alignment = WD_TABLE_ALIGNMENT.CENTER
     cell = t.rows[0].cells[0]
-    _viền_ô(cell, sz=8, color="B3403A", dashed=True)
+    _viền_ô(cell, sz=6, color="9AA4B0", dashed=True)
     cell.width = Cm(15)
     p = cell.paragraphs[0]
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.paragraph_format.space_before = Pt(int(chieu_cao_cm * 8))
     p.paragraph_format.space_after = Pt(int(chieu_cao_cm * 8))
-    _run(p, f"[CHỖ DÀNH CHO HÌNH — {ten_hinh}]\n", bold=True, colour=RED, size=Pt(12))
+    _run(p, f"[Vị trí gắn ảnh chụp — {ten_hinh}]\n", bold=True, colour=GREY, size=Pt(12))
     _run(p, mo_ta, italic=True, colour=GREY, size=Pt(11))
-    caption(doc, f"{ten_hinh} (tác giả bổ sung sau khi chạy trên thiết bị thật)")
+    caption(doc, f"{ten_hinh}. {mo_ta}")
 
 
 def _viền_ô(cell, sz=6, color="7F7F7F", dashed=False):
@@ -238,8 +251,14 @@ def _to_mau(cell, hex_colour):
 
 
 def bang(doc, tieu_de, headers, rows, widths=None, note=None):
-    """Bảng có tiêu đề phía trên, hàng đầu tô nền, tự động canh chữ."""
-    caption(doc, tieu_de, above=True)
+    """Bảng có tiêu đề phía trên, hàng đầu tô nền, tự động canh chữ.
+
+    `tieu_de` chỉ cần phần mô tả; số hiệu "Bảng N." được thêm tự động theo thứ tự xuất hiện.
+    Truyền chuỗi rỗng nếu muốn bảng không có tiêu đề.
+    """
+    if tieu_de:
+        _DEM["bang"] += 1
+        caption(doc, f"Bảng {_DEM['bang']}. {tieu_de}", above=True)
     t = doc.add_table(rows=1, cols=len(headers))
     t.style = "Table Grid"
     t.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -376,3 +395,69 @@ def muc_luc(doc, tieu_de="MỤC LỤC"):
         r._r.append(e)
     r.font.name = FONT
     r.font.size = Pt(12)
+
+
+# ------------------------------------------------------------------ tiêu đề văn bản
+def tieu_de_quan_doi(doc, don_vi_tren="TỔNG CỤC II", don_vi_duoi="HỌC VIỆN KHOA HỌC QUÂN SỰ"):
+    """Khối tiêu đề hai cột theo mẫu hồ sơ: tên đơn vị bên trái, quốc hiệu bên phải."""
+    t = doc.add_table(rows=1, cols=2)
+    t.alignment = WD_TABLE_ALIGNMENT.CENTER
+    trai, phai = t.rows[0].cells
+    trai.width = Cm(6.4)
+    phai.width = Cm(9.6)
+
+    p = trai.paragraphs[0]
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.paragraph_format.space_after = Pt(0)
+    p.paragraph_format.first_line_indent = Cm(0)
+    _run(p, don_vi_tren, size=Pt(12.5))
+    q = trai.add_paragraph()
+    q.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    q.paragraph_format.space_after = Pt(0)
+    q.paragraph_format.first_line_indent = Cm(0)
+    _run(q, don_vi_duoi, bold=True, size=Pt(12.5))
+    r = trai.add_paragraph()
+    r.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    r.paragraph_format.first_line_indent = Cm(0)
+    _run(r, "―――――――", size=Pt(10))
+
+    p = phai.paragraphs[0]
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.paragraph_format.space_after = Pt(0)
+    p.paragraph_format.first_line_indent = Cm(0)
+    _run(p, "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM", bold=True, size=Pt(12.5))
+    q = phai.add_paragraph()
+    q.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    q.paragraph_format.space_after = Pt(0)
+    q.paragraph_format.first_line_indent = Cm(0)
+    _run(q, "Độc lập – Tự do – Hạnh phúc", bold=True, size=Pt(12.5))
+    r = phai.add_paragraph()
+    r.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    r.paragraph_format.first_line_indent = Cm(0)
+    _run(r, "―――――――――――――――", size=Pt(10))
+
+    doc.add_paragraph().paragraph_format.space_after = Pt(6)
+
+
+def dong_dien(doc, nhan, gia_tri="", *, dam_nhan=True, cach_sau=4):
+    """Một dòng thông tin kiểu biểu mẫu: 'Nhãn: ...........'."""
+    p = doc.add_paragraph()
+    p.paragraph_format.space_after = Pt(cach_sau)
+    p.paragraph_format.first_line_indent = Cm(0)
+    # Căn trái, không căn đều: dòng biểu mẫu kết thúc bằng dấu chấm lửng, nếu căn đều thì
+    # các từ bị kéo giãn ra toàn bề ngang trông rất xấu.
+    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    _run(p, f"{nhan}: ", bold=dam_nhan)
+    _run(p, gia_tri if gia_tri else "…" * 30)
+    return p
+
+
+def o_danh_dau(doc, muc, danh_dau=True):
+    """Dòng trong danh mục hồ sơ kèm theo, có ô đánh dấu."""
+    p = doc.add_paragraph()
+    p.paragraph_format.space_after = Pt(3)
+    p.paragraph_format.left_indent = Cm(0.8)
+    p.paragraph_format.first_line_indent = Cm(0)
+    _run(p, "☑  " if danh_dau else "☐  ", size=Pt(13))
+    _run(p, muc)
+    return p

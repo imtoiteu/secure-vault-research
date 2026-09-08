@@ -12,3 +12,6 @@ Cargo.lock.orig
 /sbom*.json
 # Local env
 .DS_Store
+
+# Thư mục nạp sẵn của Python trong bộ sinh hồ sơ — sinh lại được, không cần theo dõi
+hoso-sang-kien/__pycache__/

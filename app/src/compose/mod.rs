@@ -15,6 +15,6 @@ mod desktop;
 mod mobile;
 
 #[cfg(desktop)]
-pub use desktop::{backend, meta, Backend};
+pub use desktop::{backend, meta, Backend, Meta};
 #[cfg(mobile)]
-pub use mobile::{backend, meta, Backend};
+pub use mobile::{backend, meta, Backend, Meta};

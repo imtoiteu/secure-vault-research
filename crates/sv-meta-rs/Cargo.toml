@@ -1,0 +1,19 @@
+[package]
+name = "sv-meta-rs"
+description = "Mô-đun siêu dữ liệu thuần Rust: đọc, xoá và so sánh metadata nhúng trong tệp ảnh. Chạy trong tiến trình, không cần ExifTool — dùng cho nền tảng di động."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+sv-types = { path = "../sv-types" }
+# Đọc EXIF: thuần Rust, BSD-2-Clause (nằm trong danh sách giấy phép cho phép của deny.toml).
+kamadak-exif = "0.6"
+# Đọc/ghi vùng chứa JPEG, PNG, RIFF — dùng để loại bỏ khối siêu dữ liệu mà giữ nguyên ảnh.
+# MIT OR Apache-2.0.
+img-parts = "0.4"
+
+[lints]
+workspace = true

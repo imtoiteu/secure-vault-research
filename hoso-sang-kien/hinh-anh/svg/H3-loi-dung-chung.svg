@@ -12,7 +12,7 @@
 <line x1="280" y1="528" x2="400" y2="556" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
 <line x1="760" y1="528" x2="640" y2="556" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
 <rect x="300" y="92" width="440" height="84" rx="7" fill="#E7F4EC" stroke="#2E7D4F" stroke-width="1.6"/>
-<text x="520.0" y="121.0" font-size="13.5" font-weight="600" text-anchor="middle" fill="#14432A">Lõi bảo mật dùng chung (14 thành phần Rust)</text>
+<text x="520.0" y="121.0" font-size="13.5" font-weight="600" text-anchor="middle" fill="#14432A">Lõi bảo mật dùng chung (15 thành phần Rust)</text>
 <text x="520.0" y="138.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">định dạng .svault, phân cấp khoá, mật mã, phân loại lỗi</text>
 <text x="520.0" y="155.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">GIỐNG HỆT NHAU trên mọi nền tảng</text>
 <rect x="90" y="244" width="380" height="60" rx="7" fill="#F2F3F5" stroke="#6B7280" stroke-width="1.6"/>
@@ -21,13 +21,13 @@
 <text x="760.0" y="278.0" font-size="13" font-weight="600" text-anchor="middle" fill="#6B3E10">Biên dịch với cfg = mobile (Android)</text>
 <rect x="90" y="330" width="380" height="108" rx="7" fill="#F2F3F5" stroke="#6B7280" stroke-width="1.6" stroke-dasharray="7,4"/>
 <text x="280.0" y="362.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#1F2933">compose/desktop.rs</text>
-<text x="280.0" y="379.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">tiến trình con age/age-keygen được ghim băm BLAKE3</text>
-<text x="280.0" y="396.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">ExifTool cho phân tích siêu dữ liệu</text>
+<text x="280.0" y="379.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">tiến trình con age/age-keygen ghim băm BLAKE3</text>
+<text x="280.0" y="396.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">ExifTool cho siêu dữ liệu</text>
 <text x="280.0" y="413.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">(không thuộc phạm vi hồ sơ này)</text>
 <rect x="570" y="330" width="380" height="108" rx="7" fill="#FDF0E3" stroke="#C4772B" stroke-width="1.6"/>
 <text x="760.0" y="362.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#6B3E10">compose/mobile.rs</text>
-<text x="760.0" y="379.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">RustAgePayloadCipher — mã hoá trong tiến trình</text>
-<text x="760.0" y="396.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">MetaApp::disabled() — mô-đun siêu dữ liệu tắt an toàn</text>
+<text x="760.0" y="379.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">RustAgePayloadCipher — mã hoá két trong tiến trình</text>
+<text x="760.0" y="396.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">RustMetaApp — siêu dữ liệu bằng Rust thuần</text>
 <text x="760.0" y="413.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">không sinh tiến trình con</text>
 <rect x="570" y="462" width="380" height="66" rx="7" fill="#FBE9E9" stroke="#B3403A" stroke-width="1.6"/>
 <text x="760.0" y="482.0" font-size="13.5" font-weight="600" text-anchor="middle" fill="#5F1B17">Vì sao bắt buộc phải thay đổi:</text>
@@ -38,6 +38,6 @@
 <text x="280.0" y="499.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">toàn bộ chức năng két sẽ không hoạt động</text>
 <text x="280.0" y="516.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">trên thiết bị di động</text>
 <rect x="90" y="556" width="860" height="56" rx="7" fill="#E7F4EC" stroke="#2E7D4F" stroke-width="1.6"/>
-<text x="520.0" y="579.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#14432A">Bằng chứng tương thích định dạng: tệp .svault tạo bằng bộ mã hoá này mở được bằng bộ kia và ngược lại</text>
-<text x="520.0" y="596.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">5 kiểm thử đối chứng với age v1.2.1 thật — chi tiết tại Bảng 3</text>
+<text x="520.0" y="579.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#14432A">Cùng một nguyên tắc áp dụng cho hai thành phần: thay phần hiện thực bên dưới, giữ nguyên mọi thứ phía trên</text>
+<text x="520.0" y="596.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">két vẫn liên thông giữa hai nền tảng; siêu dữ liệu là chức năng chạy thật trên di động</text>
 </svg>

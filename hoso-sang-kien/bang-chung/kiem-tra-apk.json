@@ -2,7 +2,7 @@
   "co_apk": true,
   "duong_dan": "app/gen/android/app/build/outputs/apk/arm64/debug/app-arm64-debug.apk",
   "kich_thuoc_byte": 47391883,
-  "sha256": "1eb5ebad01eb3a9f74b4d33a3f4c8f3cc77dd371b4be7bc4e6e74c7aac67560f",
+  "sha256": "406d5b2224ad0c46effdd93b687ebd5fcb05b6fcc24cbd47fd626c5e119579a3",
   "thu_vien_native": {
     "lib/arm64-v8a/libsecure_vault_desktop_lib.so": "64-bit ARM aarch64"
   },

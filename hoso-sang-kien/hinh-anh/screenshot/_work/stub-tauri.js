@@ -12,7 +12,7 @@ window.__TAURI__ = {
           max_format_version: 1, suite_version: 1,
         };
       }
-      if (cmd === "metadata_available") return false;   // đúng như trên Android
+      if (cmd === "metadata_available") return true;    // mô-đun Rust luôn sẵn sàng
       throw { code: "SV-INTERNAL", detail: "stub" };
     },
   },

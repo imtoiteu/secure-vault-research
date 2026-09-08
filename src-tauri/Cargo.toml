@@ -18,6 +18,9 @@ sv-age = { path = "../crates/sv-age" }
 # Pure-Rust age adapter — the mobile payload cipher (no subprocess). Always compiled; the
 # composition root chooses which cipher to instantiate per platform.
 sv-age-rs = { path = "../crates/sv-age-rs" }
+# Mô-đun siêu dữ liệu thuần Rust — chạy trong tiến trình, dùng cho nền tảng di động nơi
+# không thể chạy ExifTool.
+sv-meta-rs = { path = "../crates/sv-meta-rs" }
 # Vault-free file-level crypto services (Integrity + Cryptography modules).
 sv-platform = { path = "../crates/sv-platform" }
 # Steganography module (Hide / Extract / Detect over image covers; encrypt-then-embed).

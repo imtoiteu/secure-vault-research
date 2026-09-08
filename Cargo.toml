@@ -12,6 +12,7 @@ members = [
     "crates/sv-platform",
     "crates/sv-stego",
     "crates/sv-meta",
+    "crates/sv-meta-rs",
     "crates/sv-qr",
     "crates/sv-watermark",
     "crates/sv-core",

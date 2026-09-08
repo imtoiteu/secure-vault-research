@@ -66,6 +66,10 @@ impl DecodedImage {
     }
 
     /// Iterate the value of one colour channel (`0=R,1=G,2=B`) over every pixel, skipping alpha.
+    // Clippy 1.98 suggests `as_chunks::<4>()` here. We keep `chunks_exact(4)` deliberately: the
+    // suggested API stabilised after this crate's declared MSRV (1.96), so adopting it would
+    // silently raise the minimum toolchain. The two forms compile to the same iteration.
+    #[allow(clippy::chunks_exact_to_as_chunks)]
     pub(crate) fn channel_samples(&self, channel: usize) -> impl Iterator<Item = u8> + '_ {
         self.rgba.chunks_exact(4).map(move |px| px[channel])
     }

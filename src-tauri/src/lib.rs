@@ -22,7 +22,7 @@ mod service;
 mod stego;
 mod watermark;
 
-pub use meta::{MetaApp, MetaSurface};
+pub use meta::{MetaApp, MetaSurface, RustMetaApp};
 pub use passphrase::IpcPassphrase;
 pub use payload::{AgePayloadCipher, PayloadCipher, RustAgePayloadCipher};
 pub use platform::{PlatformApp, PlatformSurface};

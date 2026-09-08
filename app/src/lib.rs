@@ -11,7 +11,7 @@
 //! oracle-safe [`sv_types::ApiError`]; the frontend localizes off `error.code`.
 
 use sv_app::{
-    CommandSurface, IpcPassphrase, MetaApp, MetaSurface, PlatformApp, PlatformSurface, StegoApp,
+    CommandSurface, IpcPassphrase, MetaSurface, PlatformApp, PlatformSurface, StegoApp,
     StegoSurface, WatermarkApp, WatermarkSurface,
 };
 use sv_types::{
@@ -34,7 +34,7 @@ type Stego = StegoApp;
 
 /// The vault-free Analysis services (Metadata Inspect / Sanitize / Compare), a fourth managed
 /// state. Backed by a hash-pinned ExifTool subprocess; disabled (fail-closed) if absent.
-type Meta = MetaApp;
+use compose::Meta;
 
 /// The vault-free Watermarking services (Embed / Verify a fragile tamper-evident mark), a fifth
 /// managed state. Pure in-process Rust; needs no binary/session.

@@ -1,31 +1,38 @@
-//! Mobile composition root (Android + iOS).
+//! Gốc hợp thành cho di động (Android + iOS).
 //!
-//! No subprocess is possible here: iOS forbids spawning executables outright, and Android
-//! blocks exec of app-writable binaries. Two consequences, and nothing else changes:
+//! Không thể sinh tiến trình con ở đây: iOS cấm hoàn toàn, còn Android chặn thực thi tệp nhị
+//! phân nằm trong vùng lưu trữ mà ứng dụng ghi được. Hai thành phần vốn dựa trên tiến trình
+//! con trên máy tính để bàn vì vậy được thay bằng hai bản hiện thực chạy **trong tiến trình**,
+//! và đó là toàn bộ khác biệt giữa hai nền tảng:
 //!
-//!   * the vault payload cipher is the in-process [`RustAgePayloadCipher`]. The wire format is
-//!     the same age v1, proven bidirectionally against the real Go binary by `sv-age-rs`'s
-//!     `interop` test and at container level by `sv-app`'s `vault_interop` test — so a vault
-//!     written on desktop opens here and vice versa;
-//!   * the Analysis module is composed **disabled**. `MetaApp::disabled()` is not a new
-//!     affordance invented for mobile: it is the existing fail-closed state desktop already
-//!     uses when its pinned ExifTool is absent or fails its pin check, so the frontend's
-//!     `metadata_available` probe disables those screens with no new UI code.
+//!   * bộ mã hoá nội dung két dùng [`RustAgePayloadCipher`]. Định dạng vẫn là age v1, đã kiểm
+//!     chứng hai chiều với công cụ age chính thức và bằng phép mở chéo tệp .svault, nên két
+//!     tạo trên máy tính mở được ở đây và ngược lại;
 //!
-//! There is no binary to resolve and therefore no pin to verify — the tamper-evidence control
-//! that `compose::desktop` implements has no subject on this platform.
+//!   * mô-đun Phân tích siêu dữ liệu dùng [`RustMetaApp`] (crate `sv-meta-rs`) thay cho
+//!     ExifTool. Phạm vi định dạng hẹp hơn ExifTool — hỗ trợ đọc EXIF của JPEG, PNG, TIFF,
+//!     WebP, HEIF và xoá siêu dữ liệu của JPEG, PNG — nhưng đây là chức năng **có thật và
+//!     chạy được** trên thiết bị, không phải trạng thái vô hiệu hoá. Định dạng ngoài phạm vi
+//!     bị từ chối bằng lỗi có mã, không bao giờ báo "đã xoá" cho tệp chưa thực sự được xử lý.
+//!
+//! Không có tệp nhị phân nào được đóng gói kèm nên cũng không có mã băm nào cần kiểm: cơ chế
+//! ghim băm mà `compose::desktop` thực hiện không có đối tượng trên nền tảng này.
 
-use sv_app::{AppVault, MetaApp, RustAgePayloadCipher, VaultBackend};
+use sv_app::{AppVault, RustAgePayloadCipher, RustMetaApp, VaultBackend};
 
-/// The concrete, thread-safe vault backend managed by Tauri on mobile.
+/// Lõi két an toàn cụ thể do Tauri quản lý trên di động.
 pub type Backend = AppVault<RustAgePayloadCipher>;
 
-/// Compose the vault backend. Infallible on mobile: nothing to resolve, nothing to pin.
+/// Bề mặt Phân tích siêu dữ liệu trên di động: chạy trong tiến trình, không cần ExifTool.
+pub type Meta = RustMetaApp;
+
+/// Dựng lõi két. Trên di động thao tác này không thể thất bại: không có gì để phân giải,
+/// cũng không có mã băm nào để kiểm.
 pub fn backend(_app: &tauri::AppHandle) -> Result<Backend, String> {
     Ok(AppVault::new(VaultBackend::new(RustAgePayloadCipher::new())))
 }
 
-/// The Analysis module cannot exist on mobile (ExifTool is a Perl program). Fail closed.
-pub fn meta(_app: &tauri::AppHandle) -> MetaApp {
-    MetaApp::disabled()
+/// Dựng bề mặt Phân tích siêu dữ liệu bằng mô-đun thuần Rust.
+pub fn meta(_app: &tauri::AppHandle) -> Meta {
+    RustMetaApp::new()
 }

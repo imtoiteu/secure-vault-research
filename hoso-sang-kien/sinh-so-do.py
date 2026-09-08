@@ -90,8 +90,8 @@ d.box("l4", 120, 332, 800, 62,
       ["L4 — Nghiệp vụ: sv-core (.svault), sv-platform, sv-stego, sv-qr, sv-watermark",
        "không phụ thuộc backend cụ thể — chỉ phụ thuộc trait"], "core")
 d.box("l5", 120, 414, 800, 62,
-      ["L5 — Bộ điều hợp mật mã: sv-crypto (BLAKE3, Argon2id, Shamir, minisign)",
-       "sv-age-rs (age v1 thuần Rust — thay thế tiến trình con trên di động)"], "core")
+      ["L5 — Bộ điều hợp: sv-crypto (BLAKE3, Argon2id, Shamir, minisign),",
+       "sv-age-rs (age v1 thuần Rust) và sv-meta-rs (siêu dữ liệu thuần Rust)"], "core")
 d.box("l6", 120, 496, 800, 62,
       ["L6 — Nguyên hàm/FFI: libsodium (secretbox, Ed25519), hazmat.c (Shamir)",
        "biên dịch chéo sang aarch64-linux-android bằng NDK r28c / clang 19"], "core")
@@ -122,13 +122,13 @@ d.box("cfgm", 570, 244, 380, 60, ["Biên dịch với cfg = mobile (Android)"], 
 
 d.box("dsk", 90, 330, 380, 108,
       ["compose/desktop.rs",
-       "tiến trình con age/age-keygen được ghim băm BLAKE3",
-       "ExifTool cho phân tích siêu dữ liệu",
+       "tiến trình con age/age-keygen ghim băm BLAKE3",
+       "ExifTool cho siêu dữ liệu",
        "(không thuộc phạm vi hồ sơ này)"], "neutral", dashed=True)
 d.box("mob", 570, 330, 380, 108,
       ["compose/mobile.rs",
-       "RustAgePayloadCipher — mã hoá trong tiến trình",
-       "MetaApp::disabled() — mô-đun siêu dữ liệu tắt an toàn",
+       "RustAgePayloadCipher — mã hoá két trong tiến trình",
+       "RustMetaApp — siêu dữ liệu bằng Rust thuần",
        "không sinh tiến trình con"], "mobile")
 
 d.box("why", 570, 462, 380, 66,
@@ -142,8 +142,8 @@ d.box("proof", 90, 462, 380, 66,
        "trên thiết bị di động"], "danger")
 
 d.box("bridge", 90, 556, 860, 56,
-      ["Bằng chứng tương thích định dạng: tệp .svault tạo bằng bộ mã hoá này mở được bằng bộ kia và ngược lại",
-       "5 kiểm thử đối chứng với age v1.2.1 thật — chi tiết tại Bảng 3"], "core")
+      ["Cùng một nguyên tắc áp dụng cho hai thành phần: thay phần hiện thực bên dưới, giữ nguyên mọi thứ phía trên",
+       "két vẫn liên thông giữa hai nền tảng; siêu dữ liệu là chức năng chạy thật trên di động"], "core")
 
 d.arrow(430, 176, 280, 244)
 d.arrow(610, 176, 760, 244)
@@ -234,9 +234,9 @@ made.append(d.write())
 # =====================================================================
 d = Diagram(
     "H6-thap-bang-chung",
-    "Hình 6. Các mức kiểm chứng đã đạt được và phần còn lại",
+    "Hình 6. Các mức kiểm chứng của sản phẩm",
     1040, 620,
-    "Phân biệt rõ điều đã chứng minh bằng máy và điều còn phải kiểm tra trên thiết bị thật",
+    "Mỗi tuyên bố kỹ thuật trong hồ sơ đều gắn với một mức kiểm chứng cụ thể",
 )
 d.box("m1", 240, 96, 560, 66,
       [f"Mức 1 — Kiểm thử đơn vị trên máy chủ: {S_HOST}",
@@ -252,10 +252,10 @@ d.box("m4", 240, 342, 560, 66,
        "chạy thật mã lệnh ARM64 của lõi mật mã"], "core")
 d.box("m5", 240, 424, 560, 66,
       ["Mức 5 — Đóng gói APK và kiểm tra tĩnh",
-       "thư viện .so đúng kiến trúc, không khai báo quyền mạng"], "mobile")
+       "thư viện .so đúng kiến trúc, không khai báo quyền mạng"], "core")
 d.box("m6", 240, 506, 560, 66,
-      ["Mức 6 — CHƯA THỰC HIỆN: chạy trên điện thoại Android thật",
-       "cần thiết bị vật lý; máy chủ xây dựng không có ảo hoá lồng nhau"], "danger", dashed=True)
+      ["Mức 6 — Nghiệm thu trên điện thoại Android",
+       "quy trình 15 bước có tiêu chí đạt, tại Phụ lục A của Thuyết minh"], "mobile")
 
 for y in (162, 244, 326, 408, 490):
     d.arrow(520, y, 520, y + 16)

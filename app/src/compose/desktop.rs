@@ -16,6 +16,9 @@ use sv_app::{AgePayloadCipher, AppVault, MetaApp, VaultBackend};
 /// The concrete, thread-safe vault backend managed by Tauri on desktop.
 pub type Backend = AppVault<AgePayloadCipher>;
 
+/// Bề mặt Phân tích siêu dữ liệu trên máy tính để bàn: chạy ExifTool đã ghim băm.
+pub type Meta = MetaApp;
+
 // ===========================================================================
 // Backend wiring — production binary pinning + bundling
 // ===========================================================================

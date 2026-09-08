@@ -77,6 +77,57 @@ impl MetaApp {
     }
 }
 
+/// Bề mặt Phân tích chạy **trong tiến trình** bằng mô-đun `sv-meta-rs` thuần Rust.
+///
+/// Dùng cho nền tảng di động, nơi không thể chạy ExifTool: ExifTool là chương trình Perl,
+/// Android không có trình thông dịch Perl và chặn thực thi tệp nhị phân trong vùng ghi được
+/// của ứng dụng.
+///
+/// Phạm vi định dạng hẹp hơn ExifTool (xem tài liệu của `sv-meta-rs`) và điều đó được phản
+/// ánh trung thực: định dạng chưa hỗ trợ bị từ chối bằng lỗi có mã, không bao giờ báo "đã
+/// xoá" cho một tệp thực ra chưa được xử lý.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct RustMetaApp;
+
+impl RustMetaApp {
+    #[must_use]
+    pub fn new() -> Self {
+        Self
+    }
+
+    /// Luôn `true`: mô-đun này chạy trong tiến trình nên không phụ thuộc tệp nhị phân ngoài,
+    /// không có trạng thái "không sẵn sàng" như bản dùng ExifTool. Giữ cùng tên phương thức
+    /// với [`MetaApp`] để lệnh `metadata_available` dùng chung cho mọi nền tảng.
+    #[must_use]
+    pub fn is_available(&self) -> bool {
+        true
+    }
+}
+
+impl MetaSurface for RustMetaApp {
+    fn metadata_inspect(&self, path: String) -> Result<MetadataReport, ApiError> {
+        sv_meta_rs::inspect(std::path::Path::new(&path))
+    }
+
+    fn metadata_sanitize(&self, input: String, output: String) -> Result<SanitizeReport, ApiError> {
+        sv_meta_rs::sanitize(
+            std::path::Path::new(&input),
+            std::path::Path::new(&output),
+        )
+    }
+
+    fn metadata_diff(
+        &self,
+        path_a: String,
+        path_b: String,
+    ) -> Result<MetadataDiffReport, ApiError> {
+        sv_meta_rs::diff(
+            std::path::Path::new(&path_a),
+            std::path::Path::new(&path_b),
+        )
+    }
+}
+
 impl MetaSurface for MetaApp {
     fn metadata_inspect(&self, path: String) -> Result<MetadataReport, ApiError> {
         self.tool()?
