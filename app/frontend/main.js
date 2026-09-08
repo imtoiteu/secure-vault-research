@@ -982,10 +982,47 @@ async function initMetadataAvailability() {
   }
 }
 
+// Mobile layout is entirely CSS-driven off this attribute; every command invocation below is
+// identical on all platforms. Tauri's OS plugin isn't bundled here, so detect from the user
+// agent (the webview reports Android/iOS) and fall back to a width heuristic.
+function initPlatform() {
+  const ua = navigator.userAgent || "";
+  const mobile = /Android|iPhone|iPad|iPod/i.test(ua)
+    || window.matchMedia("(max-width: 700px)").matches;
+  if (mobile) document.documentElement.dataset.platform = "mobile";
+}
+
+// Off-canvas drawer for the sidebar. Nineteen tools do not fit a bottom tab bar, and Home is
+// already a launcher, so the drawer supplements it rather than replacing navigation.
+function initDrawer() {
+  const toggle = $("nav-toggle");
+  const shell = document.querySelector(".shell");
+  const scrim = $("drawer-scrim");
+  if (!toggle || !shell) return;
+
+  const setOpen = (open) => {
+    shell.classList.toggle("drawer-open", open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    if (scrim) scrim.hidden = !open;
+  };
+
+  toggle.addEventListener("click", () => setOpen(!shell.classList.contains("drawer-open")));
+  if (scrim) scrim.addEventListener("click", () => setOpen(false));
+  // Choosing a tool closes the drawer so the user lands on the screen they picked.
+  document.querySelectorAll("#sidebar-nav .navitem").forEach((b) => {
+    b.addEventListener("click", () => setOpen(false));
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") setOpen(false);
+  });
+}
+
 async function init() {
   window.i18n.apply(); // translate static markup up front (Vietnamese by default)
+  initPlatform();
   initLang();
   wireSidebar();
+  initDrawer();
   initNavGroups();
   initTiles();
   initRecentTools();

@@ -8,6 +8,10 @@
   </head>
   <body>
     <header>
+      <!-- Mobile-only drawer toggle. Hidden on desktop by CSS; the sidebar it controls is the
+           same #sidebar-nav the router already drives, so navigation logic is unchanged. -->
+      <button id="nav-toggle" class="nav-toggle" data-i18n-title="nav.menu" aria-label="Menu"
+              aria-expanded="false" aria-controls="sidebar-nav">☰</button>
       <div class="brand">
         <h1 data-i18n="app.title">🔒 Security &amp; Privacy Toolkit</h1>
         <span class="brand-sub" data-i18n="header.attribution">© Tracy Tran • Secure Vault v0.1.0</span>
@@ -21,6 +25,8 @@
     </header>
 
     <div class="shell">
+      <!-- Tap-outside target that closes the mobile drawer. Inert on desktop. -->
+      <div id="drawer-scrim" class="drawer-scrim" hidden></div>
       <!-- ===================================================================
            SIDEBAR — goal-based navigation. Each item routes to one screen.
            "soon" items are placeholders for not-yet-built modules.

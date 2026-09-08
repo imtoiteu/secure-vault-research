@@ -957,3 +957,134 @@ code {
   width: auto;
   margin: 0;
 }
+
+/* ===================================================================
+   Mobile layout.
+   Keyed off data-platform="mobile", set at runtime by initPlatform().
+   Desktop never sets the attribute, so every rule below is inert there —
+   the desktop rendering is byte-identical to before this block existed.
+   =================================================================== */
+.nav-toggle {
+  display: none;
+  background: transparent;
+  border: 0;
+  color: var(--fg);
+  font-size: 1.35rem;
+  line-height: 1;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+}
+
+.drawer-scrim {
+  display: none;
+}
+
+:root[data-platform="mobile"] .nav-toggle {
+  display: block;
+}
+
+:root[data-platform="mobile"] body {
+  padding: calc(0.9rem + env(safe-area-inset-top)) 1rem
+           calc(0.9rem + env(safe-area-inset-bottom)) 1rem;
+}
+
+/* The 220px sidebar becomes an off-canvas drawer. */
+:root[data-platform="mobile"] .sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 78vw;
+  max-width: 300px;
+  z-index: 40;
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  padding: calc(0.9rem + env(safe-area-inset-top)) 0.6rem
+           calc(1rem + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  transform: translateX(-102%);
+  transition: transform 0.22s ease;
+}
+
+:root[data-platform="mobile"] .shell.drawer-open .sidebar {
+  transform: translateX(0);
+}
+
+:root[data-platform="mobile"] .shell.drawer-open .drawer-scrim:not([hidden]) {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 39;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+:root[data-platform="mobile"] #main {
+  max-width: none;
+}
+
+/* Touch targets: 44px minimum on every interactive control. */
+:root[data-platform="mobile"] .navitem,
+:root[data-platform="mobile"] .tile,
+:root[data-platform="mobile"] button,
+:root[data-platform="mobile"] summary {
+  min-height: 44px;
+}
+
+:root[data-platform="mobile"] .navitem {
+  padding: 0.7rem 0.6rem;
+}
+
+/* An opaque content:// URI is meaningless in a text box, so the picker becomes the primary
+   control and the path input sits beneath it. The input still carries the broker's staged
+   path, so main.js logic is unchanged. */
+:root[data-platform="mobile"] .filefield {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+:root[data-platform="mobile"] .filefield input {
+  font-size: 0.85rem;
+  text-overflow: ellipsis;
+}
+
+:root[data-platform="mobile"] .task,
+:root[data-platform="mobile"] .card {
+  padding: 1.15rem 1rem;
+}
+
+/* Quick-start tiles stack rather than squeezing three across a phone screen. */
+:root[data-platform="mobile"] .tiles {
+  grid-template-columns: 1fr;
+}
+
+:root[data-platform="mobile"] .tiles.small {
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+}
+
+/* The full product name wraps to four lines on a 390px screen and swallows the viewport.
+   Shrink it, keep it on one line, and drop the attribution sub-line — it is already in the
+   About panel, so nothing is lost. */
+:root[data-platform="mobile"] header {
+  gap: 0.5rem;
+  margin-bottom: 1.1rem;
+}
+
+:root[data-platform="mobile"] h1 {
+  font-size: 1rem;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+:root[data-platform="mobile"] .brand-sub {
+  display: none;
+}
+
+:root[data-platform="mobile"] .lang-pick {
+  font-size: 0.78rem;
+  padding: 0.25rem 0.35rem;
+}
+
+:root[data-platform="mobile"] .linkbtn {
+  font-size: 0.78rem;
+  padding: 0.25rem 0.3rem;
+}
