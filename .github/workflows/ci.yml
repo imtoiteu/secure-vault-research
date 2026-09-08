@@ -127,9 +127,65 @@ jobs:
       - name: cargo-deny — app shell webview tree (advisories + bans + sources)
         working-directory: app
         run: cargo deny check advisories bans sources
-      - name: cargo-audit — desktop webview tree (RUSTSEC)
+      - name: cargo-audit — app shell webview tree (RUSTSEC)
         working-directory: app
         run: cargo audit
+
+  # ---- Mobile: the audited core must cross-compile to Android ---------------
+  # Uses the NDK preinstalled on the GitHub runner rather than a third-party setup action, so
+  # the toolchain comes from the runner image and adds no supply-chain surface to this repo.
+  android-core:
+    name: android core cross-compile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,x86_64-linux-android
+      - uses: Swatinem/rust-cache@v2
+      - name: Cross-compile the audited core for Android
+        shell: bash
+        run: |
+          set -euo pipefail
+          NDK="${ANDROID_NDK_LATEST_HOME:-$ANDROID_NDK_HOME}"
+          TC="$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
+          echo "using NDK at $NDK"
+          for t in aarch64-linux-android x86_64-linux-android; do
+            case "$t" in
+              aarch64*) CLANG="$TC/aarch64-linux-android24-clang" ;;
+              x86_64*)  CLANG="$TC/x86_64-linux-android24-clang" ;;
+            esac
+            UP=$(echo "$t" | tr 'a-z-' 'A-Z_')
+            env "CC_${t//-/_}=$CLANG" \
+                "AR_${t//-/_}=$TC/llvm-ar" \
+                "CARGO_TARGET_${UP}_LINKER=$CLANG" \
+                cargo build --workspace --locked --target "$t"
+          done
+
+  # ---- Mobile: run the real test suite on ARM64 -----------------------------
+  # Deliberately aarch64-unknown-linux-gnu, NOT the Android triple: Android binaries link
+  # against bionic, which QEMU user-mode cannot resolve without an Android sysroot. The pure-Rust
+  # and C code under test is identical, so this exercises real ARM64 codegen — which is the
+  # point. It does not execute Android binaries and must not be described as if it did.
+  android-arm64-tests:
+    name: core suite on ARM64 (QEMU)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-unknown-linux-gnu
+      - uses: Swatinem/rust-cache@v2
+      - name: Install the cross toolchain and QEMU
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu qemu-user-static
+      - name: Run the core suite on emulated ARM64
+        env:
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUNNER: qemu-aarch64-static -L /usr/aarch64-linux-gnu
+          CC_aarch64_unknown_linux_gnu: aarch64-linux-gnu-gcc
+        run: cargo test --workspace --locked --target aarch64-unknown-linux-gnu
 
   # ---- SBOM stub ------------------------------------------------------------
   sbom:
