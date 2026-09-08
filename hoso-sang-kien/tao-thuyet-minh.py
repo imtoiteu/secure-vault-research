@@ -107,9 +107,12 @@ para(doc,
      "khoá, quy tắc phân loại lỗi an toàn và tự viết mô-đun xử lý siêu dữ liệu.")
 para(doc,
      f"Sản phẩm và bằng chứng. Sản phẩm là ứng dụng Android hoàn chỉnh với {N_LENH} chức năng "
-     f"nghiệp vụ, xây dựng trên {N_CRATE} thành phần mã nguồn do tác giả tổ chức, kèm "
-     f"{N_TEST} hàm kiểm thử tự động. Tính tương thích định dạng được kiểm chứng bằng "
-     f"{SO_DOI_CHUNG} phép thực nghiệm đối chứng với công cụ chuẩn, không phải bằng suy luận.")
+     f"nghiệp vụ thao tác qua {len(DANH_MUC_MAN_HINH)} màn hình giao diện, xây dựng trên "
+     f"{N_CRATE} thành phần mã nguồn do tác giả tổ chức, kèm {N_TEST} hàm kiểm thử tự động. "
+     f"Tính tương thích định dạng được kiểm chứng bằng {SO_DOI_CHUNG} phép thực nghiệm đối "
+     "chứng với công cụ chuẩn, không phải bằng suy luận. Hồ sơ trình bày đầy đủ từng chức "
+     "năng kèm giao diện thực hiện nó (mục 3.b.4 và Phụ lục C), để mỗi tuyên bố về chức năng "
+     "đều đối chiếu được với màn hình có thật.")
 para(doc,
      "Giá trị. Sản phẩm vừa dùng được trong công tác để bảo vệ dữ liệu ngay trên thiết bị, "
      "vừa là học cụ trực quan cho giảng dạy an toàn thông tin: mỗi nhóm chức năng tương ứng "

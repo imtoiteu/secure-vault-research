@@ -21,9 +21,19 @@ OUT = BASE / "bang-chung" / "kiem-tra-apk.json"
 
 
 def tim_apk():
+    """Ưu tiên đúng tệp APK được nộp kèm hồ sơ.
+
+    Trước đây hàm này chọn tệp .apk lớn nhất trong thư mục dựng, và đó là một lỗi: sau một
+    lần dựng lại, thư mục dựng còn giữ cả gói cũ của lần trước: kiểm tra sẽ mô tả một gói
+    KHÁC với gói thực sự nộp kèm hồ sơ. Nay ưu tiên tệp trong thư mục apk/ của hồ sơ; chỉ
+    khi chưa có tệp đó mới lấy gói mới nhất trong thư mục dựng.
+    """
+    nop = sorted((BASE / "apk").glob("*.apk"))
+    if nop:
+        return nop[0]
     ket_qua = sorted(
         (REPO / "app/gen/android").rglob("*.apk"),
-        key=lambda p: p.stat().st_size, reverse=True,
+        key=lambda p: p.stat().st_mtime, reverse=True,
     )
     return ket_qua[0] if ket_qua else None
 

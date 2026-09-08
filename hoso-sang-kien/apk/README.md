@@ -31,6 +31,12 @@ cd app
 cargo tauri android build --debug --target aarch64
 ```
 
+Tauri CLI 2.11.4 xuất gói ra nhánh `universal` (`app/gen/android/app/build/outputs/apk/
+universal/debug/app-universal-debug.apk`). Tên nhánh không phản ánh nội dung: vì chỉ biên
+dịch một kiến trúc nên gói chỉ chứa đúng `lib/arm64-v8a/libsecure_vault_desktop_lib.so`,
+kiểm tra lại được bằng `python3 ../kiem-tra-apk.py`. Tệp nộp kèm hồ sơ đặt tên theo nội dung
+thật của gói.
+
 Trên máy có ít RAM (dưới 8 GB), cần thêm:
 
 ```bash
@@ -56,7 +62,10 @@ Script kiểm tra ba điều mà hồ sơ có tuyên bố, để mỗi tuyên b�
    ELF của tệp `.so` trong gói, không dựa vào tên tệp.
 2. **Ứng dụng không khai báo quyền truy cập mạng** — đọc tệp kê khai, đối chiếu thêm bằng
    `aapt2` nếu có.
-3. **Toàn bộ giao diện được nhúng sẵn** — đếm tệp trong `assets/`, xác nhận có `index.html`.
+3. **Toàn bộ giao diện được nhúng sẵn** — Tauri không đặt giao diện thành tệp rời trong
+   `assets/` mà nén và nhúng thẳng vào thư viện native, nên script quét bảng tài nguyên bên
+   trong tệp `.so` để tìm `/index.html`, `/main.js`, `/i18n.js` và `/styles.css`. Kiểm tra
+   sai chỗ (tìm `index.html` trong `assets/`) sẽ kết luận ngược hoàn toàn.
 
 Kết quả ghi ra `../bang-chung/kiem-tra-apk.json` kèm giá trị băm SHA-256 của gói, để đối
 chiếu về sau.
