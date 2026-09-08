@@ -16,6 +16,7 @@ members = [
     "crates/sv-watermark",
     "crates/sv-core",
     "crates/sv-age",
+    "crates/sv-age-rs",
     "crates/sv-sys-sss",
     "crates/sv-sys-sodium",
     "src-tauri",
