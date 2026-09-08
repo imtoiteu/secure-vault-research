@@ -985,6 +985,22 @@ async function initMetadataAvailability() {
 // Mobile layout is entirely CSS-driven off this attribute; every command invocation below is
 // identical on all platforms. Tauri's OS plugin isn't bundled here, so detect from the user
 // agent (the webview reports Android/iOS) and fall back to a width heuristic.
+// The metadata module differs by platform: the desktop build drives ExifTool as a subprocess,
+// the mobile build uses the in-process Rust module, which covers fewer formats. The scope note
+// shown to the user must describe the build that is actually running — a UI that promises PDF
+// or Office support the running build does not have is a correctness bug, not a wording detail.
+function applyMetadataScopeCopy() {
+  if (document.documentElement.dataset.platform !== "mobile") return;
+  for (const [key, mobileKey, attr] of [
+    ["mi.tech", "mi.tech.mobile", "data-i18n"],
+    ["mc.tech1", "mc.tech1.mobile", "data-i18n-html"],
+  ]) {
+    const el = document.querySelector(`[${attr}="${key}"]`);
+    if (el) el.setAttribute(attr, mobileKey);
+  }
+  window.i18n.apply();
+}
+
 function initPlatform() {
   const ua = navigator.userAgent || "";
   const mobile = /Android|iPhone|iPad|iPod/i.test(ua)
@@ -1035,6 +1051,7 @@ async function init() {
   } catch (_) {
     /* non-fatal */
   }
+  applyMetadataScopeCopy();
   await initMetadataAvailability();
 }
 

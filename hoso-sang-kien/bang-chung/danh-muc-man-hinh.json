@@ -1,0 +1,332 @@
+{
+  "trang_thai": [
+    {
+      "ma": "GDX1",
+      "khoa": "metadata-inspect",
+      "ten": "Xem siêu dữ liệu — mở mục “Thông tin thêm”",
+      "tep": "GDX1-metadata-inspect-mo-rong.png"
+    }
+  ],
+  "man_hinh": [
+    {
+      "ma": "GD01",
+      "khoa": "home",
+      "ten": "Trang chủ",
+      "tep": "GD01-home.png",
+      "rong": 800,
+      "cao": 1150
+    },
+    {
+      "ma": "GD02",
+      "khoa": "__drawer__",
+      "ten": "Ngăn kéo điều hướng",
+      "tep": "GD02-drawer.png",
+      "rong": 800,
+      "cao": 2920
+    },
+    {
+      "ma": "GD03",
+      "khoa": "vault",
+      "ten": "Két an toàn",
+      "tep": "GD03-vault.png",
+      "rong": 800,
+      "cao": 2312
+    },
+    {
+      "ma": "GD04",
+      "khoa": "encrypt",
+      "ten": "Khoá tệp",
+      "tep": "GD04-encrypt.png",
+      "rong": 800,
+      "cao": 1651
+    },
+    {
+      "ma": "GD05",
+      "khoa": "decrypt",
+      "ten": "Mở khoá tệp",
+      "tep": "GD05-decrypt.png",
+      "rong": 800,
+      "cao": 1411
+    },
+    {
+      "ma": "GD06",
+      "khoa": "sign",
+      "ten": "Ký tệp",
+      "tep": "GD06-sign.png",
+      "rong": 800,
+      "cao": 2651
+    },
+    {
+      "ma": "GD07",
+      "khoa": "verify",
+      "ten": "Kiểm tra chữ ký",
+      "tep": "GD07-verify.png",
+      "rong": 800,
+      "cao": 1512
+    },
+    {
+      "ma": "GD08",
+      "khoa": "hash",
+      "ten": "Lấy vân tay tệp",
+      "tep": "GD08-hash.png",
+      "rong": 800,
+      "cao": 991
+    },
+    {
+      "ma": "GD09",
+      "khoa": "intact",
+      "ten": "Kiểm tra tệp chưa bị đổi",
+      "tep": "GD09-intact.png",
+      "rong": 800,
+      "cao": 1196
+    },
+    {
+      "ma": "GD10",
+      "khoa": "verify-integrity",
+      "ten": "Xác minh tệp tải về",
+      "tep": "GD10-verify-integrity.png",
+      "rong": 800,
+      "cao": 1756
+    },
+    {
+      "ma": "GD11",
+      "khoa": "split-secret",
+      "ten": "Chia nhỏ bí mật",
+      "tep": "GD11-split-secret.png",
+      "rong": 800,
+      "cao": 1536
+    },
+    {
+      "ma": "GD12",
+      "khoa": "split-file",
+      "ten": "Chia nhỏ tệp",
+      "tep": "GD12-split-file.png",
+      "rong": 800,
+      "cao": 1489
+    },
+    {
+      "ma": "GD13",
+      "khoa": "recover-pieces",
+      "ten": "Ghép lại từ các mảnh",
+      "tep": "GD13-recover-pieces.png",
+      "rong": 800,
+      "cao": 1792
+    },
+    {
+      "ma": "GD14",
+      "khoa": "qr-transfer",
+      "ten": "Chuyển mảnh bằng mã QR",
+      "tep": "GD14-qr-transfer.png",
+      "rong": 800,
+      "cao": 2709
+    },
+    {
+      "ma": "GD15",
+      "khoa": "hide",
+      "ten": "Giấu dữ liệu trong ảnh",
+      "tep": "GD15-hide.png",
+      "rong": 800,
+      "cao": 1983
+    },
+    {
+      "ma": "GD16",
+      "khoa": "unhide",
+      "ten": "Hiện dữ liệu ẩn",
+      "tep": "GD16-unhide.png",
+      "rong": 800,
+      "cao": 1457
+    },
+    {
+      "ma": "GD17",
+      "khoa": "detect",
+      "ten": "Phát hiện dữ liệu ẩn",
+      "tep": "GD17-detect.png",
+      "rong": 800,
+      "cao": 1035
+    },
+    {
+      "ma": "GD18",
+      "khoa": "watermark",
+      "ten": "Chống giả mạo ảnh",
+      "tep": "GD18-watermark.png",
+      "rong": 800,
+      "cao": 2332
+    },
+    {
+      "ma": "GD19",
+      "khoa": "metadata-inspect",
+      "ten": "Xem siêu dữ liệu",
+      "tep": "GD19-metadata-inspect.png",
+      "rong": 800,
+      "cao": 1035
+    },
+    {
+      "ma": "GD20",
+      "khoa": "metadata-clean",
+      "ten": "Xoá siêu dữ liệu",
+      "tep": "GD20-metadata-clean.png",
+      "rong": 800,
+      "cao": 1251
+    },
+    {
+      "ma": "GD21",
+      "khoa": "metadata-compare",
+      "ten": "So sánh siêu dữ liệu",
+      "tep": "GD21-metadata-compare.png",
+      "rong": 800,
+      "cao": 1295
+    }
+  ],
+  "hinh_ghep": [
+    {
+      "ma": "GC01",
+      "tep": "GC01-gd01-gd02.png",
+      "gom": [
+        {
+          "ma": "GD01",
+          "ten": "Trang chủ"
+        },
+        {
+          "ma": "GD02",
+          "ten": "Ngăn kéo điều hướng"
+        }
+      ]
+    },
+    {
+      "ma": "GC02",
+      "tep": "GC02-gd03-gd04.png",
+      "gom": [
+        {
+          "ma": "GD03",
+          "ten": "Két an toàn"
+        },
+        {
+          "ma": "GD04",
+          "ten": "Khoá tệp"
+        }
+      ]
+    },
+    {
+      "ma": "GC03",
+      "tep": "GC03-gd05-gd06.png",
+      "gom": [
+        {
+          "ma": "GD05",
+          "ten": "Mở khoá tệp"
+        },
+        {
+          "ma": "GD06",
+          "ten": "Ký tệp"
+        }
+      ]
+    },
+    {
+      "ma": "GC04",
+      "tep": "GC04-gd07-gd08.png",
+      "gom": [
+        {
+          "ma": "GD07",
+          "ten": "Kiểm tra chữ ký"
+        },
+        {
+          "ma": "GD08",
+          "ten": "Lấy vân tay tệp"
+        }
+      ]
+    },
+    {
+      "ma": "GC05",
+      "tep": "GC05-gd09-gd10.png",
+      "gom": [
+        {
+          "ma": "GD09",
+          "ten": "Kiểm tra tệp chưa bị đổi"
+        },
+        {
+          "ma": "GD10",
+          "ten": "Xác minh tệp tải về"
+        }
+      ]
+    },
+    {
+      "ma": "GC06",
+      "tep": "GC06-gd11-gd12.png",
+      "gom": [
+        {
+          "ma": "GD11",
+          "ten": "Chia nhỏ bí mật"
+        },
+        {
+          "ma": "GD12",
+          "ten": "Chia nhỏ tệp"
+        }
+      ]
+    },
+    {
+      "ma": "GC07",
+      "tep": "GC07-gd13-gd14.png",
+      "gom": [
+        {
+          "ma": "GD13",
+          "ten": "Ghép lại từ các mảnh"
+        },
+        {
+          "ma": "GD14",
+          "ten": "Chuyển mảnh bằng mã QR"
+        }
+      ]
+    },
+    {
+      "ma": "GC08",
+      "tep": "GC08-gd15-gd16.png",
+      "gom": [
+        {
+          "ma": "GD15",
+          "ten": "Giấu dữ liệu trong ảnh"
+        },
+        {
+          "ma": "GD16",
+          "ten": "Hiện dữ liệu ẩn"
+        }
+      ]
+    },
+    {
+      "ma": "GC09",
+      "tep": "GC09-gd17-gd18.png",
+      "gom": [
+        {
+          "ma": "GD17",
+          "ten": "Phát hiện dữ liệu ẩn"
+        },
+        {
+          "ma": "GD18",
+          "ten": "Chống giả mạo ảnh"
+        }
+      ]
+    },
+    {
+      "ma": "GC10",
+      "tep": "GC10-gd19-gd20.png",
+      "gom": [
+        {
+          "ma": "GD19",
+          "ten": "Xem siêu dữ liệu"
+        },
+        {
+          "ma": "GD20",
+          "ten": "Xoá siêu dữ liệu"
+        }
+      ]
+    },
+    {
+      "ma": "GC11",
+      "tep": "GC11-gd21.png",
+      "gom": [
+        {
+          "ma": "GD21",
+          "ten": "So sánh siêu dữ liệu"
+        }
+      ]
+    }
+  ]
+}

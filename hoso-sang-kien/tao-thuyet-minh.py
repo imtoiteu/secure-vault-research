@@ -28,6 +28,9 @@ from dinh_dang import (  # noqa: E402
     tieuDeChinh, tieu_de_quan_doi,
 )
 from noi_dung_chuc_nang import NHOM_CHUC_NANG  # noqa: E402
+from noi_dung_giao_dien import (  # noqa: E402
+    DANH_MUC_MAN_HINH, GIAO_DIEN_NHOM, LENH_MUC_UNG_DUNG,
+)
 
 BASE = pathlib.Path(__file__).parent
 DK = json.loads((BASE / "bang-chung" / "du-kien.json").read_text(encoding="utf-8"))
@@ -35,6 +38,29 @@ _apk_file = BASE / "bang-chung" / "kiem-tra-apk.json"
 APK = json.loads(_apk_file.read_text(encoding="utf-8")) if _apk_file.exists() else {"co_apk": False}
 PNG = BASE / "hinh-anh" / "png"
 SS = BASE / "hinh-anh" / "screenshot"
+_dm_file = BASE / "bang-chung" / "danh-muc-man-hinh.json"
+DMMH = json.loads(_dm_file.read_text(encoding="utf-8")) if _dm_file.exists() else None
+
+
+def ngat_duoc(chuoi):
+    """Chèn ký tự ngắt dòng vô hình sau dấu gạch dưới của tên lệnh.
+
+    Tên lệnh (ví dụ crypto_generate_signing_keypair) là một từ dài không có chỗ xuống dòng,
+    khiến ô bảng bị vỡ chữ. Ký tự U+200B không hiển thị nhưng cho phép trình soạn thảo ngắt
+    dòng đúng ranh giới từ.
+    """
+    return chuoi.replace("_", "_\u200b")
+
+
+def anh_man_hinh(ma):
+    """Đường dẫn ảnh chụp của một màn hình theo mã GDxx/GDXx (tên tệp do chup-giao-dien.py sinh)."""
+    if not DMMH:
+        return None
+    for m in DMMH.get("man_hinh", []) + DMMH.get("trang_thai", []):
+        if m["ma"] == ma:
+            dd = SS / m["tep"]
+            return dd if dd.exists() else None
+    return None
 
 N_LENH = DK["lenh_ipc"]["so_luong"]
 N_CRATE = DK["crate"]["so_luong"]
@@ -438,6 +464,13 @@ para(doc,
      "biết bên dưới dùng kỹ thuật gì. Mục này trình bày đầy đủ từng nhóm; với mỗi chức năng "
      "nêu rõ đầu vào, cách xử lý và kết quả trả về.")
 
+para(doc,
+     "Mỗi nhóm được trình bày theo cùng một khuôn: bảng liệt kê từng chức năng theo bốn cột "
+     "đầu vào — xử lý — kết quả, tiếp đó là phần mô tả giao diện thực hiện nhóm chức năng "
+     "đó, kèm mã màn hình để đối chiếu với ảnh chụp trong Phụ lục C. Cách trình bày này để "
+     "hội đồng kiểm tra được một-một giữa chức năng đã nêu và giao diện có thật, thay vì "
+     "phải tin vào lời mô tả.")
+
 for _ma, _ten, _dan, _ds in NHOM_CHUC_NANG:
     h3(doc, _ten)
     para(doc, _dan)
@@ -445,6 +478,21 @@ for _ma, _ten, _dan, _ds in NHOM_CHUC_NANG:
          ["Chức năng", "Đầu vào", "Xử lý", "Kết quả"],
          [[a, b, c, d] for (a, b, c, d) in _ds],
          widths=[3.3, 3.7, 4.6, 4.4])
+
+    _gd = GIAO_DIEN_NHOM.get(_ma)
+    if not _gd:
+        continue
+    _doan, _man = _gd
+    para(doc, "Giao diện tương ứng", bold=True, indent=False)
+    for _d in _doan:
+        para(doc, _d)
+    _hang = [[m, t, ngat_duoc(l)] for (m, t, n, l) in DANH_MUC_MAN_HINH if m in _man]
+    bang(doc, f"Màn hình giao diện của {_ten.split('—')[0].strip().lower()}",
+         ["Mã màn hình", "Tên màn hình", "Lệnh nghiệp vụ màn hình này gọi"],
+         _hang, widths=[2.4, 4.4, 8.7],
+         note="Ảnh chụp các màn hình này ở Phụ lục C. Cột lệnh nghiệp vụ đối chiếu trực tiếp "
+              "với bảng chức năng ở trên: không có lệnh nào của lõi mà giao diện không gọi "
+              "tới, và không có nút nào trên giao diện gọi tới thứ ngoài danh sách này.")
 
 para(doc, "b.5. Luồng xử lý tệp trên Android", bold=True, indent=False)
 para(doc,
@@ -458,25 +506,99 @@ if (PNG / "H5-luong-tep-android.png").exists():
     hinh(doc, PNG / "H5-luong-tep-android.png",
          "Luồng xử lý tệp trên Android và ranh giới tin cậy", 15.5)
 
-para(doc, "b.6. Giao diện người dùng", bold=True, indent=False)
+para(doc, "b.6. Giao diện người dùng và nguyên tắc thiết kế của tác giả", bold=True,
+     indent=False)
 para(doc,
-     "Giao diện do tác giả thiết kế theo hướng giảm tải nhận thức: mỗi màn hình chỉ hiển thị "
-     "các bước cần thiết để hoàn thành công việc, phần giải thích kỹ thuật đặt trong mục "
-     "“Thông tin thêm” có thể mở rộng. Riêng cảnh báo có nguy cơ gây mất dữ liệu vĩnh viễn "
-     "thì luôn hiển thị thường trực, không thu gọn. Toàn bộ giao diện có tiếng Việt và tiếng "
-     "Anh; vùng chạm được thiết kế tối thiểu 44 điểm ảnh theo khuyến nghị về khả năng tiếp cận.")
+     f"Toàn bộ {N_LENH} lệnh nghiệp vụ nêu ở mục b.4 được thao tác qua {len(DANH_MUC_MAN_HINH)} "
+     "màn hình giao diện. Giao diện không phải lớp vỏ trang trí đặt lên trên phần lõi: với "
+     "một công cụ an toàn thông tin, phần lớn sự cố mất dữ liệu trên thực tế đến từ việc "
+     "người dùng hiểu sai mình đang làm gì, chứ không từ việc thuật toán bị phá. Vì vậy tác "
+     "giả coi thiết kế giao diện là một phần của thiết kế an toàn và đặt ra bốn nguyên tắc "
+     "áp dụng thống nhất cho mọi màn hình.")
 
-for _f, _cap in [("A1-trang-chu.png", "Màn hình chính với các nhóm công cụ theo mục đích"),
-                 ("A3-khoa-tep.png", "Màn hình khoá tệp — thao tác theo ba bước rõ ràng"),
-                 ("A2-dieu-huong.png", "Ngăn kéo điều hướng nhóm công cụ theo nghiệp vụ"),
-                 ("A5-chia-bi-mat.png", "Màn hình chia bí mật theo ngưỡng k trong n")]:
-    if (SS / _f).exists():
-        hinh(doc, SS / _f, _cap, 7.2)
+for _stt, _ten_nt, _noi_dung in [
+    (1, "Trình bày theo việc cần làm, không theo thuật toán",
+     "Người dùng chọn công cụ bằng câu hỏi “tôi cần làm gì” chứ không cần biết bên dưới là "
+     "Argon2id hay Ed25519. Mười chín công cụ được xếp thành năm nhóm mục đích: két an "
+     "toàn; bảo vệ tệp; chứng minh tính xác thực; sao lưu và khôi phục; kiểm tra và làm "
+     "sạch. Cùng một nghiệp vụ mật mã nhưng khác tình huống sử dụng thì tách thành các màn "
+     "hình riêng — ví dụ “lấy vân tay tệp” và “kiểm tra tệp chưa bị đổi” đều dùng hàm băm "
+     "BLAKE3 nhưng là hai việc khác nhau nên là hai màn hình khác nhau."),
+    (2, "Giảm tải nhận thức bằng phân tầng thông tin",
+     "Mỗi màn hình chỉ hiển thị thường trực các bước cần thiết để hoàn thành công việc, "
+     "được đánh số rõ ràng. Giải thích kỹ thuật, khuyến nghị và ghi chú về giới hạn đặt "
+     "trong mục thu gọn “Thông tin thêm”, mở ra khi người dùng muốn kiểm chứng. Phân tầng "
+     "này giữ được cả hai yêu cầu vốn xung khắc nhau: màn hình đủ gọn cho người mới, và đủ "
+     "chi tiết cho người cần kiểm chứng kỹ thuật."),
+    (3, "Cảnh báo mất dữ liệu thì không bao giờ thu gọn",
+     "Đây là ngoại lệ có chủ ý của nguyên tắc 2. Những cảnh báo mà hậu quả là mất dữ liệu "
+     "vĩnh viễn — gõ nhầm mật khẩu khi đặt, quên mật khẩu là không có đường khôi phục — "
+     "luôn hiển thị thường trực ngay cạnh ô nhập tương ứng. Tác giả xác định ranh giới: "
+     "thông tin *giúp hiểu thêm* thì thu gọn được, thông tin *ngăn mất dữ liệu* thì không."),
+    (4, "Không để kết quả cũ bị đọc nhầm thành kết quả mới",
+     "Với nhóm công cụ cho kết luận đạt/không đạt, một thẻ kết quả còn sót lại của công cụ "
+     "trước là nguồn sai lầm nghiêm trọng. Do đó mỗi lần chuyển màn hình, ứng dụng xoá "
+     "thanh trạng thái, ẩn mọi thẻ kết quả, xoá danh sách mảnh bí mật và đường dẫn tệp vừa "
+     "sinh, đồng thời xoá trắng mọi ô mật khẩu đang có nội dung. Đây vừa là biện pháp chống "
+     "hiểu nhầm, vừa là biện pháp an toàn: mật khẩu không nằm lại trong cây tài liệu sau "
+     "khi người dùng rời màn hình."),
+]:
+    rich(doc, [(f"Nguyên tắc {_stt} — {_ten_nt}. ", "b"), (_noi_dung, "")])
+
+para(doc, "Thích ứng cho màn hình cảm ứng", bold=True, indent=False)
+para(doc,
+     "Bố cục hai cột của bản máy tính để bàn không dùng được trên màn hình điện thoại. Tác "
+     "giả giữ nguyên một bộ mã giao diện cho cả hai nền tảng và chuyển đổi bố cục bằng một "
+     "thuộc tính đánh dấu nền tảng, thay vì viết hai giao diện song song. Trên điện thoại, "
+     "thanh điều hướng bên trái trở thành ngăn kéo trượt ra từ cạnh trái (Hình được dẫn ở "
+     "Phụ lục C), mọi vùng chạm được đặt tối thiểu 44 điểm ảnh theo khuyến nghị về khả năng "
+     "tiếp cận, và bố cục chừa lề cho vùng khuyết của màn hình. Cách làm này đã được kiểm "
+     "chứng là không làm thay đổi giao diện bản máy tính để bàn: ảnh kết xuất trước và sau "
+     "khi thêm phần di động trùng khớp từng byte.")
+para(doc,
+     "Toàn bộ chuỗi hiển thị có hai ngôn ngữ Việt và Anh, chuyển đổi ngay trong ứng dụng. "
+     "Riêng phần chú thích phạm vi định dạng của nhóm siêu dữ liệu được thay theo nền tảng "
+     "đang chạy, để giao diện không hứa hẹn nhiều hơn năng lực thật của bản dựng — tác giả "
+     "coi đây là lỗi đúng nghĩa chứ không phải chuyện câu chữ. Hình dưới đây minh hoạ: khi "
+     "mở mục “Thông tin thêm” của màn hình xem siêu dữ liệu trên bản di động, dòng chú thích "
+     "nêu đúng các định dạng mà mô-đun Rust thuần xử lý được, thay vì danh sách rộng hơn của "
+     "bản máy tính để bàn dùng ExifTool.")
+
+_gdx = anh_man_hinh("GDX1")
+if _gdx:
+    hinh(doc, _gdx,
+         "Chú thích phạm vi định dạng được thay theo nền tảng đang chạy — màn hình xem siêu "
+         "dữ liệu với mục “Thông tin thêm” đang mở", 7.6)
+
+para(doc, "Danh mục màn hình và đối chiếu với lệnh nghiệp vụ", bold=True, indent=False)
+para(doc,
+     "Bảng dưới đây liệt kê đầy đủ các màn hình của ứng dụng, nhóm chức năng mà mỗi màn hình "
+     "phục vụ và các lệnh nghiệp vụ mà màn hình đó gọi tới. Bảng này là cơ sở để kiểm tra "
+     "tính đầy đủ theo cả hai chiều.")
+bang(
+    doc,
+    "Danh mục toàn bộ màn hình giao diện và lệnh nghiệp vụ tương ứng",
+    ["Mã", "Màn hình", "Nhóm", "Lệnh nghiệp vụ được gọi"],
+    [[m, t, n, ngat_duoc(l)] for (m, t, n, l) in DANH_MUC_MAN_HINH],
+    widths=[1.6, 3.8, 1.7, 8.4],
+    note="Kiểm tra hai chiều đã thực hiện trên mã nguồn: (1) mọi lệnh trong bề mặt lệnh của "
+         "lõi đều có ít nhất một màn hình gọi tới — không có lệnh nào bị bỏ quên; (2) mọi "
+         "lệnh mà giao diện gọi đều tồn tại trong bề mặt lệnh — không có nút nào gọi tới "
+         "lệnh không có thật.",
+)
+bang(
+    doc,
+    "Hai lệnh chạy ở mức toàn ứng dụng, không thuộc một màn hình nghiệp vụ",
+    ["Lệnh", "Chạy ở đâu", "Vai trò"],
+    [[ngat_duoc(a), b, c] for (a, b, c) in LENH_MUC_UNG_DUNG],
+    widths=[3.2, 4.6, 7.7],
+)
 
 para(doc,
-     "Ghi chú về ảnh chụp giao diện: các hình trên được kết xuất từ chính mã giao diện của "
-     "sản phẩm ở kích thước màn hình điện thoại, với cầu nối tới lõi được mô phỏng trả về "
-     "đúng giá trị mà gốc hợp thành Android tạo ra, nhờ vậy logic giao diện thật được thực thi.",
+     "Ghi chú về ảnh chụp giao diện: các ảnh trong Phụ lục C được kết xuất từ chính mã giao "
+     "diện của sản phẩm ở kích thước màn hình điện thoại, với cầu nối tới lõi được mô phỏng "
+     "trả về đúng giá trị mà gốc hợp thành Android sinh ra. Nhờ vậy logic giao diện thật "
+     "được thực thi khi chụp, chứ không phải ảnh dựng bằng công cụ thiết kế.",
      italic=True)
 
 # ------------------------------------------------- 3.c
@@ -489,8 +611,8 @@ for t in [
      "bảo vệ dữ liệu biên dịch cho kiến trúc ARM64, đã kiểm tra tĩnh nội dung gói."
      if APK.get("co_apk") else
      "Thư viện lõi bảo vệ dữ liệu đã biên dịch cho kiến trúc ARM64 của Android."),
-    f"Mã nguồn đầy đủ gồm {N_CRATE} thành phần độc lập và giao diện web tĩnh, kèm "
-    f"{N_TEST} hàm kiểm thử tự động.",
+    f"Mã nguồn đầy đủ gồm {N_CRATE} thành phần độc lập và giao diện web tĩnh "
+    f"{len(DANH_MUC_MAN_HINH)} màn hình, kèm {N_TEST} hàm kiểm thử tự động.",
     "Bộ tài liệu kiến trúc, mô hình mối đe doạ và hướng dẫn triển khai.",
     "Quy trình kiểm thử tự động chạy trên máy chủ tích hợp liên tục.",
 ]:
@@ -499,6 +621,10 @@ for t in [
 para(doc, "c.2. Các chỉ tiêu kỹ thuật đạt được", bold=True, indent=False)
 _rows = [
     ["Số chức năng nghiệp vụ", f"{N_LENH} lệnh", "Đếm trực tiếp từ mã nguồn"],
+    ["Số màn hình giao diện", f"{len(DANH_MUC_MAN_HINH)} màn hình",
+     "Đếm trực tiếp từ mã giao diện; ảnh chụp đủ ở Phụ lục C"],
+    ["Lệnh nghiệp vụ chưa có giao diện gọi tới", "0",
+     "Đối chiếu hai chiều giữa bề mặt lệnh và mã giao diện"],
     ["Số hàm kiểm thử tự động", f"{N_TEST} hàm", "Đếm trực tiếp từ mã nguồn"],
 ]
 if _host:
@@ -951,6 +1077,39 @@ placeholder_hinh(doc, "Hình PL-2",
 placeholder_hinh(doc, "Hình PL-3",
                  "Ảnh chụp kết quả xem siêu dữ liệu của một ảnh chụp bằng điện thoại", 4.5)
 
+ngat_trang(doc)
+h2(doc, "Phụ lục C. Danh mục ảnh chụp toàn bộ màn hình giao diện")
+para(doc,
+     f"Phụ lục này trình bày ảnh chụp đầy đủ {len(DANH_MUC_MAN_HINH)} màn hình của ứng dụng, "
+     "xếp theo đúng thứ tự trong thanh điều hướng. Mã màn hình dưới mỗi ảnh (GD01…GD21) "
+     "khớp với mã dùng trong bảng danh mục ở mục 3.b.6 và trong phần “Giao diện tương ứng” "
+     "của từng nhóm chức năng ở mục 3.b.4, để hội đồng đối chiếu được từng chức năng với "
+     "đúng màn hình thực hiện nó.")
+para(doc,
+     "Ảnh được kết xuất từ chính mã giao diện của sản phẩm ở kích thước màn hình điện thoại. "
+     "Màn hình nào dài hơn khung hiển thị thì ảnh chụp trọn toàn bộ nội dung cuộn, nên nội "
+     "dung nhìn thấy trong hình nhiều hơn một khung màn hình điện thoại thực tế. Các mục "
+     "“Thông tin thêm” để ở trạng thái thu gọn — đúng trạng thái mặc định khi người dùng mở "
+     "màn hình.", italic=True)
+
+_chua_co = []
+if DMMH:
+    for _h in DMMH["hinh_ghep"]:
+        _dd = SS / _h["tep"]
+        if not _dd.exists():
+            _chua_co.append(_h["ma"])
+            continue
+        _cap = "; ".join(f"{g['ma']} — {g['ten']}" for g in _h["gom"])
+        hinh(doc, _dd, _cap, 15.5)
+else:
+    _chua_co.append("toàn bộ")
+
+if _chua_co:
+    para(doc,
+         "Chưa sinh được ảnh chụp cho: " + ", ".join(_chua_co) +
+         ". Chạy lại chup-giao-dien.py rồi sinh lại văn bản này.", italic=True)
+
+ngat_trang(doc)
 chu_ky(doc, ("XÁC NHẬN CỦA ĐƠN VỊ", "(Ký, đóng dấu)"),
        ("TÁC GIẢ SÁNG KIẾN", "(Ký, ghi rõ họ tên)"))
 

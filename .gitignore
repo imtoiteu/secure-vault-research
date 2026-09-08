@@ -15,3 +15,6 @@ Cargo.lock.orig
 
 # Thư mục nạp sẵn của Python trong bộ sinh hồ sơ — sinh lại được, không cần theo dõi
 hoso-sang-kien/__pycache__/
+
+# Thư mục làm việc trung gian của chup-giao-dien.py — sinh lại được từ app/frontend
+hoso-sang-kien/hinh-anh/screenshot/_work/

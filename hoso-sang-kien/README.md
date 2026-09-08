@@ -40,16 +40,20 @@ Bản PDF kèm theo trong cùng thư mục chỉ dùng để **kiểm tra bố c
 | `hinh-anh/svg/` | Sơ đồ gốc dạng SVG (6 hình) |
 | `hinh-anh/drawio/` | **Bản drawio tương ứng** — mở bằng diagrams.net để sửa nếu cần |
 | `hinh-anh/png/` | Ảnh PNG độ phân giải cao đã chèn vào DOCX |
-| `hinh-anh/screenshot/` | Ảnh chụp giao diện ứng dụng |
+| `hinh-anh/screenshot/` | Ảnh chụp giao diện: 21 ảnh màn hình đơn (`GD01`–`GD21`) và 11 hình ghép hai màn hình dùng cho Phụ lục C (`GC01`–`GC11`) |
 
 Sáu sơ đồ: bài toán thực tế, kiến trúc phân lớp, lõi dùng chung, phân cấp khoá,
 luồng tệp trên Android, tháp bằng chứng kiểm chứng.
 
 **Về ảnh chụp giao diện:** đây là ảnh kết xuất từ *chính mã giao diện của sản phẩm* ở kích
 thước màn hình điện thoại, với cầu nối IPC được mô phỏng để trả về đúng giá trị mà gốc hợp
-thành Android tạo ra. Nhờ vậy logic giao diện thật được thực thi (ví dụ cơ chế tắt an toàn ở
-Hình 9 là hành vi thật, không phải ảnh dựng). Ảnh chụp trên **thiết bị Android thật** vẫn cần
-bổ sung — xem Phụ lục B.
+thành Android tạo ra. Nhờ vậy logic giao diện thật được thực thi, không phải ảnh dựng bằng
+công cụ thiết kế. Ảnh chụp trên **thiết bị Android thật** vẫn cần bổ sung — xem Phụ lục B.
+
+Hồ sơ trình bày **đầy đủ 21 màn hình** của ứng dụng, và mỗi nhóm chức năng trong Thuyết minh
+đều có phần *“Giao diện tương ứng”* kèm bảng đối chiếu **màn hình ↔ lệnh nghiệp vụ**. Việc đối
+chiếu đã được kiểm tra hai chiều trên mã nguồn: không có lệnh nào của lõi mà giao diện không
+gọi tới, và không có nút nào gọi tới lệnh không tồn tại.
 
 ---
 
@@ -60,6 +64,7 @@ cd hoso-sang-kien
 
 python3 thu-thap-du-kien.py <thư-mục-log>   # đọc mã nguồn + log kiểm thử → du-kien.json
 python3 sinh-so-do.py                        # sinh SVG + drawio
+python3 chup-giao-dien.py                    # chụp 21 màn hình + ghép hình cho Phụ lục C
 python3 tao-don-va-hieu-qua.py               # sinh văn bản 1 và 3
 python3 tao-thuyet-minh.py                   # sinh văn bản 2
 ```

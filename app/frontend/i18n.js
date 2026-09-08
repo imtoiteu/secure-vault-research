@@ -93,7 +93,6 @@
     "home.t.hide": "Hide data",
     "home.t.detect": "Detect hidden data",
     "home.t.metadata": "Metadata tools",
-    "home.soon": "soon",
 
     // ---- vault: shared ----
     "vault.title": "🗄️ Secure Vault",
@@ -403,15 +402,6 @@
     "qr.recover.ph.output": "/path/to/recovered-output",
     "qr.recover.btn": "Recover from QR",
 
-    // ---- coming-soon placeholders ----
-    "soon.tag": "Coming soon",
-    "soon.hide.title": "🕵️ Hide data inside a file",
-    "soon.hide.what": "<strong>What it will do:</strong> conceal a file inside an image or audio file so it looks ordinary.",
-    "soon.hide.when": "<strong>When you'd use it:</strong> to send something discreetly alongside a normal-looking file.",
-    "soon.hide.status": "Status: under evaluation — not available yet.",
-    "soon.detect.title": "🔎 Detect hidden data",
-    "soon.detect.what": "<strong>What it will do:</strong> scan a file for signs of concealed data.",
-    "soon.detect.status": "Status: under evaluation — not available yet.",
 
     // ---- inspect metadata ----
     "mi.title": "🔍 Inspect metadata",
@@ -420,6 +410,11 @@
     "mi.step1": "1  Choose the file to inspect",
     "mi.ph.file": "Drop any file here, or Browse…",
     "mi.tech": "Works for images, PDFs, Office documents, audio, video, and more. Read-only.",
+    // Mobile build note: on Android the metadata work is done by the in-process Rust module
+    // (ExifTool is a Perl program and cannot run there), whose format coverage is narrower.
+    // The UI must state the coverage it actually has, so these two strings replace the ones
+    // above when the app runs on a mobile layout.
+    "mi.tech.mobile": "Works for JPEG, PNG, TIFF, WebP and HEIF images. Read-only. Other formats are refused with a clear error rather than reported as empty.",
     "mi.btn": "Inspect",
 
     // ---- remove metadata ----
@@ -429,6 +424,7 @@
     "mc.step1": "1  Choose the file to clean",
     "mc.ph.input": "Drop a file here, or Browse…",
     "mc.tech1": "Images and WAV/AVI/MOV/MP4 are <strong>fully stripped</strong>. <strong>PDF</strong> is a best-effort scrub (the old metadata can still be recovered). Office documents, archives, and MP3/FLAC/MKV are <strong>inspect-only</strong> and will be refused here.",
+    "mc.tech1.mobile": "<strong>JPEG</strong> and <strong>PNG</strong> are <strong>fully stripped</strong> (EXIF, colour profile, comments and text chunks). Every other format is <strong>refused with an error</strong> — the app never reports a file as cleaned when it was not processed.",
     "mc.step2": "2  Where to save the cleaned copy",
     "mc.ph.output": "/path/to/cleaned-file",
     "mc.tech2": "Keep the same file extension as the original so apps still open it. Technical details: <code>exiftool -all=</code> writes a fresh file; the input is never modified in place.",
@@ -845,7 +841,6 @@
     "home.t.hide": "Giấu dữ liệu",
     "home.t.detect": "Phát hiện dữ liệu ẩn",
     "home.t.metadata": "Công cụ siêu dữ liệu",
-    "home.soon": "sắp có",
 
     // ---- vault: shared ----
     "vault.title": "🗄️ Két an toàn",
@@ -1155,15 +1150,6 @@
     "qr.recover.ph.output": "/đường-dẫn/tới/ket-qua-khoi-phuc",
     "qr.recover.btn": "Khôi phục từ QR",
 
-    // ---- coming-soon placeholders ----
-    "soon.tag": "Sắp có",
-    "soon.hide.title": "🕵️ Giấu dữ liệu bên trong tệp",
-    "soon.hide.what": "<strong>Nó sẽ làm gì:</strong> giấu một tệp bên trong ảnh hoặc tệp âm thanh để trông bình thường.",
-    "soon.hide.when": "<strong>Khi nào bạn dùng:</strong> để gửi một thứ gì đó một cách kín đáo kèm theo một tệp trông bình thường.",
-    "soon.hide.status": "Trạng thái: đang đánh giá — chưa khả dụng.",
-    "soon.detect.title": "🔎 Phát hiện dữ liệu ẩn",
-    "soon.detect.what": "<strong>Nó sẽ làm gì:</strong> quét một tệp tìm dấu hiệu dữ liệu được che giấu.",
-    "soon.detect.status": "Trạng thái: đang đánh giá — chưa khả dụng.",
 
     // ---- inspect metadata ----
     "mi.title": "🔍 Xem siêu dữ liệu",
@@ -1172,6 +1158,7 @@
     "mi.step1": "1  Chọn tệp cần xem",
     "mi.ph.file": "Kéo thả bất kỳ tệp nào vào đây, hoặc Duyệt…",
     "mi.tech": "Hoạt động với ảnh, PDF, tài liệu Office, âm thanh, video, và nhiều hơn nữa. Chỉ đọc.",
+    "mi.tech.mobile": "Hoạt động với ảnh JPEG, PNG, TIFF, WebP và HEIF. Chỉ đọc. Định dạng ngoài phạm vi bị từ chối bằng thông báo lỗi rõ ràng, không báo là “không có siêu dữ liệu”.",
     "mi.btn": "Xem",
 
     // ---- remove metadata ----
@@ -1181,6 +1168,7 @@
     "mc.step1": "1  Chọn tệp cần làm sạch",
     "mc.ph.input": "Kéo thả tệp vào đây, hoặc Duyệt…",
     "mc.tech1": "Ảnh và WAV/AVI/MOV/MP4 được <strong>loại bỏ hoàn toàn</strong>. <strong>PDF</strong> là làm sạch theo nỗ lực tốt nhất (siêu dữ liệu cũ vẫn có thể khôi phục được). Tài liệu Office, kho nén, và MP3/FLAC/MKV là <strong>chỉ xem</strong> và sẽ bị từ chối ở đây.",
+    "mc.tech1.mobile": "<strong>JPEG</strong> và <strong>PNG</strong> được <strong>xoá sạch hoàn toàn</strong> (EXIF, hồ sơ màu, chú thích và các khối văn bản). Mọi định dạng khác đều <strong>bị từ chối bằng lỗi</strong> — ứng dụng không bao giờ báo “đã xoá” cho tệp chưa thực sự được xử lý.",
     "mc.step2": "2  Nơi lưu bản sao đã làm sạch",
     "mc.ph.output": "/đường-dẫn/tới/tệp-da-lam-sach",
     "mc.tech2": "Hãy giữ nguyên phần mở rộng tệp như bản gốc để các ứng dụng vẫn mở được. Chi tiết kỹ thuật: <code>exiftool -all=</code> ghi một tệp mới; tệp đầu vào không bao giờ bị sửa tại chỗ.",
