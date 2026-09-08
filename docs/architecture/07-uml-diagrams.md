@@ -69,7 +69,7 @@ graph LR
 graph TB
     subgraph Presentation
         FE["Webview frontend<br/>(static, withGlobalTauri)"]
-        HND["#[tauri::command] handlers<br/>(desktop/src/lib.rs)"]
+        HND["#[tauri::command] handlers<br/>(app/src/lib.rs)"]
     end
     subgraph Application
         AV["AppVault / CommandSurface"]
@@ -392,7 +392,7 @@ sequenceDiagram
 ```mermaid
 graph TB
     subgraph build["Build host (cargo tauri build)"]
-        src["Workspace crates + desktop/"]
+        src["Workspace crates + app/"]
         brs["build.rs: stage age/age-keygen/exiftool + lib/<br/>compute BLAKE3 pins (rustc-env)<br/>detect_staged_target arch check"]
         src --> brs --> bundle["Per-OS bundle (.app/.dmg, .msi/.exe, .deb/AppImage)"]
     end
@@ -419,7 +419,7 @@ graph TB
 - The webview engine is **OS-provided** (WebKit on macOS, WebView2 on Windows, WebKitGTK on Linux) —
   it is not bundled; only the static frontend assets and the Rust binary + pinned tool binaries are.
 - The five managed states (`Backend`, `Platform`, `Stego`, `Meta`, `Watermark`) are constructed in
-  the Tauri `setup` hook ([desktop/src/lib.rs](../../desktop/src/lib.rs) `run()`).
+  the Tauri `setup` hook ([app/src/lib.rs](../../app/src/lib.rs) `run()`).
 
 ---
 

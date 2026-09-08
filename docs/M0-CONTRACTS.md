@@ -178,7 +178,7 @@ handshake. **Sessions:** opaque random `session_id` → table holding **only the
 + path; explicit `lock` zeroizes; the age identity / signing key are materialized transiently
 per op. **Unlock hardening:** verify-then-parse (signature before credential), KDF-param
 ceiling before Argon2. The literal `#[tauri::command]`/`tauri.conf.json` runtime shell now exists
-in the workspace-excluded `desktop/` crate; the backend is complete and tested (a `StubPayloadCipher`
+in the workspace-excluded `app/` crate; the backend is complete and tested (a `StubPayloadCipher`
 exercises the full lifecycle in unit tests, plus an `age`-gated e2e).
 
 ---
@@ -244,7 +244,7 @@ migration rather than silent breakage.
 These were explicitly out of scope for M0 and have **since been delivered** across M1–M7: crypto
 logic (all adapters implemented — BLAKE3/Argon2id/secretbox/Ed25519-minisign/Shamir/age); FFI/`unsafe`
 (the `sv-sys-*` crates wrap libsodium and the `sss` hazmat); the bundled, hash-pinned `age`
-subprocess; the Tauri runtime/`tauri.conf.json` wiring (in the workspace-excluded `desktop/` crate);
+subprocess; the Tauri runtime/`tauri.conf.json` wiring (in the workspace-excluded `app/` crate);
 and `git init` + first commit (the repo is on GitHub, CI green — see
 [CI-VALIDATION.md](CI-VALIDATION.md)). **Still a stub:** the SBOM (`scripts/sbom.sh` emits a
 dependency-manifest stub, not full CycloneDX).

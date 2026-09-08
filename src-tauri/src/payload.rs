@@ -88,6 +88,52 @@ impl PayloadCipher for AgePayloadCipher {
     }
 }
 
+/// Mobile payload cipher: the pure-Rust age adapter, in-process.
+///
+/// iOS forbids spawning executables and Android blocks exec of app-writable binaries, so the
+/// desktop [`AgePayloadCipher`] (bundled, hash-pinned `age` + `age-keygen` subprocesses) cannot
+/// run there. The wire format is identical age v1, so vaults interoperate across platforms —
+/// proven bidirectionally against the real Go binary in `sv-age-rs`'s `interop` test.
+///
+/// Both ciphers share [`crypto_to_vault`], so a failed payload decryption is `Corrupted` here
+/// too — never an authentication oracle.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct RustAgePayloadCipher;
+
+impl RustAgePayloadCipher {
+    #[must_use]
+    pub fn new() -> Self {
+        Self
+    }
+}
+
+impl PayloadCipher for RustAgePayloadCipher {
+    fn generate_identity(&self) -> Result<(AgeIdentity, AgeRecipient), VaultError> {
+        let (identity, recipient) =
+            sv_age_rs::generate_identity().map_err(|_| VaultError::Internal)?;
+        Ok((
+            AgeIdentity::new(SecretBytes::new(identity)),
+            AgeRecipient(recipient),
+        ))
+    }
+
+    fn encrypt(&self, plaintext: &[u8], recipient: &AgeRecipient) -> Result<Vec<u8>, VaultError> {
+        let mut ct = Vec::new();
+        sv_age_rs::RustAgeCipher::new()
+            .encrypt(&mut Cursor::new(plaintext), &mut ct, recipient)
+            .map_err(crypto_to_vault)?;
+        Ok(ct)
+    }
+
+    fn decrypt(&self, ciphertext: &[u8], identity: &AgeIdentity) -> Result<Vec<u8>, VaultError> {
+        let mut pt = Vec::new();
+        sv_age_rs::RustAgeCipher::new()
+            .decrypt(&mut Cursor::new(ciphertext), &mut pt, identity)
+            .map_err(crypto_to_vault)?;
+        Ok(pt)
+    }
+}
+
 /// Map a payload-cipher `CryptoError` to the vault taxonomy. A decryption that fails here is a
 /// damaged/tampered payload (the signature already passed and the identity already unwrapped),
 /// so it is `Corrupted`, never an auth oracle.
@@ -155,5 +201,58 @@ impl PayloadCipher for StubPayloadCipher {
             .enumerate()
             .map(|(i, b)| b ^ Self::keystream_byte(&recipient, i))
             .collect())
+    }
+}
+
+#[cfg(test)]
+mod rust_cipher_tests {
+    use super::*;
+
+    #[test]
+    fn round_trips_a_payload() {
+        let cipher = RustAgePayloadCipher::new();
+        let (identity, recipient) = cipher.generate_identity().unwrap();
+        let plaintext = b"vault payload".to_vec();
+
+        let ct = cipher.encrypt(&plaintext, &recipient).unwrap();
+        assert_ne!(ct, plaintext, "ciphertext must not equal plaintext");
+
+        let out = cipher.decrypt(&ct, &identity).unwrap();
+        assert_eq!(out, plaintext);
+    }
+
+    #[test]
+    fn generated_recipient_is_an_age_public_key() {
+        let (_identity, recipient) = RustAgePayloadCipher::new().generate_identity().unwrap();
+        assert!(recipient.0.starts_with("age1"), "got {}", recipient.0);
+    }
+
+    /// A foreign identity must surface as `Corrupted`, not `AuthFailed`. The payload is only
+    /// reached after the binding signature and the identity unwrap have already succeeded, so
+    /// a failure here is damage/tampering — reporting it as an auth failure would build the
+    /// very oracle the error taxonomy exists to prevent.
+    #[test]
+    fn foreign_identity_is_corrupted_not_an_auth_oracle() {
+        let cipher = RustAgePayloadCipher::new();
+        let (_id_a, recipient_a) = cipher.generate_identity().unwrap();
+        let (id_b, _recipient_b) = cipher.generate_identity().unwrap();
+
+        let ct = cipher.encrypt(b"secret", &recipient_a).unwrap();
+        let err = cipher.decrypt(&ct, &id_b).unwrap_err();
+        assert!(matches!(err, VaultError::Corrupted), "got {err:?}");
+    }
+
+    /// The two production ciphers must agree on the error taxonomy, or the same failure would
+    /// read differently depending on the platform the user is on.
+    #[test]
+    fn shares_the_error_mapping_with_the_desktop_cipher() {
+        assert!(matches!(
+            crypto_to_vault(CryptoError::VerificationFailed),
+            VaultError::Corrupted
+        ));
+        assert!(matches!(
+            crypto_to_vault(CryptoError::Timeout),
+            VaultError::Timeout
+        ));
     }
 }

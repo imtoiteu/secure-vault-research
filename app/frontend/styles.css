@@ -31,14 +31,14 @@ body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   background: var(--bg);
   color: var(--fg);
-  padding: 1.5rem;
+  padding: 1.75rem 2rem;
 }
 
 header {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.75rem;
 }
 
 .grow {
@@ -129,7 +129,7 @@ h3 {
    =================================================================== */
 .shell {
   display: flex;
-  gap: 1.25rem;
+  gap: 2.25rem;
   align-items: flex-start;
 }
 
@@ -151,7 +151,7 @@ h3 {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--muted);
-  margin: 0.95rem 0 0.2rem;
+  margin: 1.15rem 0 0.35rem;
   padding: 0 0.6rem;
 }
 
@@ -246,11 +246,22 @@ h3 {
 #main {
   flex: 1;
   min-width: 0;
+  /* Cap the measure: long lines are a density problem of their own, and every screen is a
+     single column of form fields that gains nothing from full-width stretching. */
+  max-width: 860px;
+}
+
+/* Vertical rhythm between the stacked panels a screen is built from. */
+.task + .task,
+.task + .card,
+.card + .task {
+  margin-top: 1.25rem;
 }
 
 .screen-title {
-  font-size: 1.15rem;
-  margin: 0 0 0.3rem;
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.45rem;
 }
 
 .group-title {
@@ -259,6 +270,29 @@ h3 {
   letter-spacing: 0.05em;
   color: var(--muted);
   margin: 1.4rem 0 0.6rem;
+}
+
+/* Home: the full tool grid duplicates the sidebar, so it sits behind a disclosure and the
+   landing view is Quick start alone. */
+.alltools {
+  margin-top: 1.6rem;
+}
+
+.alltools summary {
+  cursor: pointer;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  width: fit-content;
+}
+
+.alltools summary:hover {
+  color: var(--fg);
+}
+
+.alltools[open] summary {
+  margin-bottom: 0.8rem;
 }
 
 /* Home launcher tiles */
@@ -321,33 +355,60 @@ h3 {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 1.25rem;
+  padding: 1.6rem 1.75rem;
 }
 
 .task-head {
   border-bottom: 1px solid var(--border);
-  padding-bottom: 0.85rem;
-  margin-bottom: 1rem;
+  padding-bottom: 1.1rem;
+  margin-bottom: 1.5rem;
 }
 
 .task-purpose {
   margin: 0;
-  color: var(--fg);
-  font-size: 0.95rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  max-width: 62ch;
 }
 
+/* "More info": the one disclosure per task that holds the when-to-use guidance and every
+   technical note. Collapsed by default, so the head stays a title + a single line. */
 .when {
-  margin-top: 0.55rem;
+  margin-top: 0.8rem;
 }
 
 .when summary {
   cursor: pointer;
   font-size: 0.82rem;
   color: var(--accent);
+  width: fit-content;
+}
+
+.when[open] {
+  padding-bottom: 0.15rem;
 }
 
 .when p {
-  margin: 0.45rem 0 0;
+  margin: 0.55rem 0 0;
+  max-width: 68ch;
+}
+
+/* Small in-card disclosure for explanatory copy that isn't needed to act. */
+.inline-info {
+  margin: 0 0 0.9rem;
+}
+
+.inline-info summary {
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--accent);
+  width: fit-content;
+}
+
+.inline-info p {
+  margin: 0.5rem 0 0;
+  max-width: 68ch;
 }
 
 .task-body .subcard:first-of-type {
@@ -584,8 +645,8 @@ textarea.invalid {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 1.25rem;
-  margin-bottom: 1rem;
+  padding: 1.6rem 1.75rem;
+  margin-bottom: 1.25rem;
 }
 
 .hidden {
@@ -594,9 +655,34 @@ textarea.invalid {
 
 label {
   display: block;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1.25rem;
   font-size: 0.85rem;
   color: var(--muted);
+}
+
+/* The step caption is the scan target — lift it out of the muted body colour. */
+.task-body > label > span:first-child,
+.subcard > label > span:first-child,
+.card > label > span:first-child {
+  display: inline-block;
+  margin-bottom: 0.15rem;
+  color: var(--fg);
+  font-weight: 500;
+}
+
+/* Field-level copy that survived the fold-away is mistake-prevention only — keep it quiet
+   and tucked under its input rather than competing with the caption. */
+label > .hint {
+  display: block;
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+}
+
+/* …except an inline qualifier that sits right beside the caption, e.g. "(optional)". */
+label > span:first-child + .hint {
+  display: inline;
+  margin: 0;
+  font-size: 0.8rem;
 }
 
 input {
@@ -613,7 +699,7 @@ input {
 
 .row {
   display: flex;
-  gap: 0.6rem;
+  gap: 0.9rem;
   flex-wrap: wrap;
 }
 
@@ -630,6 +716,25 @@ button {
   color: white;
   font-size: 0.9rem;
   cursor: pointer;
+}
+
+/* Primary action — everything that isn't a secondary/browse/link/nav/tile button. Sized and
+   weighted above the rest of the panel so each screen has one obvious next step. */
+.task-body > .row > button:not(.secondary),
+.card > .row > button:not(.secondary),
+.subcard > .row > button:not(.secondary) {
+  padding: 0.7rem 1.4rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  box-shadow: 0 1px 10px rgba(91, 141, 239, 0.25);
+}
+
+/* The action closes the panel: separate it from the last field above. `.spread` rows are card
+   headers, not actions, so they keep their own alignment. */
+.task-body > .row:not(.spread) > button,
+.card > .row:not(.spread) > button,
+.subcard > .row:not(.spread) > button {
+  margin-top: 0.5rem;
 }
 
 button.secondary {
@@ -675,10 +780,17 @@ button:disabled:hover {
 .add-row {
   display: flex;
   gap: 0.6rem;
+  align-items: stretch;
 }
 
 .add-row input {
+  flex: 1;
+  min-width: 0;
   margin-top: 0;
+}
+
+.add-row button {
+  white-space: nowrap;
 }
 
 .status {
@@ -725,7 +837,8 @@ input[type="number"] {
 label.inline {
   display: inline-flex;
   flex-direction: column;
-  margin-bottom: 0;
+  gap: 0.2rem;
+  margin: 0.35rem 0 0.9rem;
 }
 
 label.check {
@@ -744,8 +857,8 @@ label.check input {
 .subcard {
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 0.9rem 1rem;
-  margin-top: 1rem;
+  padding: 1.15rem 1.25rem;
+  margin-top: 1.4rem;
 }
 
 .subcard:first-of-type {
@@ -755,8 +868,8 @@ label.check input {
 .advanced {
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 0.5rem 0.8rem;
-  margin-bottom: 0.85rem;
+  padding: 0.7rem 1rem;
+  margin-bottom: 1rem;
 }
 
 .advanced summary {
@@ -843,4 +956,135 @@ code {
 .inline-check input[type="checkbox"] {
   width: auto;
   margin: 0;
+}
+
+/* ===================================================================
+   Mobile layout.
+   Keyed off data-platform="mobile", set at runtime by initPlatform().
+   Desktop never sets the attribute, so every rule below is inert there —
+   the desktop rendering is byte-identical to before this block existed.
+   =================================================================== */
+.nav-toggle {
+  display: none;
+  background: transparent;
+  border: 0;
+  color: var(--fg);
+  font-size: 1.35rem;
+  line-height: 1;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+}
+
+.drawer-scrim {
+  display: none;
+}
+
+:root[data-platform="mobile"] .nav-toggle {
+  display: block;
+}
+
+:root[data-platform="mobile"] body {
+  padding: calc(0.9rem + env(safe-area-inset-top)) 1rem
+           calc(0.9rem + env(safe-area-inset-bottom)) 1rem;
+}
+
+/* The 220px sidebar becomes an off-canvas drawer. */
+:root[data-platform="mobile"] .sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 78vw;
+  max-width: 300px;
+  z-index: 40;
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  padding: calc(0.9rem + env(safe-area-inset-top)) 0.6rem
+           calc(1rem + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  transform: translateX(-102%);
+  transition: transform 0.22s ease;
+}
+
+:root[data-platform="mobile"] .shell.drawer-open .sidebar {
+  transform: translateX(0);
+}
+
+:root[data-platform="mobile"] .shell.drawer-open .drawer-scrim:not([hidden]) {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 39;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+:root[data-platform="mobile"] #main {
+  max-width: none;
+}
+
+/* Touch targets: 44px minimum on every interactive control. */
+:root[data-platform="mobile"] .navitem,
+:root[data-platform="mobile"] .tile,
+:root[data-platform="mobile"] button,
+:root[data-platform="mobile"] summary {
+  min-height: 44px;
+}
+
+:root[data-platform="mobile"] .navitem {
+  padding: 0.7rem 0.6rem;
+}
+
+/* An opaque content:// URI is meaningless in a text box, so the picker becomes the primary
+   control and the path input sits beneath it. The input still carries the broker's staged
+   path, so main.js logic is unchanged. */
+:root[data-platform="mobile"] .filefield {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+:root[data-platform="mobile"] .filefield input {
+  font-size: 0.85rem;
+  text-overflow: ellipsis;
+}
+
+:root[data-platform="mobile"] .task,
+:root[data-platform="mobile"] .card {
+  padding: 1.15rem 1rem;
+}
+
+/* Quick-start tiles stack rather than squeezing three across a phone screen. */
+:root[data-platform="mobile"] .tiles {
+  grid-template-columns: 1fr;
+}
+
+:root[data-platform="mobile"] .tiles.small {
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+}
+
+/* The full product name wraps to four lines on a 390px screen and swallows the viewport.
+   Shrink it, keep it on one line, and drop the attribution sub-line — it is already in the
+   About panel, so nothing is lost. */
+:root[data-platform="mobile"] header {
+  gap: 0.5rem;
+  margin-bottom: 1.1rem;
+}
+
+:root[data-platform="mobile"] h1 {
+  font-size: 1rem;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+:root[data-platform="mobile"] .brand-sub {
+  display: none;
+}
+
+:root[data-platform="mobile"] .lang-pick {
+  font-size: 0.78rem;
+  padding: 0.25rem 0.35rem;
+}
+
+:root[data-platform="mobile"] .linkbtn {
+  font-size: 0.78rem;
+  padding: 0.25rem 0.3rem;
 }

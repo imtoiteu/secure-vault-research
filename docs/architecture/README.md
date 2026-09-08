@@ -39,7 +39,7 @@ and stay FFI-free: `sv-core` is the encrypted-container vault; `sv-platform` is 
 file-level crypto-services layer; and `sv-stego`, `sv-meta`, `sv-qr`, `sv-watermark` are the four
 standalone modules. A single **application/IPC command surface** (`sv-app`, in `src-tauri/`) composes
 these behind an **oracle-safe, coded `ApiError`** contract in which **no secret ever crosses the IPC
-boundary** (the one documented residual being the passphrase string). The `desktop/` crate is the
+boundary** (the one documented residual being the passphrase string). The `app/` crate is the
 Tauri runtime + static `withGlobalTauri` frontend; it bundles and **BLAKE3-hash-pins** the external
 binaries (`age`, `age-keygen`, `exiftool`).
 

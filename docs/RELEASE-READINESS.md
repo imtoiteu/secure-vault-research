@@ -1,5 +1,11 @@
 # Secure Vault — Release Readiness Gate
 
+> **Path note (2026-09-04):** the Tauri shell directory `desktop/` was renamed `app/` when it
+> became the shared desktop + Android + iOS crate. Paths cited below are the ones that existed
+> when this document was written and are left unchanged, so the record stays accurate; read
+> `desktop/...` as today's `app/...`.
+
+
 Status: **H4 PASSED on CI (2026-06-15); now blocked on H5 only.** This document is the gate: it
 defines exactly what must turn green, how to produce that signal, and the decision rule for starting
 beta.

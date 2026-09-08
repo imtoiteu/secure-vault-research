@@ -1,5 +1,11 @@
 # Secret Sharing — Standalone Extraction Audit & Implementation Plan
 
+> **Path note (2026-09-04):** the Tauri shell directory `desktop/` was renamed `app/` when it
+> became the shared desktop + Android + iOS crate. Paths cited below are the ones that existed
+> when this document was written and are left unchanged, so the record stays accurate; read
+> `desktop/...` as today's `app/...`.
+
+
 **Project:** Secure Vault → Security & Privacy Toolkit
 **Status of this document:** Plan to review before coding. Contains **no code**.
 **Evidence discipline:** Every load-bearing claim cites `file:line`, verified by direct source read during this analysis. Where the source contradicts an earlier draft assertion, the correction is stated explicitly and the stale hedge removed. Items that remain genuine design choices (not facts) are labelled *design decision* or *proposal*; nothing intent-level is presented as implemented.

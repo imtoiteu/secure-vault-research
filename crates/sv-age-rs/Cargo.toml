@@ -1,0 +1,18 @@
+[package]
+name = "sv-age-rs"
+description = "FileCipher adapter over the pure-Rust `age` crate. In-process, no subprocess — the mobile payload cipher (desktop keeps the hash-pinned `age` binary)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+sv-crypto-traits = { path = "../sv-crypto-traits" }
+# Pure-Rust reference implementation of the age spec, format-compatible with the Go binary
+# `sv-age` drives on desktop. MIT OR Apache-2.0 (deny.toml allowlist).
+age = { version = "0.12", default-features = false }
+zeroize.workspace = true
+
+[lints]
+workspace = true

@@ -1,4 +1,4 @@
-# cargo-deny config for the workspace-EXCLUDED Tauri shell (`desktop/`).
+# cargo-deny config for the workspace-EXCLUDED Tauri shell (`app/`).
 #
 # The audited core is scanned by ../deny.toml. This config scans the much larger Tauri/webview
 # dependency tree so it no longer escapes advisory review (release-readiness finding #6). The CI

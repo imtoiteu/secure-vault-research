@@ -11,14 +11,14 @@ application:
   stays FFI-free ([crates/sv-core/src/lib.rs:9](../../crates/sv-core/src/lib.rs#L9)).
 - **A composition root** (`sv-app`, in `src-tauri/`) wires concrete adapters into domain services and
   exposes them behind a single `CommandSurface`.
-- **A thin runtime shell** (`desktop/`) hosts the webview UI, registers the Tauri commands, and owns
+- **A thin runtime shell** (`app/`) hosts the webview UI, registers the Tauri commands, and owns
   the external-binary lifecycle (staging, pinning, resolution).
 
 ## 3.2 Layers
 
 ```mermaid
 graph TD
-    subgraph L5["L5 — Presentation (desktop/, excluded from workspace)"]
+    subgraph L5["L5 — Presentation (app/, excluded from workspace)"]
         FE["Webview frontend (static, withGlobalTauri)"]
         SHELL["Tauri runtime + #[tauri::command] handlers + build.rs"]
     end
@@ -73,7 +73,7 @@ graph TD
 | **sv-qr** | L3 | Pure-Rust QR codec (text ⇄ QR PNG); transport-only | denied |
 | **sv-watermark** | L3 | Invisible, keyed, fragile tamper-evidence watermark | denied |
 | **sv-app** (`src-tauri/`) | L4 | `CommandSurface` + composition root; `IpcPassphrase`; `ApiError` mapping | denied |
-| **secure-vault-desktop** (`desktop/`) | L5 | Tauri runtime, UI, `#[tauri::command]` handlers, `build.rs` binary staging/pinning. **Excluded from the workspace** | denied |
+| **secure-vault-desktop** (`app/`) | L5 | Tauri runtime, UI, `#[tauri::command]` handlers, `build.rs` binary staging/pinning. **Excluded from the workspace** | denied |
 
 ## 3.4 Dependency graph (production)
 
@@ -137,12 +137,12 @@ graph BT
   `Blake3Hasher`, `AgePayloadCipher`, …) are injected by the composition root.
 - **`age` is wired only in the composition root** (`sv-app` → `AgePayloadCipher`), keeping the
   subprocess dependency out of the domain layer ([src-tauri/src/payload.rs](../../src-tauri/src/payload.rs)).
-- **`desktop/` is `exclude`d from the workspace** so the Tauri/webview tree never enters the audited
+- **`app/` is `exclude`d from the workspace** so the Tauri/webview tree never enters the audited
   core's lock/deny/build gates ([Cargo.toml](../../Cargo.toml)).
 
 ## 3.5 Composition root
 
-The runtime wiring lives in [desktop/src/lib.rs](../../desktop/src/lib.rs) `run()` and the `sv-app`
+The runtime wiring lives in [app/src/lib.rs](../../app/src/lib.rs) `run()` and the `sv-app`
 constructors. Five managed states are registered:
 
 ```mermaid
@@ -164,9 +164,9 @@ graph TD
   ([src-tauri/src/service.rs:71](../../src-tauri/src/service.rs#L71),
   [src-tauri/src/payload.rs:28](../../src-tauri/src/payload.rs#L28)).
 - `build_backend` resolves + **hash-verifies** `age`/`age-keygen`; a release build refuses to run
-  unpinned ([desktop/src/lib.rs:429](../../desktop/src/lib.rs#L429)).
+  unpinned ([app/src/lib.rs:429](../../app/src/lib.rs#L429)).
 - `build_meta` resolves + pins ExifTool, or returns `MetaApp::disabled()` (fail-closed) if it is
-  absent or fails the pin in a release build ([desktop/src/lib.rs:463](../../desktop/src/lib.rs#L463)).
+  absent or fails the pin in a release build ([app/src/lib.rs:463](../../app/src/lib.rs#L463)).
 
 ## 3.6 Trust boundaries
 
@@ -202,7 +202,7 @@ flowchart TB
 | **TB-1** | Webview ↔ Rust core (Tauri IPC) | Plain-string paths + non-secret DTOs out; coded `ApiError` back; **passphrase** in as `IpcPassphrase` | No secret in any DTO ([crates/sv-types/src/lib.rs:5](../../crates/sv-types/src/lib.rs#L5)); passphrase zeroized at the boundary, **documented upstream residual** ([src-tauri/src/passphrase.rs](../../src-tauri/src/passphrase.rs)) |
 | **TB-2** | Core ↔ external binary (subprocess) | Plaintext/ciphertext via stdin/stdout (age); file paths via argv (exiftool) | BLAKE3 pin, `env_clear` + minimal allow-list, no shell, wall-clock timeout, fresh working dir |
 | **TB-3** | Core ↔ filesystem (at rest) | `.svault` and artifacts | Container authenticated (signed binding root) + encrypted; atomic writes; refuse-overwrite |
-| **TB-4** | Audited core ↔ webview dependency tree | (build-time) | `desktop/` excluded from workspace so `cargo deny`/`audit` gate only the audited core |
+| **TB-4** | Audited core ↔ webview dependency tree | (build-time) | `app/` excluded from workspace so `cargo deny`/`audit` gate only the audited core |
 
 A full threat model is in [06-security-design.md](06-security-design.md).
 

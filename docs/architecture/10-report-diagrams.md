@@ -53,13 +53,13 @@ and exposes **38 IPC commands**; secrets never cross the IPC boundary.
 
 ```mermaid
 flowchart TB
-    subgraph L1["Presentation — desktop/frontend (static withGlobalTauri)"]
+    subgraph L1["Presentation — app/frontend (static withGlobalTauri)"]
         ui["index.html · main.js · i18n.js · styles.css<br/>22 screens · name-based routing · vi/en i18n · CSP no-inline-scripts"]
     end
     subgraph L2["IPC boundary"]
         ipc["Tauri invoke · 38 commands · coded ApiError (oracle-safe)<br/>IpcPassphrase (zeroizing) · paths cross, never secret bytes"]
     end
-    subgraph L3["Composition root — desktop/src/lib.rs + sv-app (src-tauri)"]
+    subgraph L3["Composition root — app/src/lib.rs + sv-app (src-tauri)"]
         cr["run() / Builder · binary resolve + BLAKE3 hash-pin · fail-closed"]
         ms1["state: Backend<br/>(vault)"]
         ms2["state: Platform"]

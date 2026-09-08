@@ -1,6 +1,6 @@
 [package]
 name = "sv-app"
-description = "Application/IPC command surface + composition root. Backend-only (no `tauri` dep); the Tauri runtime shell lives in the workspace-excluded desktop/ crate."
+description = "Application/IPC command surface + composition root. Backend-only (no `tauri` dep); the Tauri runtime shell lives in the workspace-excluded app/ crate."
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -15,6 +15,9 @@ sv-core = { path = "../crates/sv-core" }
 sv-crypto-traits = { path = "../crates/sv-crypto-traits" }
 sv-crypto = { path = "../crates/sv-crypto" }
 sv-age = { path = "../crates/sv-age" }
+# Pure-Rust age adapter — the mobile payload cipher (no subprocess). Always compiled; the
+# composition root chooses which cipher to instantiate per platform.
+sv-age-rs = { path = "../crates/sv-age-rs" }
 # Vault-free file-level crypto services (Integrity + Cryptography modules).
 sv-platform = { path = "../crates/sv-platform" }
 # Steganography module (Hide / Extract / Detect over image covers; encrypt-then-embed).

@@ -18,14 +18,14 @@ those procedures can run, and the exact pre-flight verification that gates a pub
 
 These are independent of signing but block a *bundle* regardless:
 
-- [x] **`bundle.active` is already `true`** in [`desktop/tauri.conf.json`](../desktop/tauri.conf.json)
+- [x] **`bundle.active` is already `true`** in [`app/tauri.conf.json`](../app/tauri.conf.json)
       — bundling is enabled, so `cargo tauri build` produces the app package (with the pinned `age`
       toolchain and ExifTool shipped via `bundle.resources: ["binaries/**/*"]`). Icons are wired:
-      `bundle.icon` references the real `.png`/`.icns`/`.ico` set in `desktop/icons/` (an **interim**
+      `bundle.icon` references the real `.png`/`.icns`/`.ico` set in `app/icons/` (an **interim**
       brand set; final branding still pending). The emitted bundle is **unsigned** until the rest of
       this checklist is met — do not distribute it.
 - [ ] **Place the pinned `age` / `age-keygen` binaries** per [DEPLOYMENT.md §2.3](DEPLOYMENT.md)
-      (acquire → verify provenance → place under `desktop/binaries/` → BLAKE3-pin). A *release*
+      (acquire → verify provenance → place under `app/binaries/` → BLAKE3-pin). A *release*
       build refuses to run unpinned; today's local builds emit the DEV-UNPINNED warning.
 - [ ] Decide architectures/targets to ship (macOS arm64 + x86_64, Windows x64) — see
       [DEPLOYMENT.md §7](DEPLOYMENT.md).
@@ -56,7 +56,7 @@ These are independent of signing but block a *bundle* regardless:
       (a) sign them in a pre-bundle step with the same Developer ID *before* Tauri signs the app, **or**
       (b) migrate them to `bundle.externalBin` (sidecars) — a **tracked follow-up**, not a
       release-day change (it renames binaries with the target triple and requires updating
-      `resolve_binary` in [`desktop/src/lib.rs`](../desktop/src/lib.rs)).
+      `resolve_binary` in [`app/src/lib.rs`](../app/src/lib.rs)).
 
 ### Pre-flight verification (must all pass)
 - [ ] `codesign --verify --deep --strict "Secure Vault.app"` → no errors

@@ -44,13 +44,13 @@ App ..> Net : NO network access
 ```plantuml
 @startuml
 top to bottom direction
-package "Presentation — desktop/frontend (static withGlobalTauri)" {
+package "Presentation — app/frontend (static withGlobalTauri)" {
   rectangle "index.html · main.js · i18n.js · styles.css\n22 screens · name-based routing · vi/en · CSP no-inline-scripts" as UI
 }
 package "IPC boundary" {
   rectangle "Tauri invoke · 38 commands · coded ApiError (oracle-safe)\nIpcPassphrase (zeroizing) · paths cross, never secret bytes" as IPC
 }
-package "Composition root — desktop/src/lib.rs + sv-app" {
+package "Composition root — app/src/lib.rs + sv-app" {
   rectangle "run() / Builder · binary resolve + BLAKE3 hash-pin · fail-closed" as CR
   rectangle "Backend (vault)" as MS1
   rectangle "Platform" as MS2
