@@ -13,6 +13,7 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
+from ten_sang_kien import TEN_SANG_KIEN  # noqa: E402
 from dinh_dang import (  # noqa: E402
     bang, bullet, chu_ky, danh_so_trang, dat_lai_dem, dong_dien, h1, h2,
     khung_nhan_manh, new_document, o_danh_dau, para, rich, tieuDeChinh,
@@ -33,8 +34,7 @@ _arm = KQ.get("arm64_loi_mat_ma") or {}
 _iva = KQ.get("interop_age") or {}
 _ivv = KQ.get("interop_vault") or {}
 
-TEN_SK = ("SecureVault Mobile — Ứng dụng bảo vệ dữ liệu nhạy cảm trên thiết bị Android "
-          "hoạt động hoàn toàn ngoại tuyến, phục vụ công tác và huấn luyện an toàn thông tin")
+TEN_SK = TEN_SANG_KIEN
 LINH_VUC = ("An toàn thông tin trên không gian mạng; bảo vệ dữ liệu trên thiết bị di động; "
             "công nghệ thông tin phục vụ đào tạo – huấn luyện")
 
@@ -181,15 +181,16 @@ for t in [
 
 h2(doc, "3. Hiệu quả về quốc phòng – an ninh và xã hội")
 for t in [
-    "Góp phần bảo đảm an toàn cho dữ liệu nội bộ phát sinh trong công tác và huấn luyện khi "
-    "được lưu trữ, sử dụng trên thiết bị di động có tính cơ động cao.",
+    "Giảm rủi ro lộ lọt trong tình huống khẩn cấp, bất khả kháng buộc phải chuyển gấp tài "
+    "liệu qua không gian mạng: tệp được mã hoá, ký số và làm sạch siêu dữ liệu trước khi rời "
+    "thiết bị, nên nếu bị chặn bắt trên đường truyền thì nội dung vẫn không đọc được.",
     "Bảo đảm chủ quyền dữ liệu: toàn bộ quá trình xử lý diễn ra trên thiết bị, khoá do người "
     "dùng nắm giữ, sản phẩm không có thành phần máy chủ và không khai báo quyền truy cập "
     "mạng nên về mặt kỹ thuật không thể gửi dữ liệu ra ngoài.",
     "Giảm phụ thuộc vào phần mềm bảo mật nước ngoài mã nguồn đóng: toàn bộ thiết kế và mã "
     "nguồn do tác giả xây dựng, đơn vị kiểm soát được và có bộ kiểm thử để kiểm chứng lại.",
-    "Hạn chế thói quen chuyển tài liệu nội bộ qua ứng dụng nhắn tin hoặc lưu trữ đám mây "
-    "không kiểm soát, bằng cách cung cấp phương án thay thế thuận tiện ngay trên máy.",
+    "Hạn chế thói quen gửi tệp ở dạng nguyên bản qua ứng dụng nhắn tin hoặc lưu trữ đám mây "
+    "không kiểm soát, bằng cách cung cấp ngay trên máy một phương án bọc bảo vệ thuận tiện.",
     "Nâng cao nhận thức và kỹ năng an toàn thông tin cho cán bộ, học viên thông qua việc trực "
     "tiếp sử dụng và quan sát kết quả của các biện pháp bảo vệ dữ liệu.",
     "Phục vụ trực tiếp công tác đào tạo: sản phẩm là học cụ minh hoạ nhiều nội dung trong "

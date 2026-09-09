@@ -27,6 +27,7 @@ from dinh_dang import (  # noqa: E402
     khung_nhan_manh, muc_luc, new_document, ngat_trang, para, placeholder_hinh, rich,
     tieuDeChinh, tieu_de_quan_doi,
 )
+from ten_sang_kien import TEN_SANG_KIEN  # noqa: E402
 from noi_dung_chuc_nang import NHOM_CHUC_NANG  # noqa: E402
 from noi_dung_giao_dien import (  # noqa: E402
     DANH_MUC_MAN_HINH, GIAO_DIEN_NHOM, LENH_MUC_UNG_DUNG,
@@ -74,8 +75,7 @@ _iva = KQ.get("interop_age") or {}
 _ivv = KQ.get("interop_vault") or {}
 SO_DOI_CHUNG = _iva.get("passed", 0) + _ivv.get("passed", 0)
 
-TEN_SK = ("SecureVault Mobile — Ứng dụng bảo vệ dữ liệu nhạy cảm trên thiết bị Android "
-          "hoạt động hoàn toàn ngoại tuyến, phục vụ công tác và huấn luyện an toàn thông tin")
+TEN_SK = TEN_SANG_KIEN
 
 doc = new_document()
 dat_lai_dem()
@@ -88,11 +88,14 @@ tieuDeChinh(doc, "THUYẾT MINH SÁNG KIẾN/GIẢI PHÁP")
 # =====================================================================
 h1(doc, "TÓM TẮT")
 para(doc,
-     "Vấn đề. Điện thoại đã trở thành nơi lưu và trao đổi nhiều dữ liệu nội bộ phát sinh "
-     "trong công tác và huấn luyện: giáo án, đề bài và đáp án thực hành, kết quả nghiên cứu "
-     "chưa công bố, ảnh tư liệu. Các biện pháp sẵn có hoặc chỉ bảo vệ khi máy tắt, hoặc là "
-     "phần mềm mã nguồn đóng không kiểm chứng được, hoặc là công cụ mạnh nhưng không có bản "
-     "dùng được trên điện thoại.")
+     "Vấn đề. Việc bảo vệ dữ liệu bằng mật mã là nội dung cốt lõi trong chương trình đào tạo "
+     "an toàn thông tin, nhưng học viên hầu như chỉ được tiếp cận qua lý thuyết và qua các "
+     "công cụ trên máy tính, trong khi thiết bị di động mới là môi trường các em sẽ gặp nhiều "
+     "nhất sau khi ra trường. Ở chiều công tác, khi phát sinh tình huống bất khả kháng buộc "
+     "phải chuyển gấp một số tài liệu đặc thù qua không gian mạng, cán bộ thiếu một công cụ "
+     "tin cậy, kiểm chứng được để tự trang bị thêm lớp bảo vệ cho tệp trước khi gửi. Các biện "
+     "pháp sẵn có hoặc chỉ bảo vệ khi máy tắt, hoặc là phần mềm mã nguồn đóng không kiểm "
+     "chứng được, hoặc là công cụ mạnh nhưng không có bản dùng được trên điện thoại.")
 para(doc,
      "Nguyên nhân kỹ thuật của khoảng trống. Các công cụ mật mã tin cậy hiện nay phần lớn "
      "được phân phối dưới dạng tệp nhị phân chạy độc lập. Hệ điều hành di động không cho ứng "
@@ -145,23 +148,36 @@ h2(doc, "1. Hiện trạng giải pháp đã biết")
 
 h3(doc, "1.1. Bối cảnh và nhu cầu thực tiễn")
 para(doc,
-     "Điện thoại thông minh hiện là công cụ làm việc thường xuyên của cán bộ, giảng viên và "
-     "học viên. Tính cơ động của thiết bị mang lại hiệu quả rõ rệt trong công tác, giảng dạy "
-     "và nghiên cứu, nhưng đồng thời làm thay đổi căn bản phạm vi tồn tại của dữ liệu: nhiều "
-     "tài liệu trước đây chỉ nằm trong máy tính cố định nay được sao chép, xem và trao đổi "
-     "ngay trên thiết bị cá nhân.")
+     "Quy định của đơn vị không cho phép đưa tài liệu mật và tài liệu nội bộ lên thiết bị di "
+     "động. Tác giả xác định rõ ranh giới này ngay từ đầu, và sáng kiến được xây dựng để phục "
+     "vụ đúng hai nhu cầu nằm trong ranh giới đó.")
 para(doc,
-     "Trong quá trình công tác và huấn luyện an toàn thông tin, thực tế phát sinh nhiều loại "
-     "dữ liệu cần được bảo vệ ở mức cao hơn dữ liệu thông thường: giáo án và tài liệu biên "
-     "soạn nội bộ, đề bài và đáp án các bài thực hành, kết quả nghiên cứu chưa công bố, ảnh "
-     "và tư liệu phục vụ huấn luyện, dữ liệu trao đổi nghiệp vụ giữa các bộ phận. Việc lộ, "
-     "lọt những dữ liệu này tuy không nhất thiết cấu thành sự cố ở mức cao nhất nhưng vẫn ảnh "
-     "hưởng đến chất lượng công tác, tính khách quan trong đánh giá và uy tín của đơn vị.")
+     "Nhu cầu thứ nhất — huấn luyện. Bảo vệ dữ liệu bằng mật mã là nội dung cốt lõi của "
+     "chương trình đào tạo an toàn thông tin. Nhưng học viên chủ yếu tiếp cận nội dung này "
+     "qua lý thuyết và qua công cụ chạy trên máy tính, trong khi thiết bị di động mới là môi "
+     "trường phổ biến nhất mà các em sẽ phải bảo vệ dữ liệu sau khi ra trường. Khoảng cách "
+     "giữa điều được học và môi trường thực tế làm giảm hiệu quả huấn luyện: học viên biết "
+     "nguyên lý nhưng chưa từng thao tác, chưa từng nhìn thấy một hệ thống an toàn hoàn "
+     "chỉnh vận hành ra sao và vì sao nó được thiết kế như vậy.")
+para(doc,
+     "Nhu cầu thứ hai — tình huống khẩn cấp, bất khả kháng. Trong công tác vẫn phát sinh "
+     "trường hợp một số tài liệu đặc thù buộc phải chuyển gấp qua không gian mạng, khi không "
+     "còn phương án nào khác kịp thời hạn. Đây là tình huống rủi ro nhất: tệp rời khỏi tầm "
+     "kiểm soát của người gửi và đi qua hạ tầng không do đơn vị quản lý. Cán bộ cần một công "
+     "cụ tin cậy, kiểm chứng được để tự trang bị thêm lớp bảo vệ cho tệp *trước khi* gửi — "
+     "mã hoá bằng mật khẩu, ký số để bên nhận xác minh nguồn gốc, xoá siêu dữ liệu ẩn, và "
+     "khi cần thì chia bí mật thành nhiều mảnh gửi theo các kênh khác nhau. Mục tiêu là nếu "
+     "tệp bị chặn bắt trên đường truyền thì nội dung vẫn không đọc được.")
+para(doc,
+     "Cần nói rõ phạm vi: sáng kiến là công cụ hỗ trợ giảm rủi ro lộ lọt trong tình huống đã "
+     "buộc phải truyền, chứ không phải căn cứ để nới lỏng bất kỳ quy định nào về bảo vệ bí "
+     "mật. Việc có được phép truyền một tài liệu cụ thể hay không vẫn hoàn toàn do quy định "
+     "hiện hành và người có thẩm quyền quyết định.")
 para(doc, "Bốn nhóm nguy cơ nổi bật được trình bày ở Hình 1.")
 
 if (PNG / "H1-bai-toan-thuc-te.png").exists():
     hinh(doc, PNG / "H1-bai-toan-thuc-te.png",
-         "Bài toán bảo vệ dữ liệu nhạy cảm trên thiết bị di động", 15.5)
+         "Hai nhu cầu thực tiễn mà sáng kiến hướng tới và bốn nhóm nguy cơ tương ứng", 15.5)
 
 h3(doc, "1.2. Các nhóm giải pháp đã biết và nhược điểm chưa được khắc phục")
 para(doc,
@@ -243,7 +259,8 @@ for i, t in enumerate([
     "Gộp nhiều nghiệp vụ bảo vệ dữ liệu trong một ứng dụng thống nhất, thay vì phải dùng "
     "nhiều công cụ rời rạc.",
     "Tệp tạo ra tương thích với chuẩn mở, không khoá người dùng vào một sản phẩm duy nhất.",
-    "Đồng thời sử dụng được làm học cụ trực quan cho giảng dạy an toàn thông tin.",
+    "Sử dụng được làm học cụ trực quan cho giảng dạy an toàn thông tin, đồng thời vẫn là "
+    "công cụ đạt chuẩn kỹ thuật chứ không phải bản mô phỏng rút gọn.",
 ], 1):
     bullet(doc, t, bold_head=f"Yêu cầu {i}. ")
 
@@ -251,23 +268,26 @@ for i, t in enumerate([
 ngat_trang(doc)
 h2(doc, "2. Mục đích của giải pháp")
 para(doc,
-     "Sáng kiến nhằm xây dựng một ứng dụng Android giúp người dùng tự bảo vệ dữ liệu nhạy cảm "
-     "ngay trên thiết bị của mình, đồng thời trở thành học cụ phục vụ giảng dạy và huấn luyện "
-     "an toàn thông tin. Các mục tiêu cụ thể như sau.")
+     "Sáng kiến nhằm xây dựng một bộ công cụ trên Android phục vụ huấn luyện an toàn thông "
+     "tin, đồng thời đủ tin cậy để cán bộ trang bị thêm lớp bảo vệ cho tệp khi phát sinh tình "
+     "huống khẩn cấp, bất khả kháng phải chuyển gấp tài liệu qua không gian mạng. Các mục "
+     "tiêu cụ thể như sau.")
 for i, (ten, mo_ta) in enumerate([
-    ("Bảo vệ dữ liệu tại chỗ",
-     "Cung cấp cơ chế mã hoá, ký số, kiểm tra toàn vẹn, chia khoá phục hồi và xử lý siêu dữ "
-     "liệu hoạt động hoàn toàn trên thiết bị, không phụ thuộc kết nối mạng hay dịch vụ bên "
-     "ngoài."),
+    ("Phục vụ huấn luyện là mục tiêu hàng đầu",
+     "Mỗi nhóm chức năng tương ứng với một nguyên lý an toàn thông tin cụ thể trong chương "
+     "trình, cho phép giảng viên minh hoạ trực quan và xây dựng bài thực hành có kết quả "
+     "quan sát được ngay trên thiết bị mà học viên sẽ gặp nhiều nhất sau khi ra trường."),
+    ("Bọc bảo vệ cho tệp trước khi buộc phải truyền",
+     "Cung cấp cơ chế mã hoá, ký số, kiểm tra toàn vẹn, chia bí mật theo ngưỡng và xoá siêu "
+     "dữ liệu, hoạt động hoàn toàn trên thiết bị, không phụ thuộc kết nối mạng hay dịch vụ "
+     "bên ngoài — để trong tình huống bất khả kháng, tệp rời thiết bị ở dạng bên chặn bắt "
+     "không đọc được."),
     ("Bảo đảm chủ quyền dữ liệu",
      "Khoá và dữ liệu do người dùng nắm giữ hoàn toàn; ứng dụng không khai báo quyền truy cập "
      "mạng nên về mặt kỹ thuật không thể gửi dữ liệu ra ngoài."),
     ("Kiểm chứng được",
      f"Toàn bộ mã nguồn mở kèm {N_TEST} hàm kiểm thử tự động, cho phép kiểm tra lại các tuyên "
      "bố kỹ thuật thay vì phải tin vào lời khẳng định."),
-    ("Phục vụ đào tạo",
-     "Mỗi nhóm chức năng tương ứng với một nguyên lý an toàn thông tin cụ thể, cho phép giảng "
-     "viên minh hoạ trực quan và xây dựng bài thực hành có kết quả quan sát được ngay."),
     ("Sử dụng được ngay",
      "Giao diện tiếng Việt, thao tác theo từng bước, thuật ngữ kỹ thuật đặt trong mục mở rộng "
      "để không gây quá tải cho người mới."),
@@ -730,12 +750,14 @@ para(doc,
      "Ngoài các điểm mới về kỹ thuật, sáng kiến còn có những điểm sáng tạo trong cách tiếp cận "
      "và cách tổ chức sản phẩm.")
 for i, (ten, mo_ta) in enumerate([
-    ("Một sản phẩm phục vụ đồng thời hai mục đích khác nhau",
-     "Thông thường công cụ nghiệp vụ và học cụ giảng dạy là hai sản phẩm riêng. Tác giả thiết "
-     "kế sản phẩm sao cho mỗi nhóm chức năng vừa giải quyết một nhu cầu công tác có thật, vừa "
-     "minh hoạ trực quan một nguyên lý trong chương trình an toàn thông tin. Việc học viên "
-     "dùng chính công cụ mình đang học để bảo vệ dữ liệu của mình tạo ra động lực học tập mà "
-     "bài giảng lý thuyết khó có được."),
+    ("Một sản phẩm phục vụ đồng thời huấn luyện và tình huống khẩn cấp",
+     "Thông thường học cụ giảng dạy và công cụ dùng được trong tình huống thật là hai sản "
+     "phẩm riêng: học cụ thì đơn giản hoá đến mức không dùng thật được, còn công cụ thật thì "
+     "không giải thích gì. Tác giả thiết kế sao cho mỗi nhóm chức năng vừa minh hoạ trực quan "
+     "một nguyên lý trong chương trình an toàn thông tin, vừa đủ tin cậy để dùng khi phát "
+     "sinh tình huống bất khả kháng phải chuyển gấp tài liệu qua không gian mạng. Việc học "
+     "viên thao tác trên chính công cụ đạt chuẩn kỹ thuật, chứ không phải bản mô phỏng, tạo "
+     "ra chất lượng huấn luyện mà bài giảng lý thuyết khó có được."),
     ("Chuyển giới hạn của công cụ thành nội dung huấn luyện",
      "Chức năng phát hiện dữ liệu ẩn được thiết kế để báo kết quả kèm lời giải thích rằng “mức "
      "thấp nghĩa là các phép thử này không phát hiện được”, chứ không phải “ảnh sạch”. Cách "
@@ -784,17 +806,21 @@ bang(
     ["Đối tượng", "Cách sử dụng", "Điều kiện cần"],
     [
         ["Giảng viên an toàn thông tin",
-         "Bảo vệ giáo án, đề bài và đáp án thực hành, kết quả nghiên cứu chưa công bố; dùng "
-         "làm học cụ minh hoạ trực tiếp trên lớp",
+         "Dùng làm học cụ minh hoạ trực tiếp trên lớp: mỗi chức năng tương ứng một nguyên lý "
+         "trong chương trình, thao tác được ngay trên thiết bị trước mặt học viên",
          "Điện thoại Android; không cần hạ tầng bổ sung"],
         ["Học viên",
          "Thực hành các bài về mã hoá, chữ ký số, chia sẻ bí mật ngưỡng, kiểm tra toàn vẹn, "
-         "giấu tin, phát hiện giấu tin và xử lý siêu dữ liệu",
+         "giấu tin, phát hiện giấu tin và xử lý siêu dữ liệu; tự bảo vệ dữ liệu cá nhân của "
+         "mình để hình thành thói quen nghề nghiệp",
          "Điện thoại Android của cá nhân"],
-        ["Cán bộ, nhân viên trong đơn vị",
-         "Bảo vệ tài liệu nghiệp vụ nội bộ khi mang theo trên thiết bị di động; kiểm tra tính "
-         "toàn vẹn và nguồn gốc của tệp nhận được",
-         "Điện thoại Android; hướng dẫn sử dụng cơ bản khoảng 30 phút"],
+        ["Cán bộ trong tình huống khẩn cấp, bất khả kháng",
+         "Khi buộc phải chuyển gấp một số tài liệu đặc thù qua không gian mạng: mã hoá tệp "
+         "bằng mật khẩu, ký số để bên nhận xác minh nguồn gốc, xoá siêu dữ liệu ẩn, chia bí "
+         "mật thành nhiều mảnh gửi theo các kênh khác nhau — để tệp bị chặn bắt trên đường "
+         "truyền thì nội dung vẫn không đọc được",
+         "Điện thoại Android; hướng dẫn sử dụng cơ bản khoảng 30 phút; tuân thủ quy định "
+         "hiện hành về loại tài liệu được phép truyền"],
     ],
     widths=[3.6, 7.4, 4.5],
 )
@@ -905,6 +931,12 @@ bang(
          "Chức năng xoá siêu dữ liệu loại bỏ trước khi chia sẻ"],
         ["Lộ tệp do gửi nhầm qua ứng dụng khác", "Có, một phần",
          "Nếu gửi tệp két thì bên nhận vẫn cần mật khẩu; nếu gửi tệp đã trích xuất thì không"],
+        ["Tệp bị chặn bắt khi buộc phải truyền gấp qua không gian mạng", "Có",
+         "Tệp truyền đi ở dạng đã mã hoá có xác thực; bên chặn bắt thu được bản mã nhưng "
+         "không có mật khẩu thì không đọc được nội dung"],
+        ["Bên nhận không chắc tệp có đúng do người gửi tạo ra không", "Có",
+         "Chữ ký số cho phép bên nhận tự xác minh nguồn gốc và tính toàn vẹn, không cần tin "
+         "vào kênh truyền"],
         ["Thiết bị đã bị chiếm quyền điều khiển ở mức hệ điều hành", "Không",
          "Phần mềm độc hại có quyền cao đọc được bộ nhớ tiến trình khi két đang mở"],
         ["Người dùng quên mật khẩu và không tạo mảnh phục hồi", "Không",
@@ -917,15 +949,16 @@ bang(
 
 para(doc, "Hiệu quả về quốc phòng – an ninh và xã hội", bold=True, indent=False)
 for t in [
-    "Góp phần bảo đảm an toàn cho dữ liệu nội bộ phát sinh trong công tác và huấn luyện khi "
-    "được lưu trữ, sử dụng trên thiết bị di động có tính cơ động cao.",
+    "Giảm rủi ro lộ lọt trong tình huống khẩn cấp, bất khả kháng buộc phải chuyển gấp tài "
+    "liệu qua không gian mạng: tệp được mã hoá, ký số và làm sạch siêu dữ liệu trước khi rời "
+    "thiết bị, nên nếu bị chặn bắt trên đường truyền thì nội dung vẫn không đọc được.",
     "Bảo đảm chủ quyền dữ liệu: toàn bộ quá trình xử lý diễn ra trên thiết bị, khoá do người "
     "dùng nắm giữ, sản phẩm không có thành phần máy chủ và không khai báo quyền truy cập "
     "mạng nên về mặt kỹ thuật không thể gửi dữ liệu ra ngoài.",
     "Giảm phụ thuộc vào phần mềm bảo mật nước ngoài mã nguồn đóng: toàn bộ thiết kế và mã "
     "nguồn do tác giả xây dựng, đơn vị kiểm soát và kiểm chứng lại được.",
-    "Hạn chế thói quen chuyển tài liệu nội bộ qua ứng dụng nhắn tin hoặc lưu trữ đám mây "
-    "không kiểm soát, bằng cách cung cấp phương án thay thế thuận tiện ngay trên máy.",
+    "Hạn chế thói quen gửi tệp ở dạng nguyên bản qua ứng dụng nhắn tin hoặc lưu trữ đám mây "
+    "không kiểm soát, bằng cách cung cấp ngay trên máy một phương án bọc bảo vệ thuận tiện.",
     "Nâng cao nhận thức và kỹ năng an toàn thông tin cho cán bộ, học viên thông qua việc trực "
     "tiếp sử dụng và quan sát kết quả của các biện pháp bảo vệ dữ liệu.",
     "Góp phần đào tạo nguồn nhân lực làm chủ công nghệ bảo mật: học viên không chỉ dùng công "
@@ -934,11 +967,15 @@ for t in [
     bullet(doc, t)
 
 para(doc,
-     "Tác giả xác định rõ phạm vi: sản phẩm là công cụ hỗ trợ kỹ thuật do tác giả tự xây dựng "
-     "phục vụ công tác và huấn luyện. Việc sử dụng cho bất kỳ loại tài liệu nào phải tuân thủ "
-     "quy định hiện hành của cơ quan có thẩm quyền về bảo vệ bí mật nhà nước và quy chế của "
-     "đơn vị. Hồ sơ này không đưa ra tuyên bố về việc sản phẩm được phép xử lý tài liệu thuộc "
-     "danh mục bí mật nhà nước ở cấp độ cụ thể.", italic=True)
+     "Tác giả xác định rõ phạm vi. Sản phẩm là công cụ hỗ trợ kỹ thuật do tác giả tự xây dựng, "
+     "phục vụ huấn luyện an toàn thông tin và hỗ trợ giảm rủi ro trong tình huống khẩn cấp, "
+     "bất khả kháng đã buộc phải truyền tài liệu qua không gian mạng. Sản phẩm không nhằm và "
+     "không được dùng làm căn cứ để đưa tài liệu mật hoặc tài liệu nội bộ lên thiết bị di "
+     "động — việc này bị quy định của đơn vị cấm, và sáng kiến không đề xuất thay đổi quy "
+     "định đó. Việc một tài liệu cụ thể có được phép truyền hay không vẫn hoàn toàn do quy "
+     "định hiện hành và người có thẩm quyền quyết định. Hồ sơ này không đưa ra tuyên bố về "
+     "việc sản phẩm được phép xử lý tài liệu thuộc danh mục bí mật nhà nước ở cấp độ cụ thể.",
+     italic=True)
 
 # ------------------------------------------------- 4.d
 h3(doc, "d) Mức độ triển khai, phát triển trong thời gian tới")

@@ -5,7 +5,7 @@ import sys
 import pathlib
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
-from tao_so_do import Diagram  # noqa: E402
+from tao_so_do import OUT_SVG, Diagram  # noqa: E402
 
 import json
 
@@ -31,32 +31,33 @@ made = []
 # =====================================================================
 d = Diagram(
     "H1-bai-toan-thuc-te",
-    "Hình 1. Bài toán bảo vệ dữ liệu nhạy cảm trên thiết bị di động",
+    "Hình 1. Hai nhu cầu thực tiễn mà sáng kiến hướng tới",
     1040, 560,
-    "Nguy cơ phát sinh khi dữ liệu nội bộ được lưu, chuyển và xử lý trên điện thoại",
+    "Huấn luyện an toàn thông tin và bọc bảo vệ tệp trong tình huống khẩn cấp, bất khả kháng",
 )
-d.box("nv", 60, 100, 210, 92,
-      ["Cán bộ, giảng viên,", "học viên", "sử dụng điện thoại trong", "công tác và huấn luyện"], "neutral")
-d.box("dl", 340, 100, 220, 92,
-      ["Dữ liệu cần bảo vệ", "tài liệu nghiệp vụ, giáo án,", "kết quả nghiên cứu,", "ảnh/tư liệu nội bộ"], "accent")
+d.box("nv", 60, 100, 220, 92,
+      ["Nhu cầu 1 — Huấn luyện", "học viên học mật mã trên lý", "thuyết và trên máy tính, chưa",
+       "thao tác trên thiết bị di động"], "neutral")
+d.box("dl", 340, 100, 240, 92,
+      ["Nhu cầu 2 — Tình huống khẩn cấp", "buộc phải chuyển gấp một số tài",
+       "liệu đặc thù qua không gian mạng", "khi không còn phương án khác"], "accent")
 
-d.note(520, 236, "Bốn nhóm nguy cơ khi thiếu công cụ bảo vệ tại chỗ", 14, "middle", True, "#B3403A")
+d.note(520, 246, "Bốn nhóm nguy cơ khi thiếu công cụ bảo vệ tại chỗ", 14, "middle", True, "#B3403A")
 
 d.box("r1", 60, 262, 220, 86,
-      ["1. Mất / thất lạc thiết bị", "dữ liệu ở dạng rõ có thể", "bị đọc trực tiếp"], "danger")
+      ["1. Tệp bị chặn bắt", "trên đường truyền qua", "hạ tầng không kiểm soát"], "danger")
 d.box("r2", 300, 262, 220, 86,
-      ["2. Chuyển qua dịch vụ ngoài", "ứng dụng nhắn tin, lưu trữ", "đám mây không kiểm soát"], "danger")
+      ["2. Bên nhận không xác", "minh được nguồn gốc", "và tính toàn vẹn của tệp"], "danger")
 d.box("r3", 540, 262, 220, 86,
       ["3. Siêu dữ liệu ẩn", "toạ độ GPS, thiết bị,", "tác giả đi kèm tệp"], "danger")
 d.box("r4", 780, 262, 200, 86,
       ["4. Phụ thuộc bên thứ ba", "khoá và dữ liệu do", "nhà cung cấp nắm giữ"], "danger")
 
 d.box("nc", 300, 400, 460, 78,
-      ["Nhu cầu: công cụ bảo vệ dữ liệu chạy hoàn toàn trên thiết bị",
-       "không phụ thuộc mạng, không phụ thuộc dịch vụ bên ngoài,",
-       "kiểm soát được mã nguồn và có thể dùng để huấn luyện"], "core")
+      ["Nhu cầu: bộ công cụ chạy hoàn toàn trên thiết bị,",
+       "không phụ thuộc mạng và dịch vụ bên ngoài, kiểm soát được",
+       "mã nguồn, vừa dùng huấn luyện vừa đủ tin cậy khi cần dùng thật"], "core")
 
-d.arrow(270, 146, 340, 146)
 d.arrow(450, 192, 170, 262)
 d.arrow(450, 192, 410, 262)
 d.arrow(450, 192, 650, 262)
@@ -264,4 +265,40 @@ d.note(60, 596, "Nguyên tắc của hồ sơ: mỗi tuyên bố kỹ thuật đ
        12.5, "start", True, "#12325B")
 made.append(d.write())
 
-print("Đã sinh:", ", ".join(made))
+print("Đã sinh SVG + drawio:", ", ".join(made))
+
+# ---------------------------------------------------------------------------
+# Kết xuất PNG để chèn vào DOCX.
+#
+# Bước này trước đây làm thủ công ngoài kịch bản, và đó là một lỗi thật: sửa sơ đồ trong
+# sinh-so-do.py thì SVG đổi nhưng PNG trong hồ sơ vẫn là bản cũ, tức là văn bản mô tả một
+# đằng còn hình vẽ một nẻo. Nay nằm trong cùng kịch bản nên không thể quên.
+# ---------------------------------------------------------------------------
+import re  # noqa: E402
+import subprocess  # noqa: E402
+import tempfile  # noqa: E402
+
+PNG = OUT_SVG.parent / "png"
+PNG.mkdir(parents=True, exist_ok=True)
+TY_LE = 2   # kết xuất ở mật độ điểm ảnh gấp đôi cho nét khi in
+
+for ten in made:
+    svg = OUT_SVG / f"{ten}.svg"
+    noi_dung = svg.read_text(encoding="utf-8")
+    rong = int(re.search(r'width="(\d+)"', noi_dung).group(1))
+    cao = int(re.search(r'height="(\d+)"', noi_dung).group(1))
+    with tempfile.TemporaryDirectory() as tmp:
+        # Nhúng SVG vào một trang trắng không lề để ảnh chụp khít đúng khung sơ đồ.
+        trang = pathlib.Path(tmp) / "trang.html"
+        trang.write_text(
+            "<style>html,body{margin:0;padding:0;background:#fff}</style>" + noi_dung,
+            encoding="utf-8")
+        subprocess.run(
+            ["/usr/bin/google-chrome", "--headless=new", "--disable-gpu", "--no-sandbox",
+             "--hide-scrollbars", "--force-color-profile=srgb",
+             f"--force-device-scale-factor={TY_LE}",
+             f"--window-size={rong},{cao}", "--virtual-time-budget=3000",
+             f"--screenshot={PNG / (ten + '.png')}", f"file://{trang}"],
+            check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        )
+    print(f"  PNG {ten}  {rong * TY_LE}x{cao * TY_LE}")

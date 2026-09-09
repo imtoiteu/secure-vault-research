@@ -10,6 +10,8 @@ Quy ước trình bày (theo thông lệ văn bản hành chính Việt Nam):
   * tiêu đề mục in đậm, đánh số theo cấp
   * bảng có tiêu đề bảng phía trên, hình có chú thích phía dưới
 """
+import re
+
 
 from docx import Document
 from docx.enum.section import WD_SECTION
@@ -84,6 +86,20 @@ def _run(p, text, *, bold=False, italic=False, size=None, colour=None, font=None
     return r
 
 
+def _nhan_manh(p, text, *, bold=False, italic=False, colour=None):
+    """Ghi văn bản, chuyển cặp dấu sao *…* thành chữ nghiêng.
+
+    Các đoạn nội dung dài được viết ở dạng chuỗi Python thuần, nên cách duy nhất để đánh dấu
+    nhấn mạnh ngay trong chuỗi là dùng cặp dấu sao. Nếu không xử lý ở đây thì dấu sao sẽ in
+    nguyên vào văn bản — lỗi trình bày thấy rõ trên bản in.
+    """
+    for i, doan in enumerate(re.split(r"\*([^*\n]+)\*", text)):
+        if not doan:
+            continue
+        # Các phần tử ở vị trí lẻ là nội dung nằm giữa hai dấu sao.
+        _run(p, doan, bold=bold, italic=italic or i % 2 == 1, colour=colour)
+
+
 # ------------------------------------------------------------------ khối văn bản
 def quocHieu(doc):
     """Quốc hiệu — tiêu ngữ."""
@@ -149,7 +165,7 @@ def para(doc, text, *, bold=False, italic=False, align=None, indent=True, colour
         p.alignment = align
     if indent:
         p.paragraph_format.first_line_indent = Cm(0.8)
-    _run(p, text, bold=bold, italic=italic, colour=colour)
+    _nhan_manh(p, text, bold=bold, italic=italic, colour=colour)
     return p
 
 
@@ -167,7 +183,7 @@ def rich(doc, parts, *, indent=True, align=None):
         if kind == "code":
             _run(p, text, font="Consolas", size=Pt(11.5))
         else:
-            _run(p, text, bold="b" in kind, italic="i" in kind)
+            _nhan_manh(p, text, bold="b" in kind, italic="i" in kind)
     return p
 
 
@@ -177,7 +193,7 @@ def bullet(doc, text, *, level=0, bold_head=None):
     p.paragraph_format.left_indent = Cm(0.8 + 0.7 * level)
     if bold_head:
         _run(p, bold_head, bold=True)
-    _run(p, text)
+    _nhan_manh(p, text)
     return p
 
 

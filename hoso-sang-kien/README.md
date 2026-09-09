@@ -1,7 +1,16 @@
 # Hồ sơ sáng kiến — SecureVault Mobile (Android)
 
-Thư mục này chứa toàn bộ hồ sơ đề nghị công nhận sáng kiến cho **SecureVault Mobile**,
-ứng dụng bảo vệ dữ liệu nhạy cảm trên thiết bị Android hoạt động hoàn toàn ngoại tuyến.
+Thư mục này chứa toàn bộ hồ sơ đề nghị công nhận sáng kiến cho **SecureVault Mobile** —
+*Bộ công cụ bảo mật và quyền riêng tư dữ liệu ngoại tuyến trên thiết bị di động phục vụ huấn
+luyện an toàn thông tin*.
+
+> **Phạm vi sử dụng mà hồ sơ mô tả** đúng hai kịch bản, không hơn:
+> 1. **Huấn luyện** học viên về an toàn thông tin và bảo mật dữ liệu — sản phẩm là học cụ.
+> 2. **Tình huống khẩn cấp, bất khả kháng** buộc phải chuyển gấp một số tài liệu đặc thù qua
+>    không gian mạng — sản phẩm giúp cán bộ bọc thêm lớp bảo vệ cho tệp trước khi gửi.
+>
+> Hồ sơ **không** mô tả kịch bản cất giữ tài liệu mật hay tài liệu nội bộ trên thiết bị di
+> động: quy định của đơn vị cấm việc này, và sáng kiến không đề xuất thay đổi quy định đó.
 
 > **Cấu trúc hồ sơ** bám theo tệp mẫu `Mau_ho_so_sang_kien_cai_tien.doc` của Phòng Khoa học
 > Quân sự: khối tiêu đề hai cột, các mục A/B/C của Đơn, và khung mục B của Thuyết minh

@@ -1,9 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1040" height="560" viewBox="0 0 1040 560" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">
 <rect width="1040" height="560" fill="#FFFFFF"/>
 <defs><marker id="ah" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#55607A"/></marker></defs>
-<text x="520.0" y="34" font-size="20" font-weight="700" text-anchor="middle" fill="#12203A">Hình 1. Bài toán bảo vệ dữ liệu nhạy cảm trên thiết bị di động</text>
-<text x="520.0" y="56" font-size="13" text-anchor="middle" fill="#5A6779">Nguy cơ phát sinh khi dữ liệu nội bộ được lưu, chuyển và xử lý trên điện thoại</text>
-<line x1="270" y1="146" x2="340" y2="146" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
+<text x="520.0" y="34" font-size="20" font-weight="700" text-anchor="middle" fill="#12203A">Hình 1. Hai nhu cầu thực tiễn mà sáng kiến hướng tới</text>
+<text x="520.0" y="56" font-size="13" text-anchor="middle" fill="#5A6779">Huấn luyện an toàn thông tin và bọc bảo vệ tệp trong tình huống khẩn cấp, bất khả kháng</text>
 <line x1="450" y1="192" x2="170" y2="262" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
 <line x1="450" y1="192" x2="410" y2="262" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
 <line x1="450" y1="192" x2="650" y2="262" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
@@ -12,24 +11,24 @@
 <line x1="410" y1="348" x2="500" y2="400" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
 <line x1="650" y1="348" x2="560" y2="400" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
 <line x1="880" y1="348" x2="600" y2="400" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
-<rect x="60" y="100" width="210" height="92" rx="7" fill="#F2F3F5" stroke="#6B7280" stroke-width="1.6"/>
-<text x="165.0" y="124.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#1F2933">Cán bộ, giảng viên,</text>
-<text x="165.0" y="141.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">học viên</text>
-<text x="165.0" y="158.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">sử dụng điện thoại trong</text>
-<text x="165.0" y="175.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">công tác và huấn luyện</text>
-<rect x="340" y="100" width="220" height="92" rx="7" fill="#E8EBFA" stroke="#4C51BF" stroke-width="1.6"/>
-<text x="450.0" y="124.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#242A6B">Dữ liệu cần bảo vệ</text>
-<text x="450.0" y="141.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">tài liệu nghiệp vụ, giáo án,</text>
-<text x="450.0" y="158.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">kết quả nghiên cứu,</text>
-<text x="450.0" y="175.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">ảnh/tư liệu nội bộ</text>
+<rect x="60" y="100" width="220" height="92" rx="7" fill="#F2F3F5" stroke="#6B7280" stroke-width="1.6"/>
+<text x="170.0" y="124.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#1F2933">Nhu cầu 1 — Huấn luyện</text>
+<text x="170.0" y="141.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">học viên học mật mã trên lý</text>
+<text x="170.0" y="158.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">thuyết và trên máy tính, chưa</text>
+<text x="170.0" y="175.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">thao tác trên thiết bị di động</text>
+<rect x="340" y="100" width="240" height="92" rx="7" fill="#E8EBFA" stroke="#4C51BF" stroke-width="1.6"/>
+<text x="460.0" y="124.5" font-size="13.5" font-weight="600" text-anchor="middle" fill="#242A6B">Nhu cầu 2 — Tình huống khẩn cấp</text>
+<text x="460.0" y="141.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">buộc phải chuyển gấp một số tài</text>
+<text x="460.0" y="158.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">liệu đặc thù qua không gian mạng</text>
+<text x="460.0" y="175.5" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">khi không còn phương án khác</text>
 <rect x="60" y="262" width="220" height="86" rx="7" fill="#FBE9E9" stroke="#B3403A" stroke-width="1.6"/>
-<text x="170.0" y="292.0" font-size="13.5" font-weight="600" text-anchor="middle" fill="#5F1B17">1. Mất / thất lạc thiết bị</text>
-<text x="170.0" y="309.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">dữ liệu ở dạng rõ có thể</text>
-<text x="170.0" y="326.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">bị đọc trực tiếp</text>
+<text x="170.0" y="292.0" font-size="13.5" font-weight="600" text-anchor="middle" fill="#5F1B17">1. Tệp bị chặn bắt</text>
+<text x="170.0" y="309.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">trên đường truyền qua</text>
+<text x="170.0" y="326.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">hạ tầng không kiểm soát</text>
 <rect x="300" y="262" width="220" height="86" rx="7" fill="#FBE9E9" stroke="#B3403A" stroke-width="1.6"/>
-<text x="410.0" y="292.0" font-size="13.5" font-weight="600" text-anchor="middle" fill="#5F1B17">2. Chuyển qua dịch vụ ngoài</text>
-<text x="410.0" y="309.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">ứng dụng nhắn tin, lưu trữ</text>
-<text x="410.0" y="326.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">đám mây không kiểm soát</text>
+<text x="410.0" y="292.0" font-size="13.5" font-weight="600" text-anchor="middle" fill="#5F1B17">2. Bên nhận không xác</text>
+<text x="410.0" y="309.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">minh được nguồn gốc</text>
+<text x="410.0" y="326.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">và tính toàn vẹn của tệp</text>
 <rect x="540" y="262" width="220" height="86" rx="7" fill="#FBE9E9" stroke="#B3403A" stroke-width="1.6"/>
 <text x="650.0" y="292.0" font-size="13.5" font-weight="600" text-anchor="middle" fill="#5F1B17">3. Siêu dữ liệu ẩn</text>
 <text x="650.0" y="309.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">toạ độ GPS, thiết bị,</text>
@@ -39,9 +38,9 @@
 <text x="880.0" y="309.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">khoá và dữ liệu do</text>
 <text x="880.0" y="326.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">nhà cung cấp nắm giữ</text>
 <rect x="300" y="400" width="460" height="78" rx="7" fill="#E7F4EC" stroke="#2E7D4F" stroke-width="1.6"/>
-<text x="530.0" y="426.0" font-size="13.5" font-weight="600" text-anchor="middle" fill="#14432A">Nhu cầu: công cụ bảo vệ dữ liệu chạy hoàn toàn trên thiết bị</text>
-<text x="530.0" y="443.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">không phụ thuộc mạng, không phụ thuộc dịch vụ bên ngoài,</text>
-<text x="530.0" y="460.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">kiểm soát được mã nguồn và có thể dùng để huấn luyện</text>
-<text x="520" y="236" font-size="14" font-weight="700" text-anchor="middle" fill="#B3403A">Bốn nhóm nguy cơ khi thiếu công cụ bảo vệ tại chỗ</text>
+<text x="530.0" y="426.0" font-size="13.5" font-weight="600" text-anchor="middle" fill="#14432A">Nhu cầu: bộ công cụ chạy hoàn toàn trên thiết bị,</text>
+<text x="530.0" y="443.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">không phụ thuộc mạng và dịch vụ bên ngoài, kiểm soát được</text>
+<text x="530.0" y="460.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">mã nguồn, vừa dùng huấn luyện vừa đủ tin cậy khi cần dùng thật</text>
+<text x="520" y="246" font-size="14" font-weight="700" text-anchor="middle" fill="#B3403A">Bốn nhóm nguy cơ khi thiếu công cụ bảo vệ tại chỗ</text>
 <text x="520" y="512" font-size="13" font-weight="700" text-anchor="middle" fill="#2E7D4F">SecureVault Mobile được xây dựng để đáp ứng nhu cầu này</text>
 </svg>
