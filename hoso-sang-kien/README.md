@@ -1,9 +1,14 @@
-# Hồ sơ sáng kiến — SecureVault Mobile (Android)
+# Hồ sơ sáng kiến — SecureVault
 
-Thư mục này chứa toàn bộ hồ sơ đề nghị công nhận sáng kiến cho **SecureVault Mobile** —
-*Bộ công cụ bảo đảm an toàn thông tin và quyền riêng tư dữ liệu trên thiết bị di động*.
+Thư mục này chứa toàn bộ hồ sơ đề nghị công nhận sáng kiến cho **SecureVault** —
+*Bộ công cụ bảo đảm an toàn thông tin và quyền riêng tư dữ liệu đa nền tảng*.
 
-> Tên sáng kiến và thông tin nhóm tác giả nằm ở một nơi duy nhất: `ten_sang_kien.py`. Cả bốn
+> **Tên gọi nói “đa nền tảng”, nhưng trọng tâm vẫn là bản di động.** Sản phẩm dùng chung một
+> lõi nghiệp vụ và một định dạng dữ liệu cho cả bản trên máy tính lẫn bản trên Android; bản
+> di động là nơi rào cản kỹ thuật thực sự tồn tại và được giải quyết, còn bản máy tính giữ
+> vai trò đối chứng và mở rộng phạm vi sử dụng. Cả năm văn bản đều nói rõ ranh giới này.
+
+> Tên sáng kiến và thông tin nhóm tác giả nằm ở một nơi duy nhất: `ten_sang_kien.py`. Cả năm
 > văn bản đọc từ đó, nên đổi tên chỉ phải sửa một chỗ.
 
 > **Phạm vi sử dụng mà hồ sơ mô tả** đúng hai kịch bản, không hơn:

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Định dạng dùng chung cho bộ hồ sơ sáng kiến SecureVault Mobile.
+"""Định dạng dùng chung cho bộ hồ sơ sáng kiến SecureVault.
 
 Mục tiêu: ba văn bản DOCX có kiểu chữ, giãn dòng, tiêu đề, bảng và chú thích hình
 thống nhất, đạt chất lượng trình bày của một hồ sơ dự thi.

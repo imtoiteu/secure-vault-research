@@ -34,7 +34,7 @@ from du_lieu_ho_so import (  # noqa: E402
 from noi_dung_chuc_nang import NHOM_CHUC_NANG  # noqa: E402
 from noi_dung_giao_dien import DANH_MUC_MAN_HINH  # noqa: E402
 from ten_sang_kien import (  # noqa: E402
-    CHU_NHIEM, DIA_DANH_NGAY, TEN_SANG_KIEN, TEN_SANG_KIEN_HOA,
+    CHU_NHIEM, DIA_DANH_NGAY, TEN_SANG_KIEN, TEN_SANG_KIEN_HOA, TEN_SP,
 )
 
 BASE = pathlib.Path(__file__).parent
@@ -49,6 +49,12 @@ tieu_de_quan_doi(doc)
 tieuDeChinh(doc, "ĐỀ CƯƠNG SƠ BỘ VỀ SÁNG KIẾN")
 para(doc, TEN_SANG_KIEN, bold=True, align=1, indent=False)
 
+para(doc,
+     "*Về tên gọi và trọng tâm.* Tên sáng kiến nói “đa nền tảng” vì sản phẩm dùng chung một "
+     "lõi nghiệp vụ và một định dạng dữ liệu cho cả bản trên máy tính lẫn bản trên thiết bị "
+     "di động. Trọng tâm của sáng kiến vẫn là *bản di động* — nơi tồn tại rào cản kỹ thuật "
+     "mà giải pháp phải giải quyết (Phần I mục 4); bản máy tính giữ vai trò đối chứng và mở "
+     "rộng phạm vi sử dụng (Phần III mục 4).")
 para(doc,
      "*Về tài liệu này.* Đề cương sơ bộ được lập ở giai đoạn đặt vấn đề, nhằm trả lời ba câu "
      "hỏi trước khi bắt tay vào làm: *định làm gì, làm theo cách nào, và lấy gì để chứng minh "
@@ -269,7 +275,7 @@ para(doc,
      "thành phần độc lập, mỗi thành phần một trách nhiệm. Việc chia nhỏ không nhằm cho “gọn” "
      "mà để chiều phụ thuộc giữa các thành phần trở thành thứ kiểm tra được bằng máy.")
 hinh(doc, PNG / "H2-kien-truc-phan-lop.png",
-     "Kiến trúc phân lớp dự kiến của sản phẩm", width_cm=13.5)
+     f"Kiến trúc phân lớp dự kiến của {TEN_SP}", width_cm=13.5)
 
 h2(doc, "4. Triển khai trên hai nền tảng và vai trò của từng bản")
 para(doc,

@@ -22,7 +22,7 @@
         <mxCell id="e6" value="" style="endArrow=block;html=1;strokeColor=#55607A;dashed=0;fontSize=11;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="650" y="348" as="sourcePoint"/><mxPoint x="560" y="400" as="targetPoint"/></mxGeometry></mxCell>
         <mxCell id="e7" value="" style="endArrow=block;html=1;strokeColor=#55607A;dashed=0;fontSize=11;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="880" y="348" as="sourcePoint"/><mxPoint x="600" y="400" as="targetPoint"/></mxGeometry></mxCell>
         <mxCell id="n0" value="Bốn nhóm nguy cơ khi thiếu công cụ bảo vệ tại chỗ" style="text;html=1;fontSize=14;align=center;fontColor=#B3403A;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="370" y="232" width="300" height="20" as="geometry"/></mxCell>
-        <mxCell id="n1" value="SecureVault Mobile được xây dựng để đáp ứng nhu cầu này" style="text;html=1;fontSize=13;align=center;fontColor=#2E7D4F;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="370" y="498" width="300" height="20" as="geometry"/></mxCell>
+        <mxCell id="n1" value="SecureVault được xây dựng để đáp ứng nhu cầu này" style="text;html=1;fontSize=13;align=center;fontColor=#2E7D4F;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="370" y="498" width="300" height="20" as="geometry"/></mxCell>
       </root>
     </mxGraphModel>
   </diagram>

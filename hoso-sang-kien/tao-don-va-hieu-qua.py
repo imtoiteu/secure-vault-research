@@ -59,7 +59,8 @@ o_danh_dau(doc, "Thuyết minh sáng kiến")
 o_danh_dau(doc, "Dự kiến đánh giá hiệu quả mang lại của sáng kiến")
 o_danh_dau(doc, "Đề cương sơ bộ về sáng kiến")
 o_danh_dau(doc, "Đề cương chi tiết về sáng kiến")
-o_danh_dau(doc, "Sản phẩm phần mềm: tệp cài đặt Android (APK) và toàn bộ mã nguồn")
+o_danh_dau(doc, "Sản phẩm phần mềm: tệp cài đặt Android (APK) và toàn bộ mã nguồn dùng "
+                "chung cho bản di động và bản máy tính")
 
 h2(doc, "C. DANH SÁCH CÁC ĐỒNG TÁC GIẢ")
 bang(doc, "",

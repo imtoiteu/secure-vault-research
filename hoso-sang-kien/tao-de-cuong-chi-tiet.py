@@ -35,7 +35,7 @@ from du_lieu_ho_so import (  # noqa: E402
 from noi_dung_chuc_nang import NHOM_CHUC_NANG  # noqa: E402
 from noi_dung_giao_dien import DANH_MUC_MAN_HINH, LENH_MUC_UNG_DUNG  # noqa: E402
 from ten_sang_kien import (  # noqa: E402
-    CHU_NHIEM, DIA_DANH_NGAY, TEN_SANG_KIEN, TEN_SANG_KIEN_HOA,
+    CHU_NHIEM, DIA_DANH_NGAY, TEN_SANG_KIEN, TEN_SANG_KIEN_HOA, TEN_SP,
 )
 
 BASE = pathlib.Path(__file__).parent
@@ -56,6 +56,12 @@ para(doc,
      "Thuyết minh được giới hạn dưới 20 trang để hội đồng nắm nhanh sáng kiến là gì, mới ở "
      "đâu và có giá trị gì; vì vậy phần lập luận thiết kế, các phương án đã cân nhắc, cấu "
      "trúc dữ liệu, mô tả từng chức năng và toàn bộ bằng chứng kiểm chứng được đưa về đây.")
+para(doc,
+     "*Một lưu ý về tên gọi.* Tên sáng kiến nói “đa nền tảng” vì sản phẩm dùng chung một lõi "
+     "nghiệp vụ và một định dạng dữ liệu cho cả bản trên máy tính lẫn bản trên thiết bị di "
+     "động. Điều đó không làm đổi trọng tâm: *bản di động vẫn là nơi bài toán kỹ thuật phát "
+     "sinh và được giải quyết*, còn bản máy tính giữ vai trò đối chứng và mở rộng phạm vi sử "
+     "dụng. Mục 2.4 và 5.5 trình bày rõ ranh giới giữa hai vai trò đó cùng bằng chứng kèm theo.")
 para(doc,
      "Nhóm tác giả chọn mạch trình bày theo đúng trình tự công việc đã thực sự diễn ra: xác định "
      "ràng buộc và nhu cầu thực tiễn; khảo sát cái đã có để tìm khoảng trống; đặt nguyên lý "
@@ -170,7 +176,7 @@ para(doc,
      "được trên di động, và đủ nhiều nghiệp vụ để dùng làm học cụ. Không nhóm nào có đủ bốn.")
 bang(doc, "Ma trận đối chiếu theo tiêu chí kiểm tra được",
      ["Tiêu chí", "Mã hoá toàn thiết bị", "Ứng dụng két thương mại", "Công cụ dòng lệnh",
-      "SecureVault Mobile"],
+      TEN_SP],
      [
          ["Chạy được trên Android", "Có", "Có", "Không", "Có"],
          ["Không yêu cầu quyền mạng", "Có", "Thường không", "Có", "Có"],
@@ -183,7 +189,7 @@ bang(doc, "Ma trận đối chiếu theo tiêu chí kiểm tra được",
          ["Định dạng tệp theo chuẩn mở", "Không áp dụng", "Thường không", "Có", "Có"],
          ["Dùng được làm học cụ giảng dạy", "Hạn chế", "Hạn chế", "Có", "Có"],
      ], widths=[4.6, 2.6, 2.8, 2.6, 2.9],
-     note="Cột SecureVault Mobile chỉ đối chiếu với chức năng đã hiện thực và kiểm chứng; "
+     note=f"Cột {TEN_SP} chỉ đối chiếu với chức năng đã hiện thực và kiểm chứng; "
           "cách kiểm chứng từng dòng trình bày ở Phần V.")
 
 h2(doc, "1.4. Phát biểu bài toán")
@@ -319,7 +325,7 @@ para(doc,
      "biện pháp bảo vệ: mật khẩu khi đi qua ranh giới được bọc trong kiểu dữ liệu tự xoá; "
      "phiên làm việc chỉ được tham chiếu bằng một mã định danh ngẫu nhiên không mang thông "
      "tin bí mật, nên kể cả khi lộ mã phiên cũng không suy ra được khoá.")
-hinh(doc, PNG / "H2-kien-truc-phan-lop.png", "Kiến trúc phân lớp của SecureVault Mobile")
+hinh(doc, PNG / "H2-kien-truc-phan-lop.png", f"Kiến trúc phân lớp của {TEN_SP}")
 para(doc,
      f"Lõi gồm {N_CRATE} thành phần độc lập, mỗi thành phần một trách nhiệm: định dạng và "
      "nghiệp vụ két; các nguyên hàm mật mã; giao diện trừu tượng của nguyên hàm; hai bản "

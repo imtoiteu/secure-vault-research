@@ -71,7 +71,7 @@ d.arrow(170, 348, 480, 400)
 d.arrow(410, 348, 500, 400)
 d.arrow(650, 348, 560, 400)
 d.arrow(880, 348, 600, 400)
-d.note(520, 512, "SecureVault Mobile được xây dựng để đáp ứng nhu cầu này", 13, "middle", True, "#2E7D4F")
+d.note(520, 512, "SecureVault được xây dựng để đáp ứng nhu cầu này", 13, "middle", True, "#2E7D4F")
 made.append(d.write())
 
 # =====================================================================
@@ -79,7 +79,7 @@ made.append(d.write())
 # =====================================================================
 d = Diagram(
     "H2-kien-truc-phan-lop",
-    "Kiến trúc phân lớp của SecureVault Mobile",
+    "Kiến trúc phân lớp của SecureVault",
     1040, 640,
     "Sáu lớp, phụ thuộc một chiều từ trên xuống; lõi mật mã không phụ thuộc giao diện",
 )

@@ -38,7 +38,7 @@ from du_lieu_ho_so import (  # noqa: E402
 from noi_dung_chuc_nang import NHOM_CHUC_NANG  # noqa: E402
 from noi_dung_giao_dien import DANH_MUC_MAN_HINH  # noqa: E402
 from ten_sang_kien import (  # noqa: E402
-    CHU_NHIEM, DIA_DANH_NGAY, DONG_TAC_GIA, LINH_VUC, TEN_SANG_KIEN,
+    CHU_NHIEM, DIA_DANH_NGAY, DONG_TAC_GIA, LINH_VUC, TEN_SANG_KIEN, TEN_SP,
     TEN_SANG_KIEN_HOA,
 )
 
@@ -60,37 +60,37 @@ tieuDeChinh(doc, "THUYẾT MINH SÁNG KIẾN")
 # =====================================================================
 h1(doc, "TÓM TẮT")
 para(doc,
-     "*Đặt vấn đề.* Bảo vệ dữ liệu bằng mật mã là nội dung cốt lõi trong đào tạo học viên về "
-     "an toàn thông tin, bảo đảm an toàn tình báo trên không gian mạng; tuy nhiên học viên "
-     "chủ yếu mới tiếp cận qua lý thuyết và công cụ trên máy tính, trong khi thiết bị di "
-     "động mới là môi trường các em thường xuyên thao tác sau khi ra trường. Bên cạnh đó, "
-     "trong tình huống bất khả kháng buộc phải chuyển gấp một số tài liệu đặc thù qua không "
-     "gian mạng, người sử dụng thiếu một công cụ tin cậy, kiểm chứng được để bổ sung lớp bảo "
-     "vệ cho tệp trước khi gửi. Giải pháp hiện có hoặc chỉ bảo vệ khi thiết bị không hoạt "
-     "động, hoặc mã nguồn đóng khó kiểm chứng, hoặc mạnh về mật mã nhưng không chạy được "
-     "trên di động.")
-para(doc,
-     "*Nguyên nhân.* Các công cụ mật mã tin cậy phần lớn được phân phối dưới dạng tệp nhị "
-     "phân chạy độc lập, mà hệ điều hành di động lại không cho ứng dụng sinh tiến trình con "
-     "để chạy chúng — rào cản thuộc về kiến trúc nền tảng, không phải khả năng lập trình.")
+     "*Đặt vấn đề.* Bảo vệ dữ liệu bằng mật mã là nội dung cốt lõi trong đào tạo an toàn "
+     "thông tin, bảo đảm an toàn tình báo trên không gian mạng; nhưng học viên chủ yếu mới "
+     "tiếp cận qua lý thuyết và công cụ trên máy tính, trong khi thiết bị di động mới là môi "
+     "trường các em thường xuyên thao tác sau khi ra trường. Bên cạnh đó, khi tình huống bất "
+     "khả kháng buộc phải chuyển gấp một số tài liệu đặc thù qua không gian mạng, người sử "
+     "dụng thiếu một công cụ tin cậy, kiểm chứng được để bổ sung lớp bảo vệ cho tệp trước khi "
+     "gửi. Giải pháp hiện có hoặc chỉ bảo vệ khi thiết bị không hoạt động, hoặc mã nguồn đóng "
+     "khó kiểm chứng, hoặc mạnh về mật mã nhưng không chạy được trên di động — vì công cụ mật "
+     "mã tin cậy được phân phối dưới dạng tệp nhị phân chạy độc lập, mà hệ điều hành di động "
+     "lại không cho ứng dụng sinh tiến trình con để chạy chúng. Đây là rào cản kiến trúc nền "
+     "tảng, không phải khả năng lập trình.")
 para(doc,
      "*Giải pháp.* Nhóm tác giả xây dựng kiến trúc trong đó *toàn bộ nghiệp vụ bảo vệ dữ liệu "
      "nằm trong một lõi độc lập với giao diện và với nền tảng*, đặt điểm nối trừu tượng tại "
      "đúng những vị trí phụ thuộc nền tảng. Nhờ đó thay được phần hiện thực bên dưới bằng "
      "phiên bản chạy ngay trong tiến trình ứng dụng mà nghiệp vụ, định dạng dữ liệu và cơ chế "
-     "bảo vệ giữ nguyên. Cùng một lõi chạy trên cả máy tính lẫn thiết bị di động; phần khó và "
-     "mới nằm ở bản di động, nơi rào cản của hệ điều hành khiến cách làm quen thuộc trên máy "
-     "tính không dùng được. Trên nền đó, nhóm tác giả tự thiết kế định dạng tệp két (.svault), "
-     "sơ đồ phân cấp khoá, quy tắc phân loại lỗi an toàn và mô-đun xử lý siêu dữ liệu.")
+     "bảo vệ giữ nguyên. Cùng một lõi chạy trên cả máy tính lẫn thiết bị di động; *phần khó "
+     "và mới nằm ở bản di động*, nơi rào cản nêu trên khiến cách làm quen thuộc trên máy tính "
+     "không dùng được. Trên nền đó, nhóm tác giả tự thiết kế định dạng tệp két, sơ đồ phân "
+     "cấp khoá, quy tắc phân loại lỗi an toàn và mô-đun xử lý siêu dữ liệu.")
 para(doc,
-     f"*Sản phẩm.* Ứng dụng di động hoàn chỉnh với {N_LENH} chức năng nghiệp vụ thao tác qua "
-     f"{len(DANH_MUC_MAN_HINH)} màn hình, xây dựng trên {N_CRATE} thành phần mã nguồn, kèm "
-     f"{N_TEST} hàm kiểm thử tự động; tương thích định dạng được kiểm chứng bằng "
-     f"{SO_DOI_CHUNG} phép đối chứng với công cụ chuẩn thay vì bằng suy luận.")
+     f"*Sản phẩm.* Bộ công cụ gồm {N_LENH} chức năng thao tác qua "
+     f"{len(DANH_MUC_MAN_HINH)} màn hình, dựng trên {N_CRATE} thành phần mã nguồn dùng chung "
+     f"cho mọi nền tảng, kèm {N_TEST} hàm kiểm thử tự động. *Bản di động — trọng tâm của sáng "
+     "kiến — đã đóng gói thành tệp cài đặt Android hoàn chỉnh*; bản máy tính dùng đúng lõi đó, "
+     f"dựng và chạy kiểm thử đạt trên {CHUOI_OS}. Tương thích định dạng được kiểm chứng bằng "
+     f"{SO_DOI_CHUNG} phép đối chứng với công cụ chuẩn, không phải bằng suy luận.")
 para(doc,
-     "*Giá trị.* Sản phẩm vừa dùng được trong công tác, vừa là học cụ trực quan cho giảng "
-     "dạy: mỗi nhóm chức năng tương ứng một nguyên lý, và mã nguồn mở cho phép học viên đọc, "
-     "chạy lại và phân tích một hệ thống an toàn thực tế.")
+     "*Giá trị.* Sản phẩm vừa dùng được trong công tác, vừa là học cụ trực quan: mỗi nhóm "
+     "chức năng ứng với một nguyên lý trong chương trình, và mã nguồn mở cho phép học viên "
+     "phân tích một hệ thống an toàn thực tế.")
 
 muc_luc(doc, sang_trang=True)
 
@@ -174,7 +174,7 @@ para(doc,
      "thay vì dựa trên nhận định định tính.")
 bang(doc, "Ma trận đối chiếu theo tiêu chí kiểm tra được",
      ["Tiêu chí", "Mã hoá toàn thiết bị", "Ứng dụng két thương mại", "Công cụ dòng lệnh",
-      "SecureVault Mobile"],
+      TEN_SP],
      [
          ["Chạy được trên Android", "Có", "Có", "Không", "Có"],
          ["Không yêu cầu quyền mạng", "Có", "Thường không", "Có", "Có"],
@@ -187,7 +187,7 @@ bang(doc, "Ma trận đối chiếu theo tiêu chí kiểm tra được",
          ["Định dạng tệp theo chuẩn mở", "Không áp dụng", "Thường không", "Có", "Có"],
          ["Dùng được làm học cụ giảng dạy", "Hạn chế", "Hạn chế", "Có", "Có"],
      ], widths=[4.6, 2.6, 2.8, 2.6, 2.9],
-     note="Cột SecureVault Mobile chỉ đối chiếu với chức năng đã hiện thực và kiểm chứng.")
+     note=f"Cột {TEN_SP} chỉ đối chiếu với chức năng đã hiện thực và kiểm chứng.")
 
 h3(doc, "1.3. Vấn đề thực tiễn và yêu cầu cần giải quyết")
 para(doc,
@@ -209,10 +209,13 @@ rich(doc, [
 # ---------------------------------------------------------------- 2
 h2(doc, "2. Mục đích của giải pháp")
 para(doc,
-     "Sáng kiến nhằm xây dựng một bộ công cụ trên Android phục vụ huấn luyện an toàn thông "
-     "tin, bảo đảm an toàn tình báo trên không gian mạng, đồng thời đủ tin cậy để cán bộ "
-     "trang bị thêm lớp bảo vệ cho tệp khi phát sinh tình huống khẩn cấp, bất khả kháng phải "
-     "chuyển gấp tài liệu qua không gian mạng. Các mục tiêu cụ thể:")
+     "Sáng kiến nhằm xây dựng một bộ công cụ bảo vệ dữ liệu dùng chung *một* lõi nghiệp vụ "
+     "và *một* định dạng dữ liệu cho nhiều nền tảng, phục vụ huấn luyện an toàn thông tin, "
+     "bảo đảm an toàn tình báo trên không gian mạng, đồng thời đủ tin cậy để cán bộ trang bị "
+     "thêm lớp bảo vệ cho tệp khi phát sinh tình huống khẩn cấp, bất khả kháng phải chuyển "
+     "gấp tài liệu qua không gian mạng. Trọng tâm đặt ở bản chạy trên thiết bị di động "
+     "Android — nơi tồn tại rào cản kỹ thuật mà sáng kiến phải giải quyết; bản trên máy tính "
+     "dùng chung lõi, giữ vai trò đối chứng và mở rộng phạm vi sử dụng. Các mục tiêu cụ thể:")
 for _h, _t in [
     ("Phục vụ huấn luyện. ",
      "Mỗi nhóm chức năng tương ứng một nguyên lý an toàn thông tin cụ thể, cho phép giảng "
@@ -289,7 +292,7 @@ para(doc,
      "không chứa bí mật nên không thể dùng để suy ra khoá. Nhờ đó có thể thay giao diện hoặc "
      "nền tảng mà gần như không phải sửa lõi bảo vệ dữ liệu.")
 hinh(doc, PNG / "H2-kien-truc-phan-lop.png",
-     "Kiến trúc phân lớp của SecureVault Mobile", width_cm=11.5)
+     f"Kiến trúc phân lớp của {TEN_SP}", width_cm=11.5)
 
 
 para(doc, "3.2.2. Thích ứng kiến trúc phần mềm với nền tảng di động", bold=True, indent=False)
@@ -705,7 +708,9 @@ rich(doc, [
      "điện thoại; đóng gói tệp cài đặt Android. Mỗi hạng mục đều có cách xác định tương ứng "
      "— bảng đầy đủ tại mục 6.4 của Đề cương chi tiết. ", ""),
     ("Chưa hoàn thành: ", "b"),
-    ("kiểm thử nghiệm thu trên thiết bị Android thật (đã có quy trình 15 bước, chưa chạy) và "
+    ("kiểm thử nghiệm thu trên thiết bị Android thật (đã có quy trình 15 bước, chưa chạy); "
+     "đóng gói bản cài đặt có ký số cho bản trên máy tính — bước cần cho phân phối rộng rãi, "
+     "nên hồ sơ không tuyên bố sản phẩm đã sẵn sàng phát hành trên Windows hay macOS; và "
      "tích hợp kho khoá phần cứng của Android (mới ở mức định hướng).", ""),
 ])
 

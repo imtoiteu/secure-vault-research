@@ -1,10 +1,10 @@
 <mxfile host="SecureVault" modified="2026-09-08T00:00:00.000Z" agent="tao-so-do.py" version="24.0.0">
-  <diagram id="H2-kien-truc-phan-lop" name="Kiến trúc phân lớp của SecureVault Mobile">
+  <diagram id="H2-kien-truc-phan-lop" name="Kiến trúc phân lớp của SecureVault">
     <mxGraphModel dx="1040" dy="640" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1040" pageHeight="640" math="0" shadow="0">
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
-        <mxCell id="title" value="Kiến trúc phân lớp của SecureVault Mobile" style="text;html=1;fontSize=20;fontStyle=1;align=center;" vertex="1" parent="1"><mxGeometry x="0" y="10" width="1040" height="30" as="geometry"/></mxCell>
+        <mxCell id="title" value="Kiến trúc phân lớp của SecureVault" style="text;html=1;fontSize=20;fontStyle=1;align=center;" vertex="1" parent="1"><mxGeometry x="0" y="10" width="1040" height="30" as="geometry"/></mxCell>
         <mxCell id="subtitle" value="Sáu lớp, phụ thuộc một chiều từ trên xuống; lõi mật mã không phụ thuộc giao diện" style="text;html=1;fontSize=13;align=center;fontColor=#5A6779;" vertex="1" parent="1"><mxGeometry x="0" y="42" width="1040" height="20" as="geometry"/></mxCell>
         <mxCell id="l1" value="&lt;b&gt;L1 — Giao diện (WebView): HTML/CSS/JS tĩnh, song ngữ Việt–Anh&lt;/b&gt;&lt;br/&gt;ngăn kéo điều hướng, vùng chạm ≥ 44px, không có mã nội tuyến (CSP)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF3FB;strokeColor=#3A6EA5;fontColor=#12325B;dashed=0;arcSize=8;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="120" y="86" width="800" height="62" as="geometry"/></mxCell>
         <mxCell id="l2" value="&lt;b&gt;L2 — Vỏ ứng dụng (Tauri 2, thư mục app/): 38 lệnh #[tauri::command]&lt;/b&gt;&lt;br/&gt;gốc hợp thành riêng cho Android (compose/mobile.rs)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF0E3;strokeColor=#C4772B;fontColor=#6B3E10;dashed=0;arcSize=8;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="120" y="168" width="800" height="62" as="geometry"/></mxCell>

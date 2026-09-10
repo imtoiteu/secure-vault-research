@@ -42,5 +42,5 @@
 <text x="530.0" y="443.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">không phụ thuộc mạng và dịch vụ bên ngoài, kiểm soát được</text>
 <text x="530.0" y="460.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#4B5768">mã nguồn, vừa dùng huấn luyện vừa đủ tin cậy khi cần dùng thật</text>
 <text x="520" y="246" font-size="14" font-weight="700" text-anchor="middle" fill="#B3403A">Bốn nhóm nguy cơ khi thiếu công cụ bảo vệ tại chỗ</text>
-<text x="520" y="512" font-size="13" font-weight="700" text-anchor="middle" fill="#2E7D4F">SecureVault Mobile được xây dựng để đáp ứng nhu cầu này</text>
+<text x="520" y="512" font-size="13" font-weight="700" text-anchor="middle" fill="#2E7D4F">SecureVault được xây dựng để đáp ứng nhu cầu này</text>
 </svg>

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Bộ sinh sơ đồ cho hồ sơ sáng kiến SecureVault Mobile.
+"""Bộ sinh sơ đồ cho hồ sơ sáng kiến SecureVault.
 
 Mỗi sơ đồ được mô tả một lần bằng cấu trúc dữ liệu (hộp + mũi tên), rồi xuất ra
 đồng thời hai định dạng:

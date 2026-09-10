@@ -5,22 +5,27 @@ Trước đây chuỗi này được chép hai bản trong tao-don-va-hieu-qua.p
 Sửa tên mà sót một chỗ thì hai văn bản trong cùng một bộ hồ sơ ghi tên khác nhau — lỗi nhỏ
 nhưng đủ để hội đồng nghi ngờ toàn bộ hồ sơ. Nay chỉ còn một chỗ để sửa.
 
-Bản tác giả rà soát thủ công dùng ba biến thể tên khác nhau: trang bìa và Đơn đăng ký ghi
-"Bộ công cụ bảo đảm an toàn thông tin và quyền riêng tư dữ liệu trên thiết bị di động",
-còn mục A.1 của Thuyết minh giữ lại tên cũ. Lấy tên trên Đơn đăng ký làm chuẩn — đó là
-văn bản đăng ký chính thức, và cũng là tên tác giả tự gõ ở hai chỗ.
+Tên do tác giả chốt. Tên bỏ chữ "Mobile" và thêm "đa nền tảng" vì sản phẩm dùng chung một
+lõi nghiệp vụ cho cả bản di động lẫn bản máy tính. Điều đó *không* đổi trọng tâm của sáng
+kiến: bản di động vẫn là nơi bài toán kỹ thuật phát sinh và được giải quyết. Vì tên gọi
+không còn nhắc tới điều đó nữa, các văn bản phải nói rõ ngay ở phần mở đầu.
 """
 
 TEN_SANG_KIEN = (
     "Bộ công cụ bảo đảm an toàn thông tin và quyền riêng tư dữ liệu "
-    "trên thiết bị di động (SecureVault Mobile)"
+    "đa nền tảng (SecureVault)"
 )
 
 # Dạng in hoa dùng cho trang bìa.
 TEN_SANG_KIEN_HOA = (
     "BỘ CÔNG CỤ BẢO ĐẢM AN TOÀN THÔNG TIN VÀ QUYỀN RIÊNG TƯ DỮ LIỆU "
-    "TRÊN THIẾT BỊ DI ĐỘNG (SECUREVAULT MOBILE)"
+    "ĐA NỀN TẢNG (SECUREVAULT)"
 )
+
+# Tên sản phẩm và tên bản dành cho từng nền tảng. Tách riêng để văn bản gọi đúng: nói về cả
+# sản phẩm thì dùng TEN_SP, nói riêng bản chạy trên điện thoại thì dùng TEN_SP_MOBILE.
+TEN_SP = "SecureVault"
+TEN_SP_MOBILE = "SecureVault Mobile"
 
 LINH_VUC = "An toàn thông tin"
 
