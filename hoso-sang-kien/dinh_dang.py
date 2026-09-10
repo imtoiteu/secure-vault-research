@@ -6,7 +6,7 @@ thống nhất, đạt chất lượng trình bày của một hồ sơ dự thi
 
 Quy ước trình bày (theo thông lệ văn bản hành chính Việt Nam):
   * chữ Times New Roman 13pt, giãn dòng 1.4, giãn đoạn 6pt
-  * lề trên/dưới 2.0cm, trái 3.0cm, phải 2.0cm
+  * lề trên 2.5cm, dưới 2.0cm, trái 3.5cm, phải 1.5cm
   * tiêu đề mục in đậm, đánh số theo cấp
   * bảng có tiêu đề bảng phía trên, hình có chú thích phía dưới
 """
@@ -42,15 +42,20 @@ RED = RGBColor(0xA3, 0x33, 0x2D)
 
 
 # ------------------------------------------------------------------ tài liệu
-def new_document():
+def new_document(*, gian_dong=1.4, cach_doan=6):
+    """Tài liệu trống đã đặt sẵn phông, lề và kiểu tiêu đề.
+
+    `gian_dong` / `cach_doan` để văn bản có giới hạn số trang (Thuyết minh phải dưới 20
+    trang) siết được mật độ chữ mà vẫn giữ nguyên phông và bố cục chung của bộ hồ sơ.
+    """
     doc = Document()
     st = doc.styles["Normal"]
     st.font.name = FONT
     st.font.size = SIZE
     st.element.rPr.rFonts.set(qn("w:eastAsia"), FONT)
     pf = st.paragraph_format
-    pf.line_spacing = 1.4
-    pf.space_after = Pt(6)
+    pf.line_spacing = gian_dong
+    pf.space_after = Pt(cach_doan)
     pf.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 
     # Style Heading mặc định của Word dùng Calibri/xanh nhạt — ép về phông hành chính
@@ -67,10 +72,12 @@ def new_document():
     for s in doc.sections:
         s.page_width = Cm(21.0)      # khổ A4
         s.page_height = Cm(29.7)
-        s.top_margin = Cm(2.0)
+        # Lề theo Nghị định 30/2020/NĐ-CP về công tác văn thư — cũng là lề tác giả đã
+        # đặt lại trong bản rà soát thủ công, giữ nguyên để hai bản in khớp nhau.
+        s.top_margin = Cm(2.5)
         s.bottom_margin = Cm(2.0)
-        s.left_margin = Cm(3.0)
-        s.right_margin = Cm(2.0)
+        s.left_margin = Cm(3.5)
+        s.right_margin = Cm(1.5)
     return doc
 
 
@@ -130,9 +137,13 @@ def tieuDeChinh(doc, text, sub=None):
         _run(p, sub, italic=True, size=Pt(12.5), colour=GREY)
 
 
-def h1(doc, text):
+def h1(doc, text, *, sang_trang=False):
+    """Tiêu đề cấp 1. `sang_trang=True` bắt đầu trang mới bằng thuộc tính “ngắt trang trước”
+    của chính đoạn tiêu đề — cách này không để lại đoạn rỗng như khi chèn ký tự ngắt trang,
+    nên không sinh ra trang trắng khi trang trước vừa vặn kín."""
     p = doc.add_paragraph(style="Heading 1")
-    p.paragraph_format.space_before = Pt(14)
+    p.paragraph_format.page_break_before = sang_trang
+    p.paragraph_format.space_before = Pt(0) if sang_trang else Pt(14)
     p.paragraph_format.space_after = Pt(6)
     p.paragraph_format.keep_with_next = True
     p.alignment = WD_ALIGN_PARAGRAPH.LEFT
@@ -283,22 +294,22 @@ def bang(doc, tieu_de, headers, rows, widths=None, note=None):
         _to_mau(hdr[i], "DCE6F1")
         p = hdr[i].paragraphs[0]
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        p.paragraph_format.space_after = Pt(2)
-        p.paragraph_format.line_spacing = 1.12
+        p.paragraph_format.space_after = Pt(1)
+        p.paragraph_format.line_spacing = 1.0
         p.paragraph_format.first_line_indent = Cm(0)
         _run(p, htxt, bold=True, size=Pt(12))
     for row in rows:
         cells = t.add_row().cells
         for i, val in enumerate(row):
             p = cells[i].paragraphs[0]
-            p.paragraph_format.space_after = Pt(2)
-            p.paragraph_format.line_spacing = 1.12   # ô bảng gọn hơn thân bài
+            p.paragraph_format.space_after = Pt(1)
+            p.paragraph_format.line_spacing = 1.0    # ô bảng gọn hơn hẳn thân bài
             p.paragraph_format.first_line_indent = Cm(0)
             p.alignment = (
                 WD_ALIGN_PARAGRAPH.CENTER if i > 0 and len(str(val)) < 22
                 else WD_ALIGN_PARAGRAPH.LEFT
             )
-            _run(p, str(val), size=Pt(12))
+            _run(p, str(val), size=Pt(11.5))
     if widths:
         for r in t.rows:
             for i, w in enumerate(widths):
@@ -358,7 +369,7 @@ def chu_ky(doc, trai, phai, dia_danh="……………, ngày ….. tháng ….. 
         q.alignment = WD_ALIGN_PARAGRAPH.CENTER
         q.paragraph_format.first_line_indent = Cm(0)
         _run(q, ghi, italic=True, size=Pt(11.5), colour=GREY)
-        for _ in range(4):
+        for _ in range(3):
             c.add_paragraph()
 
 
@@ -390,10 +401,11 @@ def danh_so_trang(doc):
             r._r.append(el)
 
 
-def muc_luc(doc, tieu_de="MỤC LỤC"):
+def muc_luc(doc, tieu_de="MỤC LỤC", *, sang_trang=False):
     """Chèn trường mục lục tự động (Word/LibreOffice sẽ điền khi mở và cập nhật trường)."""
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.paragraph_format.page_break_before = sang_trang
     p.paragraph_format.space_after = Pt(10)
     _run(p, tieu_de, bold=True, size=Pt(14), colour=NAVY)
 
@@ -477,3 +489,36 @@ def o_danh_dau(doc, muc, danh_dau=True):
     _run(p, "☑  " if danh_dau else "☐  ", size=Pt(13))
     _run(p, muc)
     return p
+
+
+def trang_bia(doc, ten_hoa, *, dia_danh_nam="Hà Nội, năm 2026",
+              don_vi_tren="TỔNG CỤC II", don_vi_duoi="HỌC VIỆN KHOA HỌC QUÂN SỰ",
+              nhan="HỒ SƠ"):
+    """Trang bìa theo mẫu hồ sơ: tên đơn vị trên cùng, tên sáng kiến giữa trang, địa danh dưới.
+
+    Dựng bằng một bảng một ô chiếm trọn trang thay vì các đoạn rời, để khối chữ không bị đẩy
+    sang trang sau khi độ dài tên sáng kiến thay đổi.
+    """
+    t = doc.add_table(rows=1, cols=1)
+    t.alignment = WD_TABLE_ALIGNMENT.CENTER
+    o = t.rows[0].cells[0]
+
+    def dong(text, *, bold=False, size=13.0, cach_sau=0):
+        p = o.add_paragraph() if o.paragraphs[0].text or o.paragraphs[0].runs else o.paragraphs[0]
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p.paragraph_format.first_line_indent = Cm(0)
+        p.paragraph_format.space_after = Pt(cach_sau)
+        if text:
+            _run(p, text, bold=bold, size=Pt(size))
+        return p
+
+    dong(don_vi_tren, size=13)
+    dong(don_vi_duoi, bold=True, size=13)
+    for _ in range(9):
+        dong("")
+    dong(nhan, bold=True, size=14, cach_sau=10)
+    dong(ten_hoa, bold=True, size=14)
+    for _ in range(10):
+        dong("")
+    dong(dia_danh_nam, bold=True, size=14)
+    ngat_trang(doc)

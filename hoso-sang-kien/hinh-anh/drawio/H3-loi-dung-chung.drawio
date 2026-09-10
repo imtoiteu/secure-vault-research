@@ -1,10 +1,10 @@
 <mxfile host="SecureVault" modified="2026-09-08T00:00:00.000Z" agent="tao-so-do.py" version="24.0.0">
-  <diagram id="H3-loi-dung-chung" name="Hình 3. Một lõi bảo mật, hai gốc hợp thành theo nền tảng">
+  <diagram id="H3-loi-dung-chung" name="Nguyên tắc một lõi dùng chung, hai bản hiện thực theo nền tảng">
     <mxGraphModel dx="1040" dy="650" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1040" pageHeight="650" math="0" shadow="0">
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
-        <mxCell id="title" value="Hình 3. Một lõi bảo mật, hai gốc hợp thành theo nền tảng" style="text;html=1;fontSize=20;fontStyle=1;align=center;" vertex="1" parent="1"><mxGeometry x="0" y="10" width="1040" height="30" as="geometry"/></mxCell>
+        <mxCell id="title" value="Nguyên tắc một lõi dùng chung, hai bản hiện thực theo nền tảng" style="text;html=1;fontSize=20;fontStyle=1;align=center;" vertex="1" parent="1"><mxGeometry x="0" y="10" width="1040" height="30" as="geometry"/></mxCell>
         <mxCell id="subtitle" value="Rào cản kỹ thuật và cách giải quyết đã được kiểm chứng bằng thực nghiệm" style="text;html=1;fontSize=13;align=center;fontColor=#5A6779;" vertex="1" parent="1"><mxGeometry x="0" y="42" width="1040" height="20" as="geometry"/></mxCell>
         <mxCell id="core" value="&lt;b&gt;Lõi bảo mật dùng chung (15 thành phần Rust)&lt;/b&gt;&lt;br/&gt;định dạng .svault, phân cấp khoá, mật mã, phân loại lỗi&lt;br/&gt;GIỐNG HỆT NHAU trên mọi nền tảng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E7F4EC;strokeColor=#2E7D4F;fontColor=#14432A;dashed=0;arcSize=8;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="300" y="92" width="440" height="84" as="geometry"/></mxCell>
         <mxCell id="cfgd" value="Biên dịch với cfg = desktop" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F3F5;strokeColor=#6B7280;fontColor=#1F2933;dashed=0;arcSize=8;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="90" y="244" width="380" height="60" as="geometry"/></mxCell>

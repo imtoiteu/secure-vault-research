@@ -1,8 +1,10 @@
 # Hồ sơ sáng kiến — SecureVault Mobile (Android)
 
 Thư mục này chứa toàn bộ hồ sơ đề nghị công nhận sáng kiến cho **SecureVault Mobile** —
-*Bộ công cụ bảo mật và quyền riêng tư dữ liệu ngoại tuyến trên thiết bị di động phục vụ huấn
-luyện an toàn thông tin*.
+*Bộ công cụ bảo đảm an toàn thông tin và quyền riêng tư dữ liệu trên thiết bị di động*.
+
+> Tên sáng kiến và thông tin nhóm tác giả nằm ở một nơi duy nhất: `ten_sang_kien.py`. Cả bốn
+> văn bản đọc từ đó, nên đổi tên chỉ phải sửa một chỗ.
 
 > **Phạm vi sử dụng mà hồ sơ mô tả** đúng hai kịch bản, không hơn:
 > 1. **Huấn luyện** học viên về an toàn thông tin và bảo mật dữ liệu — sản phẩm là học cụ.
@@ -28,17 +30,29 @@ luyện an toàn thông tin*.
 | Tệp | Nội dung | Số trang |
 |---|---|---|
 | `docx/01-Don-dang-ky-sang-kien.docx` | Đơn đăng ký sáng kiến cải tiến kỹ thuật | 2 |
-| `docx/02-Thuyet-minh-sang-kien.docx` | Thuyết minh đầy đủ (mục B: hiện trạng → mục đích → mô tả → tự đánh giá), kèm phụ lục | 31 |
-| `docx/03-Xac-nhan-danh-gia-hieu-qua.docx` | Xác nhận đánh giá hiệu quả mang lại của sáng kiến | 4 |
+| `docx/02-Thuyet-minh-sang-kien.docx` | **Thuyết minh — bản để hội đồng đọc.** Bám khung mẫu, cô đọng dưới 20 trang | 19 |
+| `docx/03-Du-kien-hieu-qua.docx` | Dự kiến hiệu quả khi đưa vào ứng dụng trong thực tiễn | 4 |
+| `docx/04-De-cuong-chi-tiet-sang-kien.docx` | **Đề cương chi tiết.** Toàn bộ lập luận thiết kế, mô tả từng chức năng kèm giao diện, kiểm chứng, ảnh chụp 21 màn hình, quy trình nghiệm thu | 58 |
 
 Bản PDF kèm theo trong cùng thư mục chỉ dùng để **kiểm tra bố cục**; bản nộp là tệp DOCX.
 
+**Vì sao tách 02 và 04.** Thuyết minh phải gọn để hội đồng đọc là nắm ngay sáng kiến có gì đặc
+biệt; nhưng cắt gọn thì mất phần chứng minh chiều sâu. Nên phần diễn giải kỹ thuật, bảng mô tả
+từng chức năng, ảnh chụp giao diện và quy trình nghiệm thu chuyển hết sang Đề cương, và Thuyết
+minh chỉ dẫn sang đúng mục tương ứng. Hai văn bản dùng chung một nguồn số liệu
+(`du_lieu_ho_so.py`) và chung nội dung tám nhóm chức năng (`noi_dung_chuc_nang.py`), nên không
+thể lệch nhau.
+
+**`ban-tac-gia-ra-soat/`** giữ nguyên ba tệp DOCX mà tác giả tự rà soát và chỉnh sửa thủ công —
+đây là nguồn văn bản gốc cho lần biên tập này, giữ lại để đối chiếu.
+
 ### Việc cần làm trước khi nộp
 
-1. Điền thông tin cá nhân vào các ô để trống (họ tên, đơn vị, ngày tháng) trong cả ba văn bản.
-2. Mở tệp Thuyết minh, nhấn chuột phải vào mục lục → **Cập nhật trường** để mục lục hiện ra.
-3. Thực hiện quy trình nghiệm thu 15 bước tại **Phụ lục A** trên điện thoại Android, điền
-   kết quả vào cột cuối của bảng, chụp ảnh và thay vào ba ô **Hình PL-1, PL-2, PL-3**.
+1. Mở tệp Thuyết minh và Đề cương, nhấn chuột phải vào mục lục → **Cập nhật trường** để mục
+   lục hiện ra (trường mục lục chỉ điền khi mở bằng Word/LibreOffice).
+2. Rà lại thông tin nhóm tác giả và ngày tháng — nguồn ở `ten_sang_kien.py`.
+3. Thực hiện quy trình nghiệm thu 15 bước tại **Phụ lục A của Đề cương** trên điện thoại
+   Android, điền kết quả vào cột cuối của bảng.
 
 ---
 
@@ -49,20 +63,22 @@ Bản PDF kèm theo trong cùng thư mục chỉ dùng để **kiểm tra bố c
 | `hinh-anh/svg/` | Sơ đồ gốc dạng SVG (6 hình) |
 | `hinh-anh/drawio/` | **Bản drawio tương ứng** — mở bằng diagrams.net để sửa nếu cần |
 | `hinh-anh/png/` | Ảnh PNG độ phân giải cao đã chèn vào DOCX |
-| `hinh-anh/screenshot/` | Ảnh chụp giao diện: 21 ảnh màn hình đơn (`GD01`–`GD21`) và 11 hình ghép hai màn hình dùng cho Phụ lục C (`GC01`–`GC11`) |
+| `hinh-anh/screenshot/` | Ảnh chụp giao diện: 21 ảnh màn hình đơn (`GD01`–`GD21`) và 11 hình ghép hai màn hình dùng cho Phụ lục B của Đề cương (`GC01`–`GC11`) |
 
-Sáu sơ đồ: bài toán thực tế, kiến trúc phân lớp, lõi dùng chung, phân cấp khoá,
-luồng tệp trên Android, tháp bằng chứng kiểm chứng.
+Sáu sơ đồ: hai nhu cầu thực tiễn, kiến trúc phân lớp, lõi dùng chung, phân cấp khoá,
+luồng tệp trên Android, các mức kiểm chứng. Tiêu đề nhúng trong hình **không** mang số hiệu
+“Hình N.” — số hiệu do DOCX tự đánh theo thứ tự chèn, để hai bên không lệch nhau khi một hình
+bị bỏ ra khỏi văn bản.
 
 **Về ảnh chụp giao diện:** đây là ảnh kết xuất từ *chính mã giao diện của sản phẩm* ở kích
 thước màn hình điện thoại, với cầu nối IPC được mô phỏng để trả về đúng giá trị mà gốc hợp
 thành Android tạo ra. Nhờ vậy logic giao diện thật được thực thi, không phải ảnh dựng bằng
-công cụ thiết kế. Ảnh chụp trên **thiết bị Android thật** vẫn cần bổ sung — xem Phụ lục B.
+công cụ thiết kế.
 
-Hồ sơ trình bày **đầy đủ 21 màn hình** của ứng dụng, và mỗi nhóm chức năng trong Thuyết minh
-đều có phần *“Giao diện tương ứng”* kèm bảng đối chiếu **màn hình ↔ lệnh nghiệp vụ**. Việc đối
-chiếu đã được kiểm tra hai chiều trên mã nguồn: không có lệnh nào của lõi mà giao diện không
-gọi tới, và không có nút nào gọi tới lệnh không tồn tại.
+Hồ sơ trình bày **đầy đủ 21 màn hình** của ứng dụng (Phụ lục B của Đề cương), và mỗi nhóm chức
+năng trong Đề cương đều có phần *“Giao diện tương ứng”* kèm bảng đối chiếu **màn hình ↔ lệnh
+nghiệp vụ**. Việc đối chiếu đã được kiểm tra hai chiều trên mã nguồn: không có lệnh nào của lõi
+mà giao diện không gọi tới, và không có nút nào gọi tới lệnh không tồn tại.
 
 ---
 
@@ -73,10 +89,21 @@ cd hoso-sang-kien
 
 python3 thu-thap-du-kien.py <thư-mục-log>   # đọc mã nguồn + log kiểm thử → du-kien.json
 python3 sinh-so-do.py                        # sinh SVG + drawio
-python3 chup-giao-dien.py                    # chụp 21 màn hình + ghép hình cho Phụ lục C
-python3 tao-don-va-hieu-qua.py               # sinh văn bản 1 và 3
-python3 tao-thuyet-minh.py                   # sinh văn bản 2
+python3 chup-giao-dien.py                    # chụp 21 màn hình + ghép hình cho Phụ lục B
+python3 tao-don-va-hieu-qua.py               # sinh văn bản 01 và 03
+python3 tao-thuyet-minh.py                   # sinh văn bản 02 (Thuyết minh, < 20 trang)
+python3 tao-de-cuong.py                      # sinh văn bản 04 (Đề cương chi tiết)
 ```
+
+Các mô-đun dùng chung giữa các văn bản:
+
+| Tệp | Vai trò |
+|---|---|
+| `ten_sang_kien.py` | Tên sáng kiến, lĩnh vực, thông tin nhóm tác giả |
+| `du_lieu_ho_so.py` | Mọi số liệu kỹ thuật, đọc từ `bang-chung/*.json` |
+| `noi_dung_chuc_nang.py` | Tám nhóm chức năng: bảng chức năng + phần “Giao diện tương ứng” |
+| `noi_dung_giao_dien.py` | Danh mục 21 màn hình và hai lệnh mức ứng dụng |
+| `dinh_dang.py` | Phông, lề, tiêu đề, bảng, hình, trang bìa, khối ký |
 
 Việc tách dữ kiện ra tệp JSON là có chủ đích: nếu mã nguồn thay đổi, chỉ cần chạy lại
 `thu-thap-du-kien.py` là mọi con số trong hồ sơ tự cập nhật, không phải sửa tay từng chỗ.
@@ -92,10 +119,10 @@ Việc tách dữ kiện ra tệp JSON là có chủ đích: nếu mã nguồn t
 | 3 | Biên dịch chéo toàn bộ lõi sang kiến trúc Android | Thành công |
 | 4 | Thực thi lõi trên kiến trúc ARM64 | 146 đạt / 0 lỗi |
 | 5 | Đóng gói APK và kiểm tra tĩnh nội dung gói | Đạt — xem `apk/README.md` |
-| 6 | Nghiệm thu trên điện thoại Android | Quy trình 15 bước tại Phụ lục A |
+| 6 | Nghiệm thu trên điện thoại Android | **Chưa thực hiện** — quy trình 15 bước tại Phụ lục A của Đề cương |
 
-Phụ lục A của Thuyết minh là quy trình nghiệm thu có tiêu chí đạt cho từng bước và cột trống
-để ghi kết quả; Phụ lục B dành sẵn vị trí gắn ảnh chụp từ thiết bị.
+Phụ lục A của Đề cương là quy trình nghiệm thu có tiêu chí đạt cho từng bước và cột trống để
+ghi kết quả.
 
 ## 4b. Về mô-đun siêu dữ liệu
 

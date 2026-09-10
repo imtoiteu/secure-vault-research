@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1040" height="600" viewBox="0 0 1040 600" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">
 <rect width="1040" height="600" fill="#FFFFFF"/>
 <defs><marker id="ah" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#55607A"/></marker></defs>
-<text x="520.0" y="34" font-size="20" font-weight="700" text-anchor="middle" fill="#12203A">Hình 4. Phân cấp khoá và luồng mở két an toàn</text>
+<text x="520.0" y="34" font-size="20" font-weight="700" text-anchor="middle" fill="#12203A">Sơ đồ phân cấp khoá và luồng mở két</text>
 <text x="520.0" y="56" font-size="13" text-anchor="middle" fill="#5A6779">Mật khẩu không bao giờ được lưu; khoá chính chỉ tồn tại trong bộ nhớ phiên</text>
 <line x1="260" y1="131" x2="330" y2="131" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
 <line x1="570" y1="131" x2="640" y2="131" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>

@@ -1,10 +1,10 @@
 <mxfile host="SecureVault" modified="2026-09-08T00:00:00.000Z" agent="tao-so-do.py" version="24.0.0">
-  <diagram id="H6-thap-bang-chung" name="Hình 6. Các mức kiểm chứng của sản phẩm">
+  <diagram id="H6-thap-bang-chung" name="Các mức kiểm chứng của sản phẩm">
     <mxGraphModel dx="1040" dy="620" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1040" pageHeight="620" math="0" shadow="0">
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
-        <mxCell id="title" value="Hình 6. Các mức kiểm chứng của sản phẩm" style="text;html=1;fontSize=20;fontStyle=1;align=center;" vertex="1" parent="1"><mxGeometry x="0" y="10" width="1040" height="30" as="geometry"/></mxCell>
+        <mxCell id="title" value="Các mức kiểm chứng của sản phẩm" style="text;html=1;fontSize=20;fontStyle=1;align=center;" vertex="1" parent="1"><mxGeometry x="0" y="10" width="1040" height="30" as="geometry"/></mxCell>
         <mxCell id="subtitle" value="Mỗi tuyên bố kỹ thuật trong hồ sơ đều gắn với một mức kiểm chứng cụ thể" style="text;html=1;fontSize=13;align=center;fontColor=#5A6779;" vertex="1" parent="1"><mxGeometry x="0" y="42" width="1040" height="20" as="geometry"/></mxCell>
         <mxCell id="m1" value="&lt;b&gt;Mức 1 — Kiểm thử đơn vị trên máy chủ: 263 test, 0 lỗi&lt;/b&gt;&lt;br/&gt;toàn bộ lõi mật mã và nghiệp vụ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E7F4EC;strokeColor=#2E7D4F;fontColor=#14432A;dashed=0;arcSize=8;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="240" y="96" width="560" height="66" as="geometry"/></mxCell>
         <mxCell id="m2" value="&lt;b&gt;Mức 2 — Tương thích định dạng: 5 phép đối chứng&lt;/b&gt;&lt;br/&gt;hai chiều với age v1.2.1 thật, và mở chéo tệp .svault" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E7F4EC;strokeColor=#2E7D4F;fontColor=#14432A;dashed=0;arcSize=8;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="240" y="178" width="560" height="66" as="geometry"/></mxCell>

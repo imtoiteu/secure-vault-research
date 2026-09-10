@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1040" height="620" viewBox="0 0 1040 620" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">
 <rect width="1040" height="620" fill="#FFFFFF"/>
 <defs><marker id="ah" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#55607A"/></marker></defs>
-<text x="520.0" y="34" font-size="20" font-weight="700" text-anchor="middle" fill="#12203A">Hình 6. Các mức kiểm chứng của sản phẩm</text>
+<text x="520.0" y="34" font-size="20" font-weight="700" text-anchor="middle" fill="#12203A">Các mức kiểm chứng của sản phẩm</text>
 <text x="520.0" y="56" font-size="13" text-anchor="middle" fill="#5A6779">Mỗi tuyên bố kỹ thuật trong hồ sơ đều gắn với một mức kiểm chứng cụ thể</text>
 <line x1="520" y1="162" x2="520" y2="178" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>
 <line x1="520" y1="244" x2="520" y2="260" stroke="#55607A" stroke-width="1.7" marker-end="url(#ah)"/>

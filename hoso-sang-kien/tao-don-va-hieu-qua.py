@@ -1,42 +1,32 @@
 #!/usr/bin/env python3
-"""Sinh hai văn bản theo đúng mẫu hồ sơ sáng kiến cải tiến kỹ thuật:
+"""Sinh hai văn bản còn lại của bộ hồ sơ:
 
-  1. ĐƠN ĐĂNG KÝ SÁNG KIẾN CẢI TIẾN KỸ THUẬT
-  3. XÁC NHẬN ĐÁNH GIÁ HIỆU QUẢ MANG LẠI CỦA SÁNG KIẾN
+  01. ĐƠN ĐĂNG KÝ SÁNG KIẾN CẢI TIẾN KỸ THUẬT
+  03. DỰ KIẾN HIỆU QUẢ SÁNG KIẾN KHI ĐƯA VÀO ỨNG DỤNG TRONG THỰC TIỄN
 
-Cấu trúc, thứ tự mục và khối ký được đối chiếu với tệp mẫu
-`Mau_ho_so_sang_kien_cai_tien.doc`. Số liệu lấy từ bang-chung/du-kien.json.
+Cấu trúc, thứ tự mục và khối ký đối chiếu với tệp mẫu `Mau_ho_so_sang_kien_cai_tien.doc`
+và với bản tác giả đã trực tiếp rà soát. Thông tin tác giả lấy từ ten_sang_kien.py, số liệu
+lấy từ du_lieu_ho_so.py — không nhập tay ở tệp này.
 """
 
-import json
 import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
-from ten_sang_kien import TEN_SANG_KIEN  # noqa: E402
 from dinh_dang import (  # noqa: E402
     bang, bullet, chu_ky, danh_so_trang, dat_lai_dem, dong_dien, h1, h2,
     khung_nhan_manh, new_document, o_danh_dau, para, rich, tieuDeChinh,
     tieu_de_quan_doi,
 )
+from du_lieu_ho_so import (  # noqa: E402
+    APK, MB_APK, N_CRATE, N_LENH, N_TEST, SO_DOI_CHUNG, arm, host,
+)
+from noi_dung_giao_dien import DANH_MUC_MAN_HINH  # noqa: E402
+from ten_sang_kien import (  # noqa: E402
+    CHI_HUY_DON_VI, CHU_NHIEM, DIA_DANH_NGAY, DONG_TAC_GIA, LINH_VUC, NAM, TEN_SANG_KIEN,
+)
 
 BASE = pathlib.Path(__file__).parent
-DK = json.loads((BASE / "bang-chung" / "du-kien.json").read_text(encoding="utf-8"))
-_apk_file = BASE / "bang-chung" / "kiem-tra-apk.json"
-APK = json.loads(_apk_file.read_text(encoding="utf-8")) if _apk_file.exists() else {"co_apk": False}
-
-N_LENH = DK["lenh_ipc"]["so_luong"]
-N_CRATE = DK["crate"]["so_luong"]
-N_TEST = sum(DK["test_trong_nguon"].values())
-KQ = DK["ket_qua_kiem_thu"]
-_host = KQ.get("host_toan_bo") or {}
-_arm = KQ.get("arm64_loi_mat_ma") or {}
-_iva = KQ.get("interop_age") or {}
-_ivv = KQ.get("interop_vault") or {}
-
-TEN_SK = TEN_SANG_KIEN
-LINH_VUC = ("An toàn thông tin trên không gian mạng; bảo vệ dữ liệu trên thiết bị di động; "
-            "công nghệ thông tin phục vụ đào tạo – huấn luyện")
 
 # =====================================================================
 # VĂN BẢN 1 — ĐƠN ĐĂNG KÝ
@@ -46,99 +36,106 @@ dat_lai_dem()
 danh_so_trang(doc)
 tieu_de_quan_doi(doc)
 
-tieuDeChinh(doc, "ĐƠN ĐĂNG KÝ\nSÁNG KIẾN CẢI TIẾN KỸ THUẬT NĂM ……")
+tieuDeChinh(doc, f"ĐƠN ĐĂNG KÝ\nSÁNG KIẾN CẢI TIẾN KỸ THUẬT NĂM {NAM}")
 
-h2(doc, "A. THÔNG TIN TÁC GIẢ")
-for nhan in ["Họ và tên", "Đơn vị", "Cấp bậc", "Trình độ",
-             "Ngày tháng năm sinh", "Địa chỉ liên hệ"]:
-    dong_dien(doc, nhan)
-dong_dien(doc, "Điện thoại", "……………………………          e-mail: ……………………………")
+dong_dien(doc, "Họ và tên", CHU_NHIEM["ho_ten"], cach_sau=3)
+dong_dien(doc, "Đơn vị", CHU_NHIEM["don_vi"], cach_sau=3)
+dong_dien(doc, "Cấp bậc", CHU_NHIEM["cap_bac"], cach_sau=3)
+dong_dien(doc, "Trình độ", CHU_NHIEM["trinh_do"], cach_sau=3)
+dong_dien(doc, "Ngày tháng năm sinh", CHU_NHIEM["ngay_sinh"], cach_sau=3)
+dong_dien(doc, "Địa chỉ liên hệ", CHU_NHIEM["dia_chi"], cach_sau=3)
+dong_dien(doc, "Điện thoại",
+          f"{CHU_NHIEM['dien_thoai']}          e-mail: {CHU_NHIEM['email']}", cach_sau=8)
 
-para(doc, "", indent=False)
 rich(doc, [
     ("Là tác giả (đại diện nhóm tác giả) của sáng kiến/giải pháp: ", ""),
-    (f"“{TEN_SK}”.", "b"),
+    (f"“{TEN_SANG_KIEN}”.", "b"),
 ], indent=False)
 dong_dien(doc, "Thuộc lĩnh vực", LINH_VUC)
 
 h2(doc, "B. HỒ SƠ KÈM THEO GỒM")
 o_danh_dau(doc, "Đơn đăng ký sáng kiến")
 o_danh_dau(doc, "Thuyết minh sáng kiến")
-o_danh_dau(doc, "Xác nhận đánh giá hiệu quả mang lại của sáng kiến/giải pháp")
+o_danh_dau(doc, "Dự kiến đánh giá hiệu quả mang lại của sáng kiến")
+o_danh_dau(doc, "Đề cương chi tiết về sáng kiến")
 o_danh_dau(doc, "Sản phẩm phần mềm: tệp cài đặt Android (APK) và toàn bộ mã nguồn")
-o_danh_dau(doc, "Phụ lục sơ đồ kiến trúc, ảnh chụp giao diện và quy trình kiểm thử")
 
-h2(doc, "C. DANH SÁCH CÁC ĐỒNG TÁC GIẢ (NẾU CÓ)")
+h2(doc, "C. DANH SÁCH CÁC ĐỒNG TÁC GIẢ")
 bang(doc, "",
-     ["TT", "Họ và tên", "Cấp bậc", "Đơn vị công tác", "Tỷ lệ đóng góp"],
-     [["1", "……………………", "…………", "……………………", "100%"],
-      ["2", "", "", "", ""]],
-     widths=[1.2, 4.2, 2.6, 4.8, 3.2])
+     ["TT", "Họ và tên", "Đơn vị", "Cấp bậc, chức vụ", "Tỷ lệ đóng góp"],
+     [[str(i), ng["ho_ten"], ng["don_vi"], f"{ng['cap_bac']}, {ng['chuc_vu']}", ng["ty_le"]]
+      for i, ng in enumerate(DONG_TAC_GIA, start=1)],
+     widths=[1.2, 3.8, 4.6, 3.6, 2.8])
 
 para(doc,
-     "Tôi xin cam đoan sáng kiến/giải pháp nói trên là do tôi nghiên cứu, thiết kế và trực "
-     "tiếp xây dựng. Toàn bộ ý tưởng giải pháp, kiến trúc hệ thống, thuật toán tổ chức và bảo "
-     "vệ dữ liệu, định dạng tệp két, cùng toàn bộ mã nguồn của sản phẩm là kết quả nghiên cứu "
-     "của cá nhân tôi. Các nguyên hàm mật mã cơ sở sử dụng trong sản phẩm là những chuẩn công "
-     "khai đã được cộng đồng khoa học kiểm chứng, do tôi lựa chọn và vận dụng có luận cứ vào "
-     "thiết kế của mình — đúng theo nguyên tắc nghề nghiệp là không tự chế thuật toán mật mã. "
-     "Tôi hoàn toàn chịu trách nhiệm trước pháp luật về nội dung đã kê khai.", indent=False)
+     "Chúng tôi xin cam đoan sáng kiến nói trên là do chúng tôi nghiên cứu, thiết kế và trực "
+     "tiếp xây dựng. Toàn bộ ý tưởng giải pháp, kiến trúc hệ thống, cách tổ chức và bảo vệ "
+     "dữ liệu, định dạng tệp két, cùng toàn bộ mã nguồn của sản phẩm là kết quả nghiên cứu "
+     "của nhóm tác giả. Các nguyên hàm mật mã cơ sở sử dụng trong sản phẩm là những chuẩn "
+     "công khai đã được cộng đồng khoa học kiểm chứng, do chúng tôi lựa chọn và vận dụng có "
+     "luận cứ vào thiết kế của mình — đúng theo nguyên tắc nghề nghiệp là không tự chế thuật "
+     "toán mật mã. Chúng tôi hoàn toàn chịu trách nhiệm trước pháp luật về nội dung đã kê "
+     "khai.", indent=False)
 
-chu_ky(doc, ("TÁC GIẢ SÁNG KIẾN", "(Ký, ghi rõ họ tên)"),
-       ("CHỈ HUY ĐƠN VỊ", "(Ký, đóng dấu)"))
+chu_ky(doc,
+       ("TÁC GIẢ SÁNG KIẾN", f"{CHU_NHIEM['cap_bac']} {CHU_NHIEM['ho_ten']}"),
+       ("CHỈ HUY ĐƠN VỊ", CHI_HUY_DON_VI),
+       dia_danh=DIA_DANH_NGAY)
 
 doc.save(str(BASE / "docx" / "01-Don-dang-ky-sang-kien.docx"))
 print("Đã tạo 01-Don-dang-ky-sang-kien.docx")
 
 # =====================================================================
-# VĂN BẢN 3 — XÁC NHẬN ĐÁNH GIÁ HIỆU QUẢ
+# VĂN BẢN 3 — DỰ KIẾN HIỆU QUẢ
 # =====================================================================
 doc = new_document()
 dat_lai_dem()
 danh_so_trang(doc)
 tieu_de_quan_doi(doc)
 
-tieuDeChinh(
-    doc,
-    "XÁC NHẬN ĐÁNH GIÁ HIỆU QUẢ MANG LẠI\nCỦA SÁNG KIẾN/GIẢI PHÁP",
-)
+tieuDeChinh(doc, "DỰ KIẾN HIỆU QUẢ SÁNG KIẾN\nKHI ĐƯA VÀO ỨNG DỤNG TRONG THỰC TIỄN")
 
-h1(doc, "I. THÔNG TIN CHUNG")
-dong_dien(doc, "Tên sáng kiến", TEN_SK)
-dong_dien(doc, "Tác giả")
-dong_dien(doc, "Đơn vị áp dụng")
-dong_dien(doc, "Thời gian bắt đầu áp dụng")
+h1(doc, "I. THÔNG TIN CHUNG VÀ CƠ SỞ ĐÁNH GIÁ")
+dong_dien(doc, "Tên sáng kiến", TEN_SANG_KIEN, cach_sau=3)
+dong_dien(doc, "Chủ nhiệm sáng kiến",
+          f"{CHU_NHIEM['cap_bac']} {CHU_NHIEM['ho_ten']} — {CHU_NHIEM['don_vi']}", cach_sau=3)
+dong_dien(doc, "Đơn vị áp dụng", "Học viện Khoa học Quân sự", cach_sau=8)
+para(doc,
+     "Văn bản này đánh giá hiệu quả của sáng kiến trên hai nhóm tách bạch: *hiệu quả đã đo "
+     "được* bằng số liệu khách quan tại thời điểm lập hồ sơ, và *hiệu quả dự kiến* khi đưa "
+     "vào sử dụng thực tế. Việc tách bạch nhằm tránh trình bày một dự kiến như thể đã là kết "
+     "quả đo được.")
 
 h1(doc, "II. HIỆU QUẢ ĐÃ ĐO ĐƯỢC BẰNG SỐ LIỆU KHÁCH QUAN")
 para(doc,
      "Các chỉ số dưới đây được sinh tự động từ mã nguồn và nhật ký kiểm thử của sản phẩm, "
-     "không phải số liệu ước lượng. Mọi chỉ số đều kiểm tra lại được bằng cách chạy lại bộ "
-     "kiểm thử kèm theo mã nguồn.")
+     "không phải số liệu ước lượng, và kiểm tra lại được bằng cách chạy lại bộ kiểm thử kèm "
+     "theo mã nguồn.")
 
 _rows = [
-    ["Số chức năng nghiệp vụ cung cấp", f"{N_LENH} lệnh", "Đếm trực tiếp từ mã nguồn"],
-    ["Quy mô mã nguồn do tác giả xây dựng", f"{N_CRATE} thành phần độc lập",
+    ["Số chức năng nghiệp vụ cung cấp", f"{N_LENH} chức năng", "Đếm trực tiếp từ mã nguồn"],
+    ["Số màn hình giao diện", f"{len(DANH_MUC_MAN_HINH)} màn hình",
+     "Đếm trực tiếp từ mã giao diện"],
+    ["Quy mô mã nguồn do nhóm tác giả xây dựng", f"{N_CRATE} thành phần độc lập",
      "Cấu hình vùng làm việc của dự án"],
     ["Số hàm kiểm thử tự động", f"{N_TEST} hàm", "Đếm trực tiếp từ mã nguồn"],
 ]
-if _host:
+if host:
     _rows.append(["Kết quả kiểm thử trên máy chủ",
-                  f"{_host['passed']} đạt / {_host['failed']} lỗi",
+                  f"{host['passed']} đạt / {host['failed']} lỗi",
                   "Nhật ký chạy bộ kiểm thử"])
-if _arm:
-    _rows.append([f"Kiểm thử lõi mật mã trên kiến trúc ARM64 ({_arm['suites']} bộ)",
-                  f"{_arm['passed']} đạt / {_arm['failed']} lỗi",
+if arm:
+    _rows.append([f"Kiểm thử lõi mật mã trên kiến trúc ARM64 ({arm['suites']} bộ)",
+                  f"{arm['passed']} đạt / {arm['failed']} lỗi",
                   "Chạy dưới trình giả lập kiến trúc"])
-if _iva or _ivv:
+if SO_DOI_CHUNG:
     _rows.append(["Kiểm chứng tương thích định dạng dữ liệu",
-                  f"{_iva.get('passed', 0) + _ivv.get('passed', 0)} phép đối chứng đạt",
+                  f"{SO_DOI_CHUNG} phép đối chứng đạt",
                   "Đối chứng với công cụ chuẩn age v1.2.1"])
 if APK.get("co_apk"):
-    _rows.append(["Sản phẩm đóng gói hoàn chỉnh",
-                  f"Tệp cài đặt Android {APK['kich_thuoc_byte'] / 1e6:.1f} MB",
+    _rows.append(["Sản phẩm đóng gói hoàn chỉnh", f"Tệp cài đặt Android {MB_APK} MB",
                   "Kiểm tra tĩnh nội dung gói cài đặt"])
-    _rows.append(["Quyền truy cập mạng ứng dụng yêu cầu",
-                  "Không khai báo quyền nào",
+    _rows.append(["Quyền truy cập mạng ứng dụng yêu cầu", "Không khai báo quyền nào",
                   "Đọc tệp kê khai trong gói cài đặt"])
 _rows += [
     ["Chi phí bản quyền phần mềm", "0 đồng", "Toàn bộ thành phần dùng giấy phép mở"],
@@ -147,82 +144,82 @@ _rows += [
 bang(doc, "Các chỉ số đã đo được tại thời điểm lập hồ sơ",
      ["Chỉ số", "Giá trị", "Nguồn số liệu"], _rows, widths=[6.4, 4.6, 4.5])
 
-h1(doc, "III. HIỆU QUẢ MANG LẠI KHI ÁP DỤNG")
+h1(doc, "III. HIỆU QUẢ DỰ KIẾN KHI ĐƯA VÀO ỨNG DỤNG")
 
-h2(doc, "1. Hiệu quả kinh tế")
-para(doc,
-     "Sáng kiến không phát sinh chi phí bản quyền phần mềm, không yêu cầu đầu tư máy chủ, "
-     "không phát sinh chi phí thuê bao dịch vụ và chạy trên thiết bị sẵn có của người dùng. "
-     "Hiệu quả kinh tế thể hiện ở việc tránh được chi phí mua sắm giải pháp thương mại tương "
-     "đương và chi phí duy trì hạ tầng đi kèm, đồng thời tránh chi phí đào tạo lại khi đổi "
-     "nhà cung cấp vì sản phẩm do đơn vị hoàn toàn làm chủ.")
-para(doc,
-     "Tác giả không quy đổi thành con số tiền cụ thể, vì con số đó phụ thuộc quy mô triển khai "
-     "và chính sách mua sắm của từng đơn vị; đưa ra ước lượng khi chưa triển khai sẽ không có "
-     "căn cứ và làm giảm độ tin cậy của hồ sơ.", italic=True)
-
-h2(doc, "2. Hiệu quả kỹ thuật")
+h2(doc, "1. Hiệu quả đối với công tác giảng dạy và huấn luyện")
 for t in [
-    "Bảo vệ dữ liệu ở trạng thái lưu trữ ngay trên thiết bị, lấp khoảng trống mà cơ chế mã "
-    "hoá toàn thiết bị của hệ điều hành không xử lý được: khi máy đã mở khoá, dữ liệu trong "
-    "két vẫn đòi hỏi mật khẩu riêng.",
-    "Dữ liệu tiếp tục được bảo vệ sau khi rời khỏi thiết bị: tệp két tự mang cơ chế bảo vệ "
-    "nên mở ở máy khác vẫn phải có mật khẩu.",
-    "Phát hiện được mọi sửa đổi trên tệp nhờ chữ ký ràng buộc do tác giả thiết kế, kể cả thủ "
-    "đoạn ghép nối tệp từ nhiều nguồn.",
-    "Khắc phục rủi ro mất dữ liệu do quên mật khẩu bằng cơ chế chia khoá theo ngưỡng, không "
-    "phải gửi khoá cho bên thứ ba giữ hộ.",
-    "Loại bỏ được siêu dữ liệu ẩn trong ảnh ngay trên điện thoại — nơi dữ liệu đó phát sinh — "
-    "thay vì phải chuyển ảnh sang máy tính để xử lý.",
-    "Tệp tạo ra theo chuẩn mở nên liên thông được với hệ sinh thái công cụ sẵn có, không khoá "
-    "người dùng vào một sản phẩm duy nhất.",
+    "Cung cấp học cụ cho các nội dung mã hoá, chữ ký số, hàm băm, chia sẻ bí mật ngưỡng, "
+    "giấu tin và phát hiện giấu tin — học viên thao tác trực tiếp trên thiết bị di động, "
+    "đúng môi trường sẽ gặp nhiều nhất sau khi ra trường.",
+    "Cho phép xây dựng bài thực hành có kết quả quan sát được ngay, thay cho ví dụ lý thuyết.",
+    "Giúp học viên hiểu đúng *giới hạn* của từng biện pháp: sản phẩm chủ động nêu rõ phạm vi "
+    "kết luận của các chức năng phân tích thay vì đưa ra kết luận tuyệt đối.",
+    "Mở ra hình thức huấn luyện nâng cao: đọc, phân tích và nhận xét mã nguồn của một hệ "
+    "thống an toàn thực tế — điều mà phần mềm thương mại mã nguồn đóng không đáp ứng được.",
 ]:
     bullet(doc, t)
 
-h2(doc, "3. Hiệu quả về quốc phòng – an ninh và xã hội")
+h2(doc, "2. Hiệu quả đối với bảo vệ dữ liệu trong tình huống đặc thù")
 for t in [
-    "Giảm rủi ro lộ lọt trong tình huống khẩn cấp, bất khả kháng buộc phải chuyển gấp tài "
-    "liệu qua không gian mạng: tệp được mã hoá, ký số và làm sạch siêu dữ liệu trước khi rời "
-    "thiết bị, nên nếu bị chặn bắt trên đường truyền thì nội dung vẫn không đọc được.",
+    "Giảm rủi ro lộ lọt khi phát sinh tình huống khẩn cấp, bất khả kháng buộc phải chuyển "
+    "gấp tài liệu qua không gian mạng và đã được cấp có thẩm quyền cho phép: tệp được mã "
+    "hoá, ký số và làm sạch siêu dữ liệu trước khi rời thiết bị, nên nếu bị chặn bắt trên "
+    "đường truyền thì bên chặn bắt thu được bản mã chứ không phải nội dung.",
+    "Cho phép bên nhận tự kiểm tra nguồn gốc và tính toàn vẹn của tệp bằng chữ ký số, không "
+    "phải tin vào kênh truyền.",
     "Bảo đảm chủ quyền dữ liệu: toàn bộ quá trình xử lý diễn ra trên thiết bị, khoá do người "
     "dùng nắm giữ, sản phẩm không có thành phần máy chủ và không khai báo quyền truy cập "
     "mạng nên về mặt kỹ thuật không thể gửi dữ liệu ra ngoài.",
     "Giảm phụ thuộc vào phần mềm bảo mật nước ngoài mã nguồn đóng: toàn bộ thiết kế và mã "
-    "nguồn do tác giả xây dựng, đơn vị kiểm soát được và có bộ kiểm thử để kiểm chứng lại.",
-    "Hạn chế thói quen gửi tệp ở dạng nguyên bản qua ứng dụng nhắn tin hoặc lưu trữ đám mây "
-    "không kiểm soát, bằng cách cung cấp ngay trên máy một phương án bọc bảo vệ thuận tiện.",
-    "Nâng cao nhận thức và kỹ năng an toàn thông tin cho cán bộ, học viên thông qua việc trực "
-    "tiếp sử dụng và quan sát kết quả của các biện pháp bảo vệ dữ liệu.",
-    "Phục vụ trực tiếp công tác đào tạo: sản phẩm là học cụ minh hoạ nhiều nội dung trong "
-    "chương trình an toàn thông tin, đồng thời mã nguồn mở cho phép tổ chức các bài học phân "
-    "tích mã nguồn của một hệ thống an toàn thực tế — hình thức huấn luyện sát thực tế mà "
-    "phần mềm thương mại không đáp ứng được.",
+    "nguồn do nhóm tác giả xây dựng, đơn vị kiểm soát được và có bộ kiểm thử để kiểm chứng.",
 ]:
     bullet(doc, t)
 
-h1(doc, "IV. PHẠM VI VÀ ĐIỀU KIỆN ÁP DỤNG")
+h2(doc, "3. Hiệu quả kinh tế")
+para(doc,
+     "Sáng kiến không phát sinh chi phí bản quyền phần mềm, không yêu cầu đầu tư máy chủ, "
+     "không phát sinh chi phí thuê bao dịch vụ và chạy trên thiết bị sẵn có của người dùng. "
+     "Hiệu quả kinh tế thể hiện ở việc tránh được chi phí mua sắm giải pháp thương mại tương "
+     "đương và chi phí duy trì hạ tầng đi kèm, đồng thời tránh chi phí chuyển đổi khi đổi "
+     "nhà cung cấp vì sản phẩm do đơn vị hoàn toàn làm chủ.")
+para(doc,
+     "Nhóm tác giả không quy đổi thành con số tiền cụ thể, vì con số đó phụ thuộc quy mô "
+     "triển khai và chính sách mua sắm của từng đơn vị; đưa ra ước lượng khi chưa triển khai "
+     "sẽ không có căn cứ và làm giảm độ tin cậy của hồ sơ.", italic=True)
+
+h1(doc, "IV. PHẠM VI, ĐIỀU KIỆN ÁP DỤNG VÀ GIỚI HẠN")
 para(doc,
      "Sản phẩm áp dụng được ngay với điều kiện tối thiểu: một điện thoại chạy hệ điều hành "
      "Android, không cần quyền quản trị thiết bị, không cần máy chủ và không cần kết nối "
      "mạng. Người dùng chỉ cần hướng dẫn sử dụng cơ bản và nắm nguyên tắc bảo quản mật khẩu.")
-para(doc,
-     "Việc sử dụng sản phẩm cho từng loại tài liệu phải tuân thủ quy định hiện hành của cơ "
-     "quan có thẩm quyền về bảo vệ bí mật nhà nước và quy chế của đơn vị. Hồ sơ này không "
-     "đưa ra tuyên bố về việc sản phẩm được phép xử lý tài liệu thuộc danh mục bí mật nhà "
-     "nước ở cấp độ cụ thể.", italic=True)
+para(doc, "Để bảo đảm sử dụng đúng và tránh chủ quan, cần nêu rõ các giới hạn sau:")
+for t in [
+    "Sản phẩm không bảo vệ được dữ liệu nếu thiết bị đã bị chiếm quyền điều khiển ở mức hệ "
+    "điều hành.",
+    "Nếu người dùng quên mật khẩu và không tạo trước các mảnh khoá phục hồi thì dữ liệu "
+    "không thể khôi phục — đây là đánh đổi có chủ ý của nguyên tắc không lưu mật khẩu lâu "
+    "dài, không phải thiếu sót.",
+    "Việc nghiệm thu trên thiết bị Android thật chưa thực hiện tại thời điểm lập hồ sơ; quy "
+    "trình nghiệm thu 15 bước đã được soạn sẵn tại Phụ lục A của Đề cương chi tiết để đơn vị "
+    "tự xác nhận trước khi đưa vào sử dụng rộng rãi.",
+    "Việc sử dụng sản phẩm cho bất kỳ loại tài liệu nào phải tuân thủ quy định hiện hành về "
+    "bảo vệ bí mật nhà nước và quy chế của đơn vị. Hồ sơ này không đưa ra tuyên bố về việc "
+    "sản phẩm được phép xử lý tài liệu thuộc danh mục bí mật nhà nước ở cấp độ cụ thể.",
+]:
+    bullet(doc, t)
 
-khung_nhan_manh(
-    doc,
-    "Kết luận",
-    ["Sáng kiến đã có sản phẩm hoàn chỉnh, đóng gói được và kiểm chứng bằng số liệu khách quan "
-     "ở nhiều mức, mang lại đồng thời giá trị sử dụng trong công tác và giá trị phục vụ đào "
-     "tạo an toàn thông tin.",
-     "Toàn bộ ý tưởng giải pháp, kiến trúc hệ thống, thuật toán tổ chức dữ liệu và mã nguồn "
-     "là kết quả nghiên cứu của tác giả."],
-)
+khung_nhan_manh(doc, "Kết luận", [
+    "Sáng kiến đã có sản phẩm hoàn chỉnh, đóng gói được và kiểm chứng bằng số liệu khách "
+    "quan ở nhiều mức, mang lại đồng thời giá trị phục vụ đào tạo an toàn thông tin và giá "
+    "trị sử dụng trong những tình huống công tác đặc thù đã được cho phép.",
+    "Phần chưa kiểm chứng được nêu rõ, kèm quy trình nghiệm thu để đơn vị tự xác nhận trên "
+    "thiết bị thật trước khi đưa vào sử dụng rộng rãi.",
+])
 
-chu_ky(doc, ("CÁN BỘ THỰC HIỆN", "(Ký, ghi rõ họ tên)"),
-       ("THỦ TRƯỞNG ĐƠN VỊ CHỦ TRÌ THỰC HIỆN", "(Ký, đóng dấu)"))
+chu_ky(doc,
+       ("XÁC NHẬN CỦA ĐƠN VỊ", ""),
+       ("CHỦ NHIỆM SÁNG KIẾN", f"{CHU_NHIEM['cap_bac']} {CHU_NHIEM['ho_ten']}"),
+       dia_danh=DIA_DANH_NGAY)
 
-doc.save(str(BASE / "docx" / "03-Xac-nhan-danh-gia-hieu-qua.docx"))
-print("Đã tạo 03-Xac-nhan-danh-gia-hieu-qua.docx")
+doc.save(str(BASE / "docx" / "03-Du-kien-hieu-qua.docx"))
+print("Đã tạo 03-Du-kien-hieu-qua.docx")

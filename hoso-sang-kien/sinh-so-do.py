@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Sinh toàn bộ sơ đồ của hồ sơ (SVG + drawio) từ mô tả dữ liệu."""
+"""Sinh toàn bộ sơ đồ của hồ sơ (SVG + drawio + PNG) từ mô tả dữ liệu.
+
+Tiêu đề nhúng trong hình cố tình *không* mang số hiệu “Hình N.”. Số hiệu do văn bản DOCX
+tự đánh theo thứ tự chèn; nếu hình cũng mang sẵn số thì hai bên sẽ lệch nhau ngay khi một
+hình bị bỏ ra khỏi văn bản — lỗi đã xảy ra một lần khi rút gọn bản Thuyết minh.
+"""
 
 import sys
 import pathlib
@@ -31,7 +36,7 @@ made = []
 # =====================================================================
 d = Diagram(
     "H1-bai-toan-thuc-te",
-    "Hình 1. Hai nhu cầu thực tiễn mà sáng kiến hướng tới",
+    "Hai nhu cầu thực tiễn mà sáng kiến hướng tới",
     1040, 560,
     "Huấn luyện an toàn thông tin và bọc bảo vệ tệp trong tình huống khẩn cấp, bất khả kháng",
 )
@@ -74,7 +79,7 @@ made.append(d.write())
 # =====================================================================
 d = Diagram(
     "H2-kien-truc-phan-lop",
-    "Hình 2. Kiến trúc phân lớp của SecureVault Mobile (Android)",
+    "Kiến trúc phân lớp của SecureVault Mobile",
     1040, 640,
     "Sáu lớp, phụ thuộc một chiều từ trên xuống; lõi mật mã không phụ thuộc giao diện",
 )
@@ -109,7 +114,7 @@ made.append(d.write())
 # =====================================================================
 d = Diagram(
     "H3-loi-dung-chung",
-    "Hình 3. Một lõi bảo mật, hai gốc hợp thành theo nền tảng",
+    "Nguyên tắc một lõi dùng chung, hai bản hiện thực theo nền tảng",
     1040, 650,
     "Rào cản kỹ thuật và cách giải quyết đã được kiểm chứng bằng thực nghiệm",
 )
@@ -161,7 +166,7 @@ made.append(d.write())
 # =====================================================================
 d = Diagram(
     "H4-phan-cap-khoa",
-    "Hình 4. Phân cấp khoá và luồng mở két an toàn",
+    "Sơ đồ phân cấp khoá và luồng mở két",
     1040, 600,
     "Mật khẩu không bao giờ được lưu; khoá chính chỉ tồn tại trong bộ nhớ phiên",
 )
@@ -197,7 +202,7 @@ made.append(d.write())
 # =====================================================================
 d = Diagram(
     "H5-luong-tep-android",
-    "Hình 5. Luồng xử lý tệp trên Android và ranh giới tin cậy",
+    "Luồng xử lý tệp trên Android",
     1040, 560,
     "Mọi xử lý diễn ra trên thiết bị; không có kết nối mạng trong toàn bộ luồng",
 )
@@ -235,7 +240,7 @@ made.append(d.write())
 # =====================================================================
 d = Diagram(
     "H6-thap-bang-chung",
-    "Hình 6. Các mức kiểm chứng của sản phẩm",
+    "Các mức kiểm chứng của sản phẩm",
     1040, 620,
     "Mỗi tuyên bố kỹ thuật trong hồ sơ đều gắn với một mức kiểm chứng cụ thể",
 )

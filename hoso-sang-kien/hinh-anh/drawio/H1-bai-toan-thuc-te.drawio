@@ -1,10 +1,10 @@
 <mxfile host="SecureVault" modified="2026-09-08T00:00:00.000Z" agent="tao-so-do.py" version="24.0.0">
-  <diagram id="H1-bai-toan-thuc-te" name="Hình 1. Hai nhu cầu thực tiễn mà sáng kiến hướng tới">
+  <diagram id="H1-bai-toan-thuc-te" name="Hai nhu cầu thực tiễn mà sáng kiến hướng tới">
     <mxGraphModel dx="1040" dy="560" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1040" pageHeight="560" math="0" shadow="0">
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
-        <mxCell id="title" value="Hình 1. Hai nhu cầu thực tiễn mà sáng kiến hướng tới" style="text;html=1;fontSize=20;fontStyle=1;align=center;" vertex="1" parent="1"><mxGeometry x="0" y="10" width="1040" height="30" as="geometry"/></mxCell>
+        <mxCell id="title" value="Hai nhu cầu thực tiễn mà sáng kiến hướng tới" style="text;html=1;fontSize=20;fontStyle=1;align=center;" vertex="1" parent="1"><mxGeometry x="0" y="10" width="1040" height="30" as="geometry"/></mxCell>
         <mxCell id="subtitle" value="Huấn luyện an toàn thông tin và bọc bảo vệ tệp trong tình huống khẩn cấp, bất khả kháng" style="text;html=1;fontSize=13;align=center;fontColor=#5A6779;" vertex="1" parent="1"><mxGeometry x="0" y="42" width="1040" height="20" as="geometry"/></mxCell>
         <mxCell id="nv" value="&lt;b&gt;Nhu cầu 1 — Huấn luyện&lt;/b&gt;&lt;br/&gt;học viên học mật mã trên lý&lt;br/&gt;thuyết và trên máy tính, chưa&lt;br/&gt;thao tác trên thiết bị di động" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F3F5;strokeColor=#6B7280;fontColor=#1F2933;dashed=0;arcSize=8;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="60" y="100" width="220" height="92" as="geometry"/></mxCell>
         <mxCell id="dl" value="&lt;b&gt;Nhu cầu 2 — Tình huống khẩn cấp&lt;/b&gt;&lt;br/&gt;buộc phải chuyển gấp một số tài&lt;br/&gt;liệu đặc thù qua không gian mạng&lt;br/&gt;khi không còn phương án khác" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EBFA;strokeColor=#4C51BF;fontColor=#242A6B;dashed=0;arcSize=8;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="340" y="100" width="240" height="92" as="geometry"/></mxCell>
