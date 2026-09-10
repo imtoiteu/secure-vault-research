@@ -57,6 +57,7 @@ h2(doc, "B. HỒ SƠ KÈM THEO GỒM")
 o_danh_dau(doc, "Đơn đăng ký sáng kiến")
 o_danh_dau(doc, "Thuyết minh sáng kiến")
 o_danh_dau(doc, "Dự kiến đánh giá hiệu quả mang lại của sáng kiến")
+o_danh_dau(doc, "Đề cương sơ bộ về sáng kiến")
 o_danh_dau(doc, "Đề cương chi tiết về sáng kiến")
 o_danh_dau(doc, "Sản phẩm phần mềm: tệp cài đặt Android (APK) và toàn bộ mã nguồn")
 

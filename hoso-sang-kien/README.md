@@ -32,16 +32,25 @@ Thư mục này chứa toàn bộ hồ sơ đề nghị công nhận sáng kiế
 | `docx/01-Don-dang-ky-sang-kien.docx` | Đơn đăng ký sáng kiến cải tiến kỹ thuật | 2 |
 | `docx/02-Thuyet-minh-sang-kien.docx` | **Thuyết minh — bản để hội đồng đọc.** Bám khung mẫu, cô đọng dưới 20 trang | 19 |
 | `docx/03-Du-kien-hieu-qua.docx` | Dự kiến hiệu quả khi đưa vào ứng dụng trong thực tiễn | 4 |
-| `docx/04-De-cuong-chi-tiet-sang-kien.docx` | **Đề cương chi tiết.** Toàn bộ lập luận thiết kế, mô tả từng chức năng kèm giao diện, kiểm chứng, ảnh chụp 21 màn hình, quy trình nghiệm thu | 58 |
+| `docx/04-De-cuong-so-bo-sang-kien.docx` | **Đề cương sơ bộ.** Lý do, mục tiêu, phạm vi, cách tiếp cận, khối công việc, kế hoạch kiểm chứng, tiến trình và rủi ro | 22 |
+| `docx/05-De-cuong-chi-tiet-sang-kien.docx` | **Đề cương chi tiết.** Toàn bộ lập luận thiết kế, mô tả từng chức năng kèm giao diện, kiểm chứng, ảnh chụp 21 màn hình, quy trình nghiệm thu | 60 |
 
 Bản PDF kèm theo trong cùng thư mục chỉ dùng để **kiểm tra bố cục**; bản nộp là tệp DOCX.
 
-**Vì sao tách 02 và 04.** Thuyết minh phải gọn để hội đồng đọc là nắm ngay sáng kiến có gì đặc
-biệt; nhưng cắt gọn thì mất phần chứng minh chiều sâu. Nên phần diễn giải kỹ thuật, bảng mô tả
-từng chức năng, ảnh chụp giao diện và quy trình nghiệm thu chuyển hết sang Đề cương, và Thuyết
-minh chỉ dẫn sang đúng mục tương ứng. Hai văn bản dùng chung một nguồn số liệu
-(`du_lieu_ho_so.py`) và chung nội dung tám nhóm chức năng (`noi_dung_chuc_nang.py`), nên không
-thể lệch nhau.
+**Ba văn bản nội dung, ba câu hỏi khác nhau.** Thuyết minh phải gọn để hội đồng đọc là nắm ngay
+sáng kiến có gì đặc biệt; nhưng cắt gọn thì mất phần chứng minh chiều sâu. Nên hồ sơ tách làm ba
+mức, mỗi mức trả lời một câu hỏi:
+
+| Văn bản | Trả lời câu hỏi | Quy mô |
+|---|---|---|
+| 02 Thuyết minh | *Sáng kiến này là gì và đáng giá ở đâu?* | dưới 20 trang |
+| 04 Đề cương sơ bộ | *Định làm gì, làm theo cách nào, lấy gì để chứng minh là đã làm được?* | khoảng 20 trang |
+| 05 Đề cương chi tiết | *Đã làm như thế nào, ở mức từng cơ chế?* | khoảng 60 trang |
+
+Đề cương sơ bộ **không phải** bản rút gọn của Đề cương chi tiết: nó là tài liệu của giai đoạn đặt
+vấn đề (mục tiêu, phạm vi, khối công việc, kế hoạch kiểm chứng, tiến trình, rủi ro), mỗi phần kèm
+cột đối chiếu với kết quả thực tế. Cả ba dùng chung một nguồn số liệu (`du_lieu_ho_so.py`) và
+chung nội dung tám nhóm chức năng (`noi_dung_chuc_nang.py`), nên không thể lệch nhau.
 
 **`ban-tac-gia-ra-soat/`** giữ nguyên ba tệp DOCX mà tác giả tự rà soát và chỉnh sửa thủ công —
 đây là nguồn văn bản gốc cho lần biên tập này, giữ lại để đối chiếu.
@@ -92,7 +101,8 @@ python3 sinh-so-do.py                        # sinh SVG + drawio
 python3 chup-giao-dien.py                    # chụp 21 màn hình + ghép hình cho Phụ lục B
 python3 tao-don-va-hieu-qua.py               # sinh văn bản 01 và 03
 python3 tao-thuyet-minh.py                   # sinh văn bản 02 (Thuyết minh, < 20 trang)
-python3 tao-de-cuong.py                      # sinh văn bản 04 (Đề cương chi tiết)
+python3 tao-de-cuong-so-bo.py                # sinh văn bản 04 (Đề cương sơ bộ)
+python3 tao-de-cuong-chi-tiet.py             # sinh văn bản 05 (Đề cương chi tiết)
 ```
 
 Các mô-đun dùng chung giữa các văn bản:
@@ -119,10 +129,30 @@ Việc tách dữ kiện ra tệp JSON là có chủ đích: nếu mã nguồn t
 | 3 | Biên dịch chéo toàn bộ lõi sang kiến trúc Android | Thành công |
 | 4 | Thực thi lõi trên kiến trúc ARM64 | 146 đạt / 0 lỗi |
 | 5 | Đóng gói APK và kiểm tra tĩnh nội dung gói | Đạt — xem `apk/README.md` |
-| 6 | Nghiệm thu trên điện thoại Android | **Chưa thực hiện** — quy trình 15 bước tại Phụ lục A của Đề cương |
+| 6 | Dựng + soát mã + kiểm thử trên ma trận hệ điều hành máy tính | Windows · macOS · Linux — 9/9 hạng mục xanh (biên bản `docs/CI-VALIDATION.md`) |
+| 7 | Nghiệm thu trên điện thoại Android | **Chưa thực hiện** — quy trình 15 bước tại Phụ lục A của Đề cương chi tiết |
 
-Phụ lục A của Đề cương là quy trình nghiệm thu có tiêu chí đạt cho từng bước và cột trống để
-ghi kết quả.
+Phụ lục A của Đề cương chi tiết là quy trình nghiệm thu có tiêu chí đạt cho từng bước và cột
+trống để ghi kết quả.
+
+## 4c. Về khả năng đa nền tảng
+
+Sản phẩm không chỉ có bản Android. Cùng một lõi nghiệp vụ chạy trên cả máy tính để bàn, và toàn
+bộ khác biệt giữa hai nền tảng gói gọn trong lớp lắp ráp ứng dụng (`app/src/compose/`, đúng hai
+tệp). Cái **đổi** theo nền tảng: mô-đun mã hoá nội dung, mô-đun siêu dữ liệu, cách lấy tệp từ bộ
+nhớ thiết bị, bố cục giao diện. Cái **không đổi**: định dạng tệp `.svault`, sơ đồ phân cấp khoá,
+38 lệnh nghiệp vụ, quy tắc phân loại lỗi, và 15 thành phần của lõi.
+
+Hồ sơ nêu khả năng này ở đúng mức kiểm chứng được, không hơn:
+
+| Tuyên bố | Bằng chứng |
+|---|---|
+| Mã nguồn dựng + soát mã + chạy kiểm thử đạt trên Windows/macOS/Linux | `.github/workflows/ci.yml` (ma trận 3 hệ điều hành) và `docs/CI-VALIDATION.md` (biên bản lần chạy xanh) |
+| Tệp két đọc chéo được giữa hai bản hiện thực | `src-tauri/tests/vault_interop.rs` — hai phép kiểm thử mang đúng tên `desktop_written_vault_opens_with_the_mobile_cipher` và chiều ngược lại |
+| **Chưa** có bản cài đặt ký số/công chứng cho Windows và macOS | `docs/VALIDATION-RESULTS.md` — hạng mục H5 còn để mở |
+
+**Trọng tâm của sáng kiến vẫn là bản di động**: đó là nơi rào cản kỹ thuật thực sự tồn tại và
+được giải quyết. Bản máy tính đóng vai trò đối chứng và mở rộng phạm vi sử dụng.
 
 ## 4b. Về mô-đun siêu dữ liệu
 

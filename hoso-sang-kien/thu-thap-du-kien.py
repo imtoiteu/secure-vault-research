@@ -90,16 +90,54 @@ def thuat_toan():
     }
 
 
+def da_nen_tang():
+    """Dữ kiện về khả năng đa nền tảng, đọc từ cấu hình CI và biên bản chạy CI.
+
+    Không gõ tay: ma trận hệ điều hành đọc thẳng từ .github/workflows/ci.yml, còn mã lần chạy
+    CI đã xanh đọc từ docs/CI-VALIDATION.md. Nếu một trong hai tệp đổi, số liệu trong hồ sơ
+    đổi theo.
+    """
+    ra = {}
+    ci = REPO / ".github/workflows/ci.yml"
+    if ci.exists():
+        txt = ci.read_text(encoding="utf-8")
+        he_dieu_hanh = sorted({m for m in re.findall(r"(ubuntu|macos|windows)-latest", txt)})
+        ra["he_dieu_hanh_ci"] = he_dieu_hanh
+        ra["viec_chay_ma_tran"] = re.findall(r"name: (.+) \(\$\{\{ matrix\.os \}\}\)", txt)
+    bb = REPO / "docs/CI-VALIDATION.md"
+    if bb.exists():
+        txt = bb.read_text(encoding="utf-8")
+        ngay = re.search(r"^\*\*Date:\*\* (\S+)", txt, re.M)
+        commit = re.search(r"\*\*Validated commit:\*\* `(\w+)`", txt)
+        run_id = re.search(r"workflow run\s*\n?\[`(\d+)`\]", txt)
+        xanh = re.search(r"\*\*all (\d+) jobs green\.\*\*", txt)
+        ra["lan_chay_ci_xanh"] = {
+            "ngay": ngay.group(1) if ngay else None,
+            "commit": commit.group(1) if commit else None,
+            "ma_lan_chay": run_id.group(1) if run_id else None,
+            "so_viec_dat": int(xanh.group(1)) if xanh else None,
+        }
+    # Bản hiện thực gắn với từng nền tảng — đọc từ chính lớp lắp ráp, nơi hai nền tảng rẽ nhánh.
+    for ten, tep in (("desktop", "app/src/compose/desktop.rs"), ("mobile", "app/src/compose/mobile.rs")):
+        f = REPO / tep
+        ra.setdefault("lop_lap_rap", {})[ten] = f.exists()
+    return ra
+
+
 def git_info():
     def run(*a):
         try:
             return subprocess.run(a, cwd=REPO, capture_output=True, text=True, timeout=30).stdout.strip()
         except Exception:
             return None
+    dau = run("git", "log", "--reverse", "--format=%ad", "--date=short")
     return {
         "commit": run("git", "rev-parse", "--short", "HEAD"),
         "branch": run("git", "rev-parse", "--abbrev-ref", "HEAD"),
         "so_commit": run("git", "rev-list", "--count", "HEAD"),
+        # Khoảng thời gian thực hiện lấy từ chính lịch sử kho mã, không gõ tay.
+        "ngay_dau": (dau or "").splitlines()[0] if dau else None,
+        "ngay_cuoi": run("git", "log", "-1", "--format=%ad", "--date=short"),
     }
 
 
@@ -115,6 +153,7 @@ def main():
         "thuat_toan": thuat_toan(),
         "test_trong_nguon": dem_test_nguon(),
         "git": git_info(),
+        "da_nen_tang": da_nen_tang(),
         "ket_qua_kiem_thu": {
             "host_toan_bo": doc_ket_qua(f"{scratch}/host-full.txt") if scratch else None,
             "arm64_loi_mat_ma": doc_ket_qua(f"{scratch}/arm64-core.txt") if scratch else None,
@@ -129,6 +168,12 @@ def main():
             "rust_msrv": "1.96",
         },
     }
+    if OUT.exists():
+        cu = json.loads(OUT.read_text(encoding="utf-8"))
+        for khoa, gia_tri in (cu.get("ket_qua_kiem_thu") or {}).items():
+            if du_kien["ket_qua_kiem_thu"].get(khoa) is None and gia_tri is not None:
+                du_kien["ket_qua_kiem_thu"][khoa] = gia_tri
+
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(du_kien, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"Đã ghi {OUT}")

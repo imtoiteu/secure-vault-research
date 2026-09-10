@@ -93,7 +93,7 @@ def _run(p, text, *, bold=False, italic=False, size=None, colour=None, font=None
     return r
 
 
-def _nhan_manh(p, text, *, bold=False, italic=False, colour=None):
+def _nhan_manh(p, text, *, bold=False, italic=False, colour=None, size=None):
     """Ghi văn bản, chuyển cặp dấu sao *…* thành chữ nghiêng.
 
     Các đoạn nội dung dài được viết ở dạng chuỗi Python thuần, nên cách duy nhất để đánh dấu
@@ -104,7 +104,7 @@ def _nhan_manh(p, text, *, bold=False, italic=False, colour=None):
         if not doan:
             continue
         # Các phần tử ở vị trí lẻ là nội dung nằm giữa hai dấu sao.
-        _run(p, doan, bold=bold, italic=italic or i % 2 == 1, colour=colour)
+        _run(p, doan, bold=bold, italic=italic or i % 2 == 1, colour=colour, size=size)
 
 
 # ------------------------------------------------------------------ khối văn bản
@@ -340,7 +340,9 @@ def khung_nhan_manh(doc, tieu_de, dong, mau="E7F4EC", vien="2E7D4F"):
         q = cell.add_paragraph()
         q.paragraph_format.space_after = Pt(2)
         q.paragraph_format.first_line_indent = Cm(0)
-        _run(q, d, size=Pt(12))
+        # Dùng _nhan_manh chứ không phải _run: khung nhấn mạnh cũng có chỗ cần in nghiêng,
+        # và nếu bỏ sót thì dấu sao in nguyên vào bản in.
+        _nhan_manh(q, d, size=Pt(12))
     doc.add_paragraph().paragraph_format.space_after = Pt(4)
 
 

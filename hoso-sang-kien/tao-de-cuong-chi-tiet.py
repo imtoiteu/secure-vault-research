@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
-"""Sinh văn bản ĐỀ CƯƠNG CHI TIẾT VỀ SÁNG KIẾN (DOCX).
+"""Sinh văn bản ĐỀ CƯƠNG CHI TIẾT VỀ SÁNG KIẾN (DOCX) — văn bản 05 của bộ hồ sơ.
 
-Vai trò trong bộ hồ sơ. Bản Thuyết minh (02) phải gọn dưới 20 trang để hội đồng đọc nhanh,
-nên chỉ giữ được phần có giá trị chứng minh cao nhất. Văn bản này giữ toàn bộ phần còn lại:
+Vai trò trong bộ hồ sơ. Ba văn bản nội dung xếp theo độ sâu tăng dần: Thuyết minh (02) trả
+lời *sáng kiến này là gì và đáng giá ở đâu*, Đề cương sơ bộ (04) trả lời *định làm gì, làm
+theo cách nào, lấy gì để chứng minh*, còn văn bản này trả lời *đã làm như thế nào, ở mức
+từng cơ chế*. Bản Thuyết minh phải gọn dưới 20 trang để hội đồng đọc nhanh, nên chỉ giữ
+được phần có giá trị chứng minh cao nhất; văn bản này giữ toàn bộ phần còn lại:
 lập luận thiết kế, các quyết định kiến trúc và phương án đã cân nhắc, cấu trúc dữ liệu do
 nhóm tác giả thiết kế, mô tả đầy đủ từng chức năng kèm giao diện thực hiện nó, chiến lược kiểm
 chứng, ảnh chụp toàn bộ màn hình và quy trình nghiệm thu.
@@ -22,11 +25,12 @@ import sys
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from dinh_dang import (  # noqa: E402
     bang, bullet, chu_ky, danh_so_trang, dat_lai_dem, h1, h2, h3, hinh,
-    khung_nhan_manh, muc_luc, new_document, para, tieuDeChinh, tieu_de_quan_doi, trang_bia,
+    khung_nhan_manh, muc_luc, new_document, para, rich, tieuDeChinh, tieu_de_quan_doi,
+    trang_bia,
 )
 from du_lieu_ho_so import (  # noqa: E402
-    A2, DS_LENH, MB_APK, N_CRATE, N_LENH, N_TEST, SHA_APK, SO_DOI_CHUNG,
-    TEST_THEO_CRATE, TT, arm, host, hinh_ghep, ngat_duoc,
+    A2, CHUOI_OS, CI_XANH, DS_LENH, MB_APK, N_CRATE, N_LENH, N_TEST, SHA_APK,
+    SO_DOI_CHUNG, TEN_OS, TEST_THEO_CRATE, TT, arm, host, hinh_ghep, ngat_duoc,
 )
 from noi_dung_chuc_nang import NHOM_CHUC_NANG  # noqa: E402
 from noi_dung_giao_dien import DANH_MUC_MAN_HINH, LENH_MUC_UNG_DUNG  # noqa: E402
@@ -375,6 +379,60 @@ para(doc,
      "và ngược lại; tệp tạo ra vẫn kiểm tra được bằng công cụ chuẩn của cộng đồng; và người "
      "dùng không bị khoá vào sản phẩm. Vì đây là ràng buộc dễ bị vi phạm âm thầm, nhóm tác giả "
      "không kiểm tra nó bằng lập luận mà bằng thực nghiệm đối chứng hai chiều (mục 5.4).")
+
+h2(doc, "2.4. Một lõi, nhiều nền tảng — hệ quả của việc tách nghiệp vụ khỏi nền tảng")
+para(doc,
+     "Ba quyết định trên có một hệ quả mà ban đầu không phải là mục tiêu, nhưng về sau trở "
+     "thành một trong những tính chất đáng giá nhất của sáng kiến: *nếu nghiệp vụ, định dạng "
+     "dữ liệu và cơ chế bảo vệ đều nằm dưới một ranh giới không phụ thuộc nền tảng, thì thay "
+     "nền tảng không còn là viết lại sản phẩm, mà chỉ là thay phần nằm trên ranh giới đó.*")
+para(doc,
+     "Cụ thể trong mã nguồn, toàn bộ khác biệt giữa hai nền tảng gói gọn trong *một* lớp gọi "
+     "là lớp lắp ráp ứng dụng, gồm đúng hai tệp: một cho máy tính, một cho thiết bị di động. "
+     "Lớp này quyết định hai việc — dùng bản hiện thực nào cho mô-đun mã hoá nội dung, và "
+     "dùng bản hiện thực nào cho mô-đun siêu dữ liệu — rồi bàn giao cho phần còn lại. Từ đó "
+     "trở xuống, mọi thứ giống hệt nhau.")
+bang(doc, "Cái gì đổi theo nền tảng và cái gì không",
+     ["Thành phần", "Máy tính để bàn", "Thiết bị di động", "Có đổi không?"],
+     [
+         ["Mô-đun mã hoá nội dung két", "Điều khiển công cụ chuẩn dưới dạng tiến trình con, "
+          "có ghim giá trị băm của tệp nhị phân", "Thực hiện ngay trong tiến trình ứng dụng",
+          "Đổi"],
+         ["Mô-đun xử lý siêu dữ liệu", "Gọi công cụ ngoài, phạm vi định dạng rộng",
+          "Mô-đun thuần Rust do nhóm tác giả viết, phạm vi định dạng hẹp và công bố rõ", "Đổi"],
+         ["Cách lấy tệp từ bộ nhớ thiết bị", "Đường dẫn tệp thông thường",
+          "Qua bộ chọn tệp của hệ điều hành, sao chép vào vùng riêng của ứng dụng", "Đổi"],
+         ["Bố cục giao diện", "Thanh điều hướng cố định bên trái",
+          "Ngăn kéo trượt từ cạnh trái; vùng chạm tối thiểu 44 điểm ảnh",
+          "Đổi (cùng một mã nguồn giao diện)"],
+         ["Định dạng tệp két .svault", "Như nhau", "Như nhau", "Không"],
+         ["Sơ đồ phân cấp khoá và tham số Argon2id", "Như nhau", "Như nhau", "Không"],
+         [f"{N_LENH} lệnh nghiệp vụ và ngữ nghĩa của chúng", "Như nhau", "Như nhau", "Không"],
+         ["Quy tắc phân loại lỗi", "Như nhau", "Như nhau", "Không"],
+         [f"Lõi gồm {N_CRATE} thành phần", "Như nhau", "Như nhau", "Không"],
+     ], widths=[3.8, 4.2, 4.2, 3.3])
+para(doc,
+     "Bảng trên là cách diễn đạt cụ thể nhất cho tính độc lập nền tảng: *bốn dòng đầu đổi, "
+     "năm dòng sau không*. Và năm dòng không đổi mới là những dòng quyết định dữ liệu của "
+     "người dùng có an toàn hay không.")
+para(doc, "*Vai trò của từng nền tảng trong sáng kiến.* "
+     "Bản trên máy tính ra đời trước và đóng ba vai trò: là bản *đối chứng* — chính nó cung "
+     "cấp phía còn lại cho các phép kiểm tra chéo ở mục 5.4; là bản *tham chiếu ngữ nghĩa* — "
+     "khi bản di động cho kết quả khác, bản máy tính là chuẩn để đối chiếu; và là bản *mở "
+     "rộng phạm vi sử dụng* — cùng bộ chức năng dùng được trên máy trạm của đơn vị, tệp két "
+     "đi lại được giữa hai môi trường. Bản di động thì khác hẳn về vai trò: nó là nơi bài "
+     "toán kỹ thuật thực sự phát sinh (mục 3.1) và được giải quyết, nên cũng là nơi tập trung "
+     "giá trị sáng tạo của sáng kiến. Nói ngắn gọn: *bản máy tính chứng minh kiến trúc là "
+     "đúng, bản di động chứng minh kiến trúc là có ích.*")
+khung_nhan_manh(doc, "Ranh giới của tuyên bố về đa nền tảng", [
+    "Hồ sơ nêu khả năng đa nền tảng ở đúng mức kiểm chứng được: mã nguồn của lõi và của lớp "
+    "vỏ ứng dụng được dựng, soát mã và chạy kiểm thử tự động trên cả ba hệ điều hành máy tính "
+    f"({CHUOI_OS}) trong quy trình tích hợp liên tục (mục 5.5).",
+    "Việc đóng gói bản cài đặt có ký số và công chứng cho từng hệ điều hành máy tính — bước "
+    "cần thiết để phân phối rộng rãi — chưa thực hiện. Vì vậy hồ sơ không tuyên bố sản phẩm "
+    "đã sẵn sàng phát hành trên Windows hay macOS; điều được khẳng định là *kiến trúc và mã "
+    "nguồn chạy được trên các nền tảng đó*, có bằng chứng kèm theo.",
+], mau="FDF3E3", vien="B07D2B")
 
 # =====================================================================
 # PHẦN III
@@ -725,10 +783,11 @@ hinh(doc, PNG / "H6-thap-bang-chung.png", "Các mức kiểm chứng của sản
 para(doc,
      "Kiểm chứng được tổ chức theo năm mức, từ mức rẻ và chạy thường xuyên đến mức đắt và "
      "gần thực tế nhất: kiểm thử đơn vị trên từng thành phần; kiểm thử tích hợp trên toàn bộ "
-     "vòng đời nghiệp vụ; kiểm thử trên đúng kiến trúc bộ xử lý của điện thoại; đối chứng "
-     "với công cụ chuẩn bên ngoài; và kiểm tra tĩnh chính gói cài đặt sẽ giao cho người "
+     "vòng đời nghiệp vụ; kiểm thử trên đúng kiến trúc bộ xử lý của điện thoại và trên ma "
+     "trận hệ điều hành máy tính; đối chứng với công cụ chuẩn bên ngoài; và kiểm tra tĩnh "
+     "chính gói cài đặt sẽ giao cho người "
      "dùng. Mức cuối cùng — nghiệm thu trên thiết bị thật — chưa thực hiện, và điều đó được "
-     "nói rõ ở mục 5.6.")
+     "nói rõ ở mục 5.7.")
 
 h2(doc, "5.2. Bộ kiểm thử tự động")
 para(doc,
@@ -815,7 +874,50 @@ para(doc,
      "không biết gì về sản phẩm. Nếu hai bên đọc được tệp của nhau theo cả hai chiều thì kết "
      "luận về tính tương thích không còn phụ thuộc vào lời khẳng định của nhóm tác giả.")
 
-h2(doc, "5.5. Kiểm tra tĩnh gói cài đặt")
+h2(doc, "5.5. Kiểm chứng khả năng đa nền tảng")
+para(doc,
+     "Tuyên bố “một lõi chạy trên nhiều nền tảng” rất dễ nói và rất khó chứng minh bằng lời. "
+     "Nhóm tác giả kiểm chứng nó ở hai mức, trả lời hai câu hỏi khác nhau.")
+para(doc, "*Mức thứ nhất — mã nguồn có thực sự dựng và chạy được trên từng nền tảng không?* "
+     f"Quy trình tích hợp liên tục của dự án chạy trên ma trận {len(TEN_OS)} hệ điều hành "
+     f"({CHUOI_OS}), với hai hạng mục chạy đủ cả ma trận: một cho phần lõi và một cho lớp vỏ "
+     "ứng dụng. Mỗi hạng mục gồm kiểm tra định dạng mã, soát mã ở mức từ chối mọi cảnh báo, "
+     "dựng với phiên bản phụ thuộc khoá cứng, và chạy bộ kiểm thử — trong đó có cả phép kiểm "
+     "thử vòng đời két chạy với công cụ mã hoá thật, không phải bản giả lập.")
+rich(doc, [
+    ("Kết quả: ", "b"),
+    (f"biên bản lần chạy ngày {CI_XANH.get('ngay')} trên mã nguồn {CI_XANH.get('commit')} ghi "
+     f"nhận {CI_XANH.get('so_viec_dat')} hạng mục đều đạt, gồm các hạng mục chạy trên "
+     f"{CHUOI_OS}. Số hàm kiểm thử ghi trong biên bản là số của thời điểm đó; bộ kiểm thử từ "
+     "đó đến nay đã tăng thêm, nên con số hiện tại ở mục 5.2 lớn hơn. Biên bản lưu tại "
+     "docs/CI-VALIDATION.md kèm mã lần chạy để đối chiếu.", ""),
+])
+para(doc, "*Mức thứ hai — hai nền tảng có thực sự đọc được dữ liệu của nhau không?* "
+     "Đây mới là câu hỏi người dùng quan tâm, và cũng là câu khó hơn: hai bản hiện thực có "
+     "thể cùng biên dịch được, cùng chạy được, mà vẫn sinh ra hai định dạng khác nhau. Vì vậy "
+     "có hai phép kiểm thử tự động dành riêng cho việc này, và tên gọi của chúng trong mã "
+     "nguồn nói đúng nội dung: *“két do bản máy tính tạo phải mở được bằng bản di động”* và "
+     "*“két do bản di động tạo phải mở được bằng bản máy tính”*.")
+para(doc,
+     "Điều đáng nói là hai phép kiểm thử này không dừng ở việc so sánh khối dữ liệu mã hoá — "
+     "việc đó đã có phép đối chứng riêng với công cụ chuẩn ở mục 5.4. Chúng dựng nguyên một "
+     "tệp két hoàn chỉnh bằng bản hiện thực này rồi mở bằng bản kia, tức là đi qua toàn bộ "
+     "chuỗi: dẫn xuất khoá từ mật khẩu, mở các khoá đã bọc, kiểm tra chữ ký ràng buộc, giải "
+     "mã danh mục tệp và lấy tệp ra. Phép kiểm thử thứ ba xác nhận rằng sau khi đổi bản hiện "
+     "thực, mật khẩu sai vẫn bị từ chối — để cái đọc được không phải nhờ một lỗ hổng.")
+para(doc,
+     "Một điểm cần nói chính xác: hai phép kiểm thử đọc chéo chạy trên cùng một máy, vì cái "
+     "chúng kiểm tra là *sự đồng nhất của định dạng giữa hai bản hiện thực*, không phải hành "
+     "vi của phần cứng. Toàn bộ phần còn lại của lõi là chung một mã nguồn, nên khi định dạng "
+     "đã đồng nhất thì tệp két đi lại được giữa hai nền tảng. Việc chạy đúng trên từng nền "
+     "tảng là câu hỏi riêng, và đó là việc của mức thứ nhất.")
+para(doc,
+     "Hai mức trên trả lời trọn vẹn câu hỏi về đa nền tảng trong phạm vi kiểm chứng được. "
+     "Phần chưa kiểm chứng cũng cần nói rõ: việc đóng gói bản cài đặt có ký số và công chứng "
+     "cho Windows và macOS chưa thực hiện, nên hồ sơ không tuyên bố sản phẩm đã sẵn sàng phát "
+     "hành trên hai nền tảng đó.")
+
+h2(doc, "5.6. Kiểm tra tĩnh gói cài đặt")
 para(doc,
      "Mức kiểm chứng cuối cùng thực hiện được trên máy chủ là mở chính gói cài đặt sẽ giao "
      "cho người dùng và đọc nội dung bên trong. Cách này kiểm tra được những điều mà mã "
@@ -835,7 +937,7 @@ bang(doc, "Kết quả kiểm tra tĩnh gói cài đặt Android",
           "Cho phép đối chiếu đúng gói đã kiểm tra với gói được cài đặt"],
      ], widths=[4.6, 4.6, 6.3])
 
-h2(doc, "5.6. Chỉ tiêu kỹ thuật đạt được và phần chưa kiểm chứng")
+h2(doc, "5.7. Chỉ tiêu kỹ thuật đạt được và phần chưa kiểm chứng")
 bang(doc, "Tổng hợp chỉ tiêu kỹ thuật",
      ["Chỉ tiêu", "Giá trị đạt được", "Cách xác định"],
      [
@@ -855,6 +957,13 @@ bang(doc, "Tổng hợp chỉ tiêu kỹ thuật",
           "Đối chứng hai chiều với công cụ chuẩn age v1.2.1"],
          ["Quyền ứng dụng yêu cầu", "Không khai báo quyền nào",
           "Đọc tệp kê khai trong gói cài đặt"],
+         ["Dựng và kiểm thử trên hệ điều hành máy tính", f"{CHUOI_OS} — đạt",
+          f"Biên bản tích hợp liên tục {CI_XANH.get('ngay')}, "
+          f"{CI_XANH.get('so_viec_dat')} hạng mục xanh"],
+         ["Đọc chéo tệp két giữa hai nền tảng", "2 phép kiểm thử đạt",
+          "Kiểm thử tự động dành riêng, mục 5.5"],
+         ["Đóng gói bản cài đặt có ký số cho Windows/macOS", "Chưa thực hiện",
+          "Bước cần cho phân phối rộng rãi, ngoài phạm vi phiên bản này"],
          ["Nghiệm thu trên thiết bị Android thật", "Chưa thực hiện",
           "Quy trình 15 bước đã soạn, đặt tại Phụ lục A"],
      ], widths=[6.4, 4.4, 4.7],
@@ -961,6 +1070,14 @@ para(doc,
      "kết nối mạng, không yêu cầu quyền quản trị thiết bị. Đây là hệ quả trực tiếp của "
      "nguyên lý hoạt động ngoại tuyến — thứ ban đầu là một ràng buộc an toàn, nhưng hoá ra "
      "cũng là thứ làm cho việc triển khai gần như không có chi phí.")
+para(doc,
+     "Nhờ kiến trúc ở mục 2.4, cùng bộ chức năng còn triển khai được trên máy trạm chạy hệ "
+     f"điều hành máy tính ({CHUOI_OS}), và tệp két đi lại được giữa hai môi trường. Điều này "
+     "mở thêm vài cách dùng thực tế: giảng viên chuẩn bị dữ liệu bài thực hành trên máy tính "
+     "rồi để học viên xử lý trên điện thoại; hoặc cán bộ xử lý tệp trên điện thoại rồi kiểm "
+     "tra lại kết quả trên máy trạm bằng chính công cụ chuẩn của cộng đồng. Cần nhắc lại "
+     "ranh giới đã nêu ở mục 5.5: bản cài đặt có ký số cho Windows và macOS chưa được đóng "
+     "gói, nên việc triển khai rộng trên máy tính vẫn còn một bước phải làm.")
 bang(doc, "Mức độ hoàn thành theo hạng mục",
      ["Hạng mục", "Mức độ", "Cách xác định"],
      [
@@ -998,10 +1115,17 @@ for _h, _t in [
     ("Xây dựng bộ bài giảng và bài thực hành kèm theo. ",
      "Biên soạn tài liệu hướng dẫn giảng viên, phiếu bài thực hành và bộ dữ liệu mẫu trên cơ "
      "sở khung đề xuất ở mục 6.2."),
+    ("Hoàn thiện khâu phân phối cho bản máy tính. ",
+     "Đóng gói bản cài đặt có ký số và công chứng cho Windows và macOS, cài thử trên máy "
+     "sạch và xác nhận các chức năng mật mã chạy đúng ngay lần mở đầu tiên. Đây là bước duy "
+     "nhất còn thiếu để bản máy tính phân phối được rộng rãi; phần mã nguồn đã chạy đạt trên "
+     "cả ba hệ điều hành."),
     ("Đánh giá độc lập và mở rộng nền tảng. ",
      "Tổ chức rà soát mã nguồn và kiểm thử độc lập bởi đồng nghiệp hoặc học viên có chuyên "
-     "môn. Trên cơ sở kiến trúc lõi dùng chung đã có, việc mở rộng sang nền tảng khác chỉ "
-     "cần bổ sung các thành phần phụ thuộc nền tảng mà vẫn dùng chung lõi và định dạng."),
+     "môn. Trên cơ sở kiến trúc lõi dùng chung đã có, việc mở rộng sang một nền tảng di động "
+     "khác chỉ cần bổ sung các thành phần phụ thuộc nền tảng mà vẫn dùng chung lõi và định "
+     "dạng — cấu trúc mã nguồn đã sẵn sàng cho việc đó, nhưng chưa được hiện thực và kiểm "
+     "chứng trong phiên bản này."),
 ]:
     bullet(doc, _t, bold_head=_h)
 
@@ -1082,7 +1206,7 @@ chu_ky(doc,
        ("CHỦ NHIỆM SÁNG KIẾN", f"{CHU_NHIEM['cap_bac']} {CHU_NHIEM['ho_ten']}"),
        dia_danh=DIA_DANH_NGAY)
 
-OUT = BASE / "docx" / "04-De-cuong-chi-tiet-sang-kien.docx"
+OUT = BASE / "docx" / "05-De-cuong-chi-tiet-sang-kien.docx"
 OUT.parent.mkdir(exist_ok=True)
 doc.save(OUT)
 print(f"Đã ghi {OUT}")

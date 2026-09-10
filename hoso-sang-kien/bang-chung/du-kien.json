@@ -93,9 +93,32 @@
     "sv-app": 46
   },
   "git": {
-    "commit": "6014f11",
+    "commit": "c924d23",
     "branch": "feat/mobile-android-ios",
-    "so_commit": "23"
+    "so_commit": "28",
+    "ngay_dau": "2026-06-15",
+    "ngay_cuoi": "2026-09-10"
+  },
+  "da_nen_tang": {
+    "he_dieu_hanh_ci": [
+      "macos",
+      "ubuntu",
+      "windows"
+    ],
+    "viec_chay_ma_tran": [
+      "build+test",
+      "app shell build+test"
+    ],
+    "lan_chay_ci_xanh": {
+      "ngay": "2026-06-15",
+      "commit": "780444d",
+      "ma_lan_chay": "27563728420",
+      "so_viec_dat": 9
+    },
+    "lop_lap_rap": {
+      "desktop": true,
+      "mobile": true
+    }
   },
   "ket_qua_kiem_thu": {
     "host_toan_bo": {

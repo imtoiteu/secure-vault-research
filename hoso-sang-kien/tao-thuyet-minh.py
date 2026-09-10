@@ -15,7 +15,7 @@ Cấu trúc bám theo tệp mẫu `Mau_ho_so_sang_kien_cai_tien.doc`:
 Vai trò của văn bản này trong bộ hồ sơ: **để hội đồng đọc**. Người đọc cần nắm nhanh sáng
 kiến là gì, giải quyết vấn đề nào, mới và sáng tạo ở đâu, sản phẩm thật ra sao và giá trị
 đến đâu. Vì vậy mọi phần diễn giải kỹ thuật sâu, bảng chức năng đầy đủ, ảnh chụp toàn bộ
-giao diện và quy trình nghiệm thu chi tiết đều chuyển sang văn bản 04 — Đề cương chi tiết
+giao diện và quy trình nghiệm thu chi tiết đều chuyển sang văn bản 05 — Đề cương chi tiết
 (tao-de-cuong.py) — và ở đây chỉ giữ phần có giá trị chứng minh cao nhất kèm chỉ dẫn tra cứu.
 
 Mọi số liệu lấy từ bang-chung/du-kien.json và bang-chung/kiem-tra-apk.json, do các script
@@ -33,7 +33,7 @@ from dinh_dang import (  # noqa: E402
     tieu_de_quan_doi, trang_bia,
 )
 from du_lieu_ho_so import (  # noqa: E402
-    A2, MB_APK, N_CRATE, N_LENH, N_TEST, SO_DOI_CHUNG, TT, arm, host,
+    A2, CHUOI_OS, CI_XANH, MB_APK, N_CRATE, N_LENH, N_TEST, SO_DOI_CHUNG, TT, arm, host,
 )
 from noi_dung_chuc_nang import NHOM_CHUC_NANG  # noqa: E402
 from noi_dung_giao_dien import DANH_MUC_MAN_HINH  # noqa: E402
@@ -47,7 +47,7 @@ PNG = BASE / "hinh-anh" / "png"
 SS = BASE / "hinh-anh" / "screenshot"
 
 # Thuyết minh phải gọn dưới 20 trang nên siết giãn dòng và giãn đoạn so với mặc định.
-doc = new_document(gian_dong=1.28, cach_doan=4)
+doc = new_document(gian_dong=1.24, cach_doan=3)
 dat_lai_dem()
 danh_so_trang(doc)
 
@@ -72,25 +72,25 @@ para(doc,
 para(doc,
      "*Nguyên nhân.* Các công cụ mật mã tin cậy phần lớn được phân phối dưới dạng tệp nhị "
      "phân chạy độc lập, mà hệ điều hành di động lại không cho ứng dụng sinh tiến trình con "
-     "để chạy chúng. Đây là rào cản thuộc về kiến trúc nền tảng, không phải vấn đề khả năng "
-     "lập trình.")
+     "để chạy chúng — rào cản thuộc về kiến trúc nền tảng, không phải khả năng lập trình.")
 para(doc,
-     "*Giải pháp.* Nhóm tác giả xây dựng kiến trúc tách nghiệp vụ bảo vệ dữ liệu khỏi giao diện "
-     "và nền tảng, đặt điểm nối trừu tượng tại đúng những vị trí phụ thuộc nền tảng. Nhờ đó "
-     "có thể thay phần hiện thực bên dưới bằng phiên bản chạy ngay trong tiến trình ứng dụng "
-     "mà nghiệp vụ và định dạng dữ liệu giữ nguyên. Trên nền đó, nhóm tác giả tự thiết kế định "
-     "dạng tệp két (.svault), sơ đồ phân cấp khoá, quy tắc phân loại lỗi theo hướng an toàn "
-     "và tự viết mô-đun xử lý siêu dữ liệu.")
+     "*Giải pháp.* Nhóm tác giả xây dựng kiến trúc trong đó *toàn bộ nghiệp vụ bảo vệ dữ liệu "
+     "nằm trong một lõi độc lập với giao diện và với nền tảng*, đặt điểm nối trừu tượng tại "
+     "đúng những vị trí phụ thuộc nền tảng. Nhờ đó thay được phần hiện thực bên dưới bằng "
+     "phiên bản chạy ngay trong tiến trình ứng dụng mà nghiệp vụ, định dạng dữ liệu và cơ chế "
+     "bảo vệ giữ nguyên. Cùng một lõi chạy trên cả máy tính lẫn thiết bị di động; phần khó và "
+     "mới nằm ở bản di động, nơi rào cản của hệ điều hành khiến cách làm quen thuộc trên máy "
+     "tính không dùng được. Trên nền đó, nhóm tác giả tự thiết kế định dạng tệp két (.svault), "
+     "sơ đồ phân cấp khoá, quy tắc phân loại lỗi an toàn và mô-đun xử lý siêu dữ liệu.")
 para(doc,
      f"*Sản phẩm.* Ứng dụng di động hoàn chỉnh với {N_LENH} chức năng nghiệp vụ thao tác qua "
      f"{len(DANH_MUC_MAN_HINH)} màn hình, xây dựng trên {N_CRATE} thành phần mã nguồn, kèm "
-     f"{N_TEST} hàm kiểm thử tự động; tính tương thích định dạng được kiểm chứng bằng "
-     f"{SO_DOI_CHUNG} phép đối chứng với công cụ chuẩn thay vì bằng suy luận. Mỗi chức năng "
-     "đối chiếu một-một với màn hình thực hiện nó (mục 3.2.4).")
+     f"{N_TEST} hàm kiểm thử tự động; tương thích định dạng được kiểm chứng bằng "
+     f"{SO_DOI_CHUNG} phép đối chứng với công cụ chuẩn thay vì bằng suy luận.")
 para(doc,
-     "*Giá trị.* Sản phẩm vừa dùng được trong công tác để bảo vệ dữ liệu ngay trên thiết bị, "
-     "vừa là học cụ trực quan cho giảng dạy: mỗi nhóm chức năng tương ứng một nguyên lý, và "
-     "mã nguồn mở cho phép học viên đọc, chạy lại và phân tích một hệ thống an toàn thực tế.")
+     "*Giá trị.* Sản phẩm vừa dùng được trong công tác, vừa là học cụ trực quan cho giảng "
+     "dạy: mỗi nhóm chức năng tương ứng một nguyên lý, và mã nguồn mở cho phép học viên đọc, "
+     "chạy lại và phân tích một hệ thống an toàn thực tế.")
 
 muc_luc(doc, sang_trang=True)
 
@@ -161,18 +161,14 @@ para(doc,
      "thể yêu cầu đặt ra, chưa có giải pháp nào đáp ứng đồng thời và đầy đủ các chức năng "
      "cần thiết trên nền tảng di động.")
 para(doc,
-     "Sáu nhóm giải pháp được khảo sát và điểm yếu cốt lõi của từng nhóm: *mã hoá toàn thiết "
-     "bị* của hệ điều hành chỉ bảo vệ khi máy tắt hoặc chưa mở khoá lần đầu, và không theo "
-     "tệp khi tệp rời thiết bị; *ứng dụng “két riêng tư” trên kho ứng dụng* phần lớn mã "
-     "nguồn đóng nên không kiểm chứng được thuật toán và cách quản lý khoá, nhiều ứng dụng "
-     "còn đòi quyền mạng; *trình quản lý mật khẩu mã nguồn mở* làm rất tốt việc của nó nhưng "
-     "được thiết kế cho mật khẩu chứ không cho tệp, và không có ký số, kiểm tra toàn vẹn hay "
-     "chia khoá phục hồi; *công cụ mật mã dòng lệnh* có thuật toán tin cậy nhưng không có "
-     "bản dùng được trên di động do rào cản kiến trúc nền tảng (mục 3.2.2); *ứng dụng nhắn "
-     "tin mã hoá đầu-cuối* bảo vệ đường truyền nhưng không bảo vệ dữ liệu lúc lưu trên máy, "
-     "và dữ liệu vẫn đi qua hạ tầng của nhà cung cấp nước ngoài; *giải pháp quản lý thiết bị "
-     "MDM/DLP* cần hạ tầng máy chủ, chi phí bản quyền và phụ thuộc nhà cung cấp. Bảng ưu — "
-     "nhược điểm đầy đủ của sáu nhóm trình bày tại mục 1.3 của Đề cương chi tiết.")
+     "Điểm yếu cốt lõi của từng nhóm: *mã hoá toàn thiết bị* chỉ bảo vệ khi máy tắt, không "
+     "theo tệp khi tệp rời thiết bị; *ứng dụng “két riêng tư”* phần lớn mã nguồn đóng nên "
+     "không kiểm chứng được, nhiều ứng dụng còn đòi quyền mạng; *trình quản lý mật khẩu mã "
+     "nguồn mở* thiết kế cho mật khẩu chứ không cho tệp; *công cụ mật mã dòng lệnh* thuật "
+     "toán tin cậy nhưng không có bản dùng được trên di động (mục 3.2.2); *ứng dụng nhắn tin "
+     "mã hoá đầu-cuối* bảo vệ đường truyền nhưng không bảo vệ dữ liệu lúc lưu; *MDM/DLP* cần "
+     "hạ tầng máy chủ và phụ thuộc nhà cung cấp. Bảng ưu — nhược điểm đầy đủ của sáu nhóm: "
+     "mục 1.3 của Đề cương chi tiết.")
 para(doc,
      "Để so sánh khách quan hơn, bảng dưới đây đối chiếu theo từng tiêu chí kiểm tra được, "
      "thay vì dựa trên nhận định định tính.")
@@ -229,6 +225,11 @@ for _h, _t in [
     ("Bảo đảm chủ quyền dữ liệu. ",
      "Khoá và dữ liệu do người dùng nắm giữ hoàn toàn; ứng dụng không tự truyền dữ liệu ra "
      "ngoài và không phụ thuộc máy chủ, đám mây hay dịch vụ bên thứ ba."),
+    ("Một lõi dùng chung cho nhiều nền tảng. ",
+     "Nghiệp vụ, định dạng tệp và cơ chế bảo vệ không phụ thuộc nền tảng, nên bản trên máy "
+     "tính và bản trên thiết bị di động dùng chung một lõi và đọc được tệp của nhau. Trọng "
+     "tâm của sáng kiến là bản di động; bản máy tính đóng vai trò đối chứng và mở rộng phạm "
+     "vi sử dụng."),
     ("Kiểm chứng được. ",
      f"Toàn bộ mã nguồn mở kèm {N_TEST} hàm kiểm thử tự động, cho phép kiểm tra lại các "
      "tính năng kỹ thuật."),
@@ -252,32 +253,30 @@ bang(doc, "Sáu nguyên lý thiết kế và cơ chế bảo đảm tương ứn
      ["Nguyên lý", "Cơ chế thực thi trong sản phẩm", "Cách kiểm tra"],
      [
          ["Hoạt động ngoại tuyến tuyệt đối",
-          "Không khai báo quyền truy cập mạng trong AndroidManifest.xml — ràng buộc đặt ở "
-          "cấp hệ điều hành, không phụ thuộc thao tác người dùng",
+          "Không khai báo quyền mạng trong AndroidManifest.xml — ràng buộc ở cấp hệ điều "
+          "hành, không phụ thuộc thao tác người dùng",
           "Đọc tệp kê khai trong gói cài đặt"],
          ["Một lõi bảo vệ dữ liệu dùng chung",
-          f"Nghiệp vụ mật mã tập trung trong lõi gồm {N_CRATE} thành phần độc lập, không "
-          "dùng thư viện giao diện hay thư viện đặc thù nền tảng",
+          f"Nghiệp vụ mật mã tập trung trong lõi gồm {N_CRATE} thành phần, không dùng thư "
+          "viện giao diện hay thư viện đặc thù nền tảng",
           "Đọc quan hệ phụ thuộc khai báo của từng thành phần"],
          ["Phụ thuộc một chiều theo lớp",
           "Lớp trên dùng lớp dưới, không có chiều ngược; lõi chỉ phụ thuộc giao diện trừu "
-          "tượng, không phụ thuộc một cách triển khai cụ thể",
+          "tượng, không phụ thuộc một cách triển khai",
           "Lõi được kiểm thử độc lập với bản hiện thực giả lập"],
          ["Khi không bảo đảm an toàn thì không tiếp tục xử lý",
           "Thành phần chưa sẵn sàng bị vô hiệu hoá và báo ngay khi khởi động; dữ liệu ngoài "
-          "phạm vi bị từ chối kèm mã lỗi, không trả về trạng thái thành công sai",
+          "phạm vi bị từ chối kèm mã lỗi",
           "Kiểm thử tình huống mô-đun không sẵn sàng và định dạng ngoài phạm vi"],
          ["Thông báo lỗi không làm lộ thông tin bí mật",
           "Sau khi chữ ký và khoá đã kiểm tra xong, giải mã thất bại báo “tệp hỏng” thay vì "
-          "“sai xác thực”, nên chênh lệch thông báo không dùng để dò mật khẩu",
+          "“sai xác thực”, nên không dùng thông báo để dò mật khẩu",
           "Kiểm thử đối chiếu thông báo giữa các bản hiện thực"],
          ["Không lưu trữ bí mật lâu dài",
-          "Mật khẩu chỉ nằm trong bộ nhớ lúc xử lý, quản lý bằng kiểu dữ liệu tự xoá; khoá "
-          "chính chỉ ở bộ nhớ phiên và bị xoá khi khoá két",
+          "Mật khẩu chỉ nằm trong bộ nhớ lúc xử lý, dùng kiểu dữ liệu tự xoá; khoá chính chỉ "
+          "ở bộ nhớ phiên, xoá khi khoá két",
           "Kiểm thử vòng đời phiên làm việc"],
      ], widths=[3.6, 7.6, 4.3])
-hinh(doc, PNG / "H2-kien-truc-phan-lop.png",
-     "Kiến trúc phân lớp của SecureVault Mobile", width_cm=12.5)
 
 h3(doc, "3.2. Các nội dung chủ yếu")
 
@@ -289,6 +288,9 @@ para(doc,
      "quản lý bằng kiểu dữ liệu tự xoá; phiên làm việc chỉ tham chiếu bằng mã định danh "
      "không chứa bí mật nên không thể dùng để suy ra khoá. Nhờ đó có thể thay giao diện hoặc "
      "nền tảng mà gần như không phải sửa lõi bảo vệ dữ liệu.")
+hinh(doc, PNG / "H2-kien-truc-phan-lop.png",
+     "Kiến trúc phân lớp của SecureVault Mobile", width_cm=11.5)
+
 
 para(doc, "3.2.2. Thích ứng kiến trúc phần mềm với nền tảng di động", bold=True, indent=False)
 para(doc,
@@ -307,8 +309,16 @@ para(doc,
      "mô-đun mã hoá được hiện thực ngay trong tiến trình ứng dụng nhưng giữ nguyên định dạng "
      "tệp đã thiết kế; (2) xử lý siêu dữ liệu — mô-đun tương ứng do nhóm tác giả viết bằng Rust "
      "để xem, xoá và so sánh siêu dữ liệu trực tiếp trên thiết bị.")
+para(doc,
+     "Kết quả là *một lõi, hai bản hiện thực*: bản máy tính điều khiển công cụ chuẩn dưới dạng "
+     "tiến trình con, bản di động thực hiện ngay trong tiến trình ứng dụng. Việc chọn bản nào "
+     "diễn ra khi biên dịch, ở lớp lắp ráp ứng dụng — *lõi hoàn toàn không biết mình đang chạy "
+     "với bản nào*. Toàn bộ nghiệp vụ, định dạng tệp và quy tắc lỗi nằm dưới ranh giới đó nên "
+     "không đổi theo nền tảng. Bản máy tính là bản đối chứng, ra đời trước và cho phép kiểm tra "
+     "chéo; bản di động mới là phần phải giải bài toán nêu trên, và cũng là trọng tâm của "
+     "sáng kiến.")
 hinh(doc, PNG / "H3-loi-dung-chung.png",
-     "Nguyên tắc một lõi dùng chung, hai bản hiện thực theo nền tảng", width_cm=12.5)
+     "Nguyên tắc một lõi dùng chung, hai bản hiện thực theo nền tảng", width_cm=11.5)
 para(doc,
      "*Tính tương thích của định dạng tệp.* Nếu thay mô-đun mã hoá mà định dạng thay đổi thì "
      "các tệp đã tạo trước đó sẽ không mở được nữa. Vì vậy nhóm tác giả đặt ràng buộc bắt buộc: "
@@ -320,8 +330,8 @@ rich(doc, [
      "chuẩn age v1.2.1; ", ""),
     ("(2) ", "b"), ("chiều ngược lại, tệp do age v1.2.1 tạo ra được mô-đun tích hợp giải mã "
      "đúng; ", ""),
-    ("(3) và (4) ", "b"), ("két tạo bằng phiên bản dùng tiến trình con mở được bằng phiên "
-     "bản tích hợp và ngược lại; ", ""),
+    ("(3) và (4) ", "b"), ("két tạo bằng bản máy tính mở được bằng bản di động và ngược lại "
+     "— hai phép kiểm thử mang đúng tên gọi đó trong mã nguồn; ", ""),
     ("(5) ", "b"), ("sau khi thay cách triển khai, mật khẩu không đúng vẫn bị từ chối. Nguồn "
      "kiểm chứng: crates/sv-age-rs/tests/interop.rs và src-tauri/tests/vault_interop.rs; "
      "công cụ đối chứng age v1.2.1 tải từ nguồn chính thức, giá trị băm SHA-256 của tệp tải "
@@ -416,10 +426,9 @@ para(doc,
 for _h, _t in [
     ("Trình bày theo công việc cần thực hiện, không theo thuật toán. ",
      "Người dùng chọn chức năng theo nhu cầu, không cần biết bên trong dùng Argon2id hay "
-     "Ed25519. Mười chín công cụ được tổ chức thành năm nhóm theo mục đích. Những chức năng "
-     "cùng nền tảng kỹ thuật nhưng khác mục đích được tách thành màn hình riêng — ví dụ "
-     "“lấy vân tay tệp” và “kiểm tra tệp với vân tay” đều dùng BLAKE3 nhưng là hai việc khác "
-     "nhau."),
+     "Ed25519. Mười chín công cụ chia thành năm nhóm theo mục đích; chức năng cùng nền tảng "
+     "kỹ thuật nhưng khác mục đích thì tách màn hình riêng — “lấy vân tay tệp” và “kiểm tra "
+     "tệp với vân tay” đều dùng BLAKE3 nhưng là hai việc khác nhau."),
     ("Giảm tải nhận thức bằng phân tầng thông tin. ",
      "Mỗi màn hình ưu tiên các bước cần thiết để hoàn thành công việc, có đánh số theo trình "
      "tự; thông tin kỹ thuật và lưu ý về giới hạn đặt trong mục thu gọn “Thông tin thêm”."),
@@ -428,8 +437,8 @@ for _h, _t in [
      "cảnh báo cần thiết để người dùng khỏi mất dữ liệu thì không được thu gọn."),
     ("Không để kết quả cũ bị hiểu nhầm là kết quả mới. ",
      "Khi chuyển màn hình, ứng dụng xoá trạng thái kết quả, ẩn thẻ thông báo, xoá danh sách "
-     "mảnh bí mật, đường dẫn tệp tạm và nội dung các trường mật khẩu — vừa tránh nhầm lẫn, "
-     "vừa giảm khả năng thông tin nhạy cảm còn nằm lại trên giao diện."),
+     "mảnh bí mật và nội dung các trường mật khẩu — vừa tránh nhầm lẫn, vừa giảm thông tin "
+     "nhạy cảm còn nằm lại trên giao diện."),
 ]:
     bullet(doc, _t, bold_head=_h)
 para(doc,
@@ -442,15 +451,12 @@ para(doc,
 
 h3(doc, "3.3. Kết quả của giải pháp")
 para(doc, "3.3.1. Sản phẩm đã tạo ra", bold=True, indent=False)
-for _t in [
-    f"Ứng dụng Android đóng gói dưới dạng APK ({MB_APK} MB), tích hợp lõi bảo vệ dữ liệu "
-    "biên dịch cho kiến trúc ARM64; nội dung gói đã được kiểm tra tĩnh.",
-    f"Mã nguồn đầy đủ gồm {N_CRATE} thành phần độc lập, giao diện gồm "
-    f"{len(DANH_MUC_MAN_HINH)} màn hình và {N_TEST} hàm kiểm thử tự động chạy trên máy chủ "
-    "tích hợp liên tục.",
-    "Bộ tài liệu gồm tài liệu kiến trúc, mô hình mối đe doạ và hướng dẫn triển khai.",
-]:
-    bullet(doc, _t)
+para(doc,
+     f"Ứng dụng Android đóng gói dưới dạng APK ({MB_APK} MB), tích hợp lõi bảo vệ dữ liệu "
+     f"biên dịch cho kiến trúc ARM64, nội dung gói đã được kiểm tra tĩnh. Kèm theo là mã "
+     f"nguồn đầy đủ gồm {N_CRATE} thành phần độc lập, giao diện {len(DANH_MUC_MAN_HINH)} "
+     f"màn hình, {N_TEST} hàm kiểm thử tự động chạy trên máy chủ tích hợp liên tục, và bộ "
+     "tài liệu gồm tài liệu kiến trúc, mô hình mối đe doạ và hướng dẫn triển khai.")
 
 para(doc, "3.3.2. Các chỉ tiêu kỹ thuật đạt được", bold=True, indent=False)
 bang(doc, "Các chỉ tiêu kỹ thuật đạt được",
@@ -471,6 +477,9 @@ bang(doc, "Các chỉ tiêu kỹ thuật đạt được",
           "Đối chứng với công cụ chuẩn age v1.2.1"],
          ["Kiến trúc thư viện trong gói cài đặt", "64-bit ARM aarch64",
           "Đọc phần đầu ELF của tệp trong gói"],
+         ["Dựng và kiểm thử trên ba hệ điều hành máy tính", f"{CHUOI_OS} — đạt",
+          f"Lần chạy tích hợp liên tục {CI_XANH.get('ngay')}, "
+          f"{CI_XANH.get('so_viec_dat')}/{CI_XANH.get('so_viec_dat')} hạng mục xanh"],
          ["Quyền ứng dụng yêu cầu", "Không khai báo quyền nào",
           "Đọc tệp kê khai trong gói cài đặt"],
          ["Giao diện nhúng sẵn trong ứng dụng", "Có", "Bảng tài nguyên trong thư viện native"],
@@ -507,11 +516,17 @@ for _h, _t, _bc in [
      "điện thoại vẫn kiểm tra và xử lý được bằng công cụ chuẩn. ",
      f"{SO_DOI_CHUNG} phép đối chứng hai chiều với age v1.2.1, gồm cả kiểm tra tệp mã hoá "
      "và mở chéo két giữa hai bản hiện thực."),
-    ("Dùng chung một lõi xử lý cho nhiều nền tảng. ",
-     "Thay vì xây dựng riêng từng phiên bản, giải pháp dùng một lõi chung; phần phụ thuộc "
-     "nền tảng được tách riêng và chọn khi biên dịch, nên các phiên bản dùng chung một bộ "
-     "chức năng và thuật toán, giảm nguy cơ phát sinh khác biệt khi bảo trì. ",
-     "kiểm tra kết quả biên dịch cho thấy cùng một mã nguồn dùng đúng mô-đun của từng nền tảng."),
+    ("Một lõi nghiệp vụ và một định dạng dữ liệu dùng chung cho nhiều nền tảng. ",
+     "Thay vì xây dựng riêng từng phiên bản, giải pháp dùng một lõi chung; phần phụ thuộc nền "
+     "tảng được tách riêng và chọn khi biên dịch. Nhờ đó bản trên máy tính và bản trên thiết "
+     "bị di động dùng chung một bộ chức năng, một bộ thuật toán và *một định dạng tệp*, nên "
+     "tệp két tạo ở nền tảng này mở được ở nền tảng kia. Đây là tính chất của kiến trúc chứ "
+     "không phải một tính năng được thêm vào sau. ",
+     f"lõi và lớp vỏ ứng dụng được dựng, soát mã và chạy kiểm thử trên cả ba hệ điều hành "
+     f"máy tính ({CHUOI_OS}) trong quy trình tích hợp liên tục — biên bản lần chạy "
+     f"{CI_XANH.get('ngay')} (mã nguồn tại thời điểm đó: {CI_XANH.get('commit')}) ghi nhận "
+     f"{CI_XANH.get('so_viec_dat')} hạng mục đều đạt; riêng khả năng đọc chéo tệp két giữa "
+     "hai nền tảng có hai phép kiểm thử tự động dành riêng."),
     ("Xây dựng mô-đun xử lý siêu dữ liệu phù hợp với nền tảng di động. ",
      "Với các chức năng xem, xoá và so sánh siêu dữ liệu, nhóm tác giả viết mô-đun bằng Rust để "
      "chạy trực tiếp trong ứng dụng di động; người dùng loại bỏ được toạ độ GPS và thông tin "
@@ -534,18 +549,17 @@ for _h, _t, _bc in [
 para(doc, "4.1.2. Điểm sáng tạo", bold=True, indent=False)
 for _h, _t in [
     ("Kết hợp công cụ huấn luyện với sản phẩm dùng được thật. ",
-     "Học viên không chỉ xem hoặc mô phỏng mà trực tiếp thao tác trên chính sản phẩm được "
-     "xây dựng cho nhu cầu sử dụng thật; mã hoá, chữ ký số, chia sẻ khoá, che giấu dữ liệu "
-     "và xử lý siêu dữ liệu chuyển từ kiến thức lý thuyết thành thao tác kiểm tra được."),
+     "Học viên không chỉ xem hoặc mô phỏng mà thao tác trên chính sản phẩm được xây dựng cho "
+     "nhu cầu sử dụng thật; mã hoá, chữ ký số, chia sẻ khoá, che giấu dữ liệu và xử lý siêu "
+     "dữ liệu chuyển từ lý thuyết thành thao tác kiểm tra được."),
     ("Biến giới hạn của công cụ thành một phần của nội dung huấn luyện. ",
      "Thay vì chỉ trả về “đạt” hoặc “an toàn”, một số chức năng nói rõ phạm vi và giới hạn "
      "của kết quả: chức năng phát hiện dữ liệu ẩn chỉ kết luận trong phạm vi các phép kiểm "
      "tra đã thực hiện, không khẳng định tuyệt đối rằng ảnh sạch — qua đó học viên hiểu kết "
      "quả của một công cụ phân tích luôn phụ thuộc phương pháp và phạm vi kiểm tra."),
     ("Thiết kế sản phẩm theo hướng có thể kiểm chứng. ",
-     "Mọi thông tin quan trọng về sản phẩm đều gắn với mã nguồn, kết quả kiểm thử hoặc dữ "
-     "liệu đối chiếu độc lập được; số liệu kỹ thuật trong hồ sơ này sinh tự động từ mã nguồn "
-     "và nhật ký kiểm thử nên không lệch với phiên bản thực tế."),
+     "Mọi thông tin quan trọng đều gắn với mã nguồn, kết quả kiểm thử hoặc dữ liệu đối chiếu "
+     "độc lập được; số liệu kỹ thuật trong hồ sơ sinh tự động nên không lệch với sản phẩm."),
     ("Ưu tiên sự chính xác hơn sự tiện lợi. ",
      "Khi chức năng không thể thực hiện trong phạm vi đã xác định, ứng dụng từ chối và thông "
      "báo rõ thay vì trả về kết quả có thể gây hiểu nhầm. Quan điểm xuyên suốt: trong bảo vệ "
@@ -581,6 +595,13 @@ for _h, _t in [
      "loại tài liệu được phép truyền."),
 ]:
     bullet(doc, _t, bold_head=_h)
+para(doc,
+     "*Mở rộng nhờ kiến trúc dùng chung.* Vì lõi nghiệp vụ và định dạng tệp không phụ thuộc "
+     "nền tảng, cùng bộ chức năng còn triển khai được trên máy tính để bàn, và tệp két đi lại "
+     "được giữa hai môi trường. Điều này mở rộng phạm vi sử dụng: giảng viên chuẩn bị bài trên "
+     "máy tính rồi kiểm tra kết quả ngay trên điện thoại của học viên, hoặc ngược lại. Tuy "
+     "vậy, giá trị sáng tạo của sáng kiến vẫn nằm ở bản di động — đó là nơi rào cản kỹ thuật "
+     "thực sự tồn tại và được giải quyết; bản máy tính chỉ đóng vai trò đối chứng và bổ trợ.")
 para(doc,
      "*Giá trị đối với công tác giảng dạy.* Điểm mạnh của sản phẩm trong đào tạo là các chức "
      "năng được thiết kế gắn với đúng những nguyên lý có trong chương trình học. Học viên "
@@ -643,8 +664,6 @@ bang(doc, "Mô hình mối đe doạ: phạm vi bảo vệ và giới hạn",
          ["Bên nhận không chắc tệp có đúng do người gửi tạo ra không", "Có",
           "Chữ ký số cho phép bên nhận tự xác minh nguồn gốc và tính toàn vẹn, không cần tin "
           "vào kênh truyền"],
-         ["Người khác mượn máy khi máy đã mở khoá", "Có, một phần",
-          "Két vẫn cần mật khẩu riêng; nhưng nếu phiên đang mở thì nội dung có thể xem được"],
          ["Thiết bị đã bị chiếm quyền điều khiển ở mức hệ điều hành", "Không",
           "Phần mềm độc hại có quyền cao đọc được bộ nhớ tiến trình khi két đang mở"],
          ["Người dùng quên mật khẩu và không tạo mảnh phục hồi", "Không",
@@ -678,26 +697,17 @@ para(doc,
 
 h3(doc, "4.4. Mức độ triển khai, phát triển trong thời gian tới")
 para(doc, "4.4.1. Mức độ hoàn thành hiện tại", bold=True, indent=False)
-bang(doc, "Mức độ hoàn thành theo hạng mục",
-     ["Hạng mục", "Mức độ", "Cách xác định"],
-     [
-         ["Thiết kế kiến trúc, định dạng dữ liệu và sơ đồ khoá", "Hoàn thành",
-          "Tài liệu kiến trúc và mã nguồn"],
-         ["Lõi bảo vệ dữ liệu và toàn bộ nghiệp vụ", "Hoàn thành",
-          "Bộ kiểm thử tự động chạy đạt trên máy chủ"],
-         ["Mô-đun xử lý siêu dữ liệu bằng Rust", "Hoàn thành",
-          "Kiểm thử tự động trên ảnh có siêu dữ liệu"],
-         ["Tương thích định dạng giữa hai bản hiện thực", "Hoàn thành",
-          "Đối chứng hai chiều với công cụ chuẩn age v1.2.1"],
-         ["Biên dịch và thực thi lõi trên kiến trúc ARM64", "Hoàn thành",
-          "Kiểm tra tệp đối tượng và chạy bộ kiểm thử dưới trình giả lập kiến trúc"],
-         ["Giao diện cho màn hình điện thoại và đóng gói APK", "Hoàn thành",
-          "Kết xuất ở kích thước điện thoại; kiểm tra tĩnh nội dung gói cài đặt"],
-         ["Kiểm thử nghiệm thu trên thiết bị Android", "Có quy trình nghiệm thu",
-          "Quy trình 15 bước có tiêu chí đạt cho từng bước (Phụ lục A của Đề cương chi tiết)"],
-         ["Tích hợp kho khoá phần cứng của Android", "Định hướng phát triển",
-          "Chưa hiện thực trong phiên bản này"],
-     ], widths=[6.0, 3.6, 5.9])
+rich(doc, [
+    ("Đã hoàn thành: ", "b"),
+    ("thiết kế kiến trúc, định dạng tệp két và sơ đồ phân cấp khoá; lõi bảo vệ dữ liệu cùng "
+     "toàn bộ nghiệp vụ; mô-đun xử lý siêu dữ liệu bằng Rust; tương thích định dạng giữa hai "
+     "bản hiện thực; biên dịch và thực thi lõi trên kiến trúc ARM64; giao diện cho màn hình "
+     "điện thoại; đóng gói tệp cài đặt Android. Mỗi hạng mục đều có cách xác định tương ứng "
+     "— bảng đầy đủ tại mục 6.4 của Đề cương chi tiết. ", ""),
+    ("Chưa hoàn thành: ", "b"),
+    ("kiểm thử nghiệm thu trên thiết bị Android thật (đã có quy trình 15 bước, chưa chạy) và "
+     "tích hợp kho khoá phần cứng của Android (mới ở mức định hướng).", ""),
+])
 
 para(doc, "4.4.2. Hướng phát triển", bold=True, indent=False)
 for _h, _t in [
@@ -740,9 +750,10 @@ for _t in [
 ]:
     bullet(doc, _t)
 para(doc,
-     "Văn bản kèm theo: *04 — Đề cương chi tiết về sáng kiến*, trình bày đầy đủ phân tích kỹ "
-     "thuật, mô tả từng chức năng kèm giao diện, ảnh chụp toàn bộ 21 màn hình và quy trình "
-     "kiểm thử nghiệm thu trên thiết bị Android.", italic=True)
+     "Văn bản kèm theo: *04 — Đề cương sơ bộ về sáng kiến* (khái quát mục tiêu, cách tiếp cận, "
+     "kế hoạch kiểm chứng và tiến trình thực hiện) và *05 — Đề cương chi tiết về sáng kiến* "
+     "(phân tích kỹ thuật, mô tả từng chức năng kèm giao diện, ảnh chụp toàn bộ 21 màn hình "
+     "và quy trình kiểm thử nghiệm thu trên thiết bị Android).", italic=True)
 
 chu_ky(doc,
        ("XÁC NHẬN CỦA ĐƠN VỊ", ""),

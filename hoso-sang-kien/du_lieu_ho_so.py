@@ -38,6 +38,20 @@ _iva = KQ.get("interop_age") or {}
 _ivv = KQ.get("interop_vault") or {}
 SO_DOI_CHUNG = _iva.get("passed", 0) + _ivv.get("passed", 0)
 
+# --- Khả năng đa nền tảng -------------------------------------------------
+# Nguồn: .github/workflows/ci.yml (ma trận hệ điều hành) và docs/CI-VALIDATION.md (biên bản
+# lần chạy CI đã xanh). Hồ sơ chỉ được nói tới mức hai tệp này chứng minh được.
+DNT = DK.get("da_nen_tang") or {}
+OS_CI = DNT.get("he_dieu_hanh_ci") or []
+CI_XANH = DNT.get("lan_chay_ci_xanh") or {}
+
+_TEN_OS = {"ubuntu": "Linux", "macos": "macOS", "windows": "Windows"}
+# Xếp theo thứ tự người đọc quen gặp, không theo thứ tự chữ cái của tên kỹ thuật.
+TEN_OS = [_TEN_OS[k] for k in ("windows", "macos", "ubuntu") if k in OS_CI]
+CHUOI_OS = ", ".join(TEN_OS)
+
+GIT = DK.get("git") or {}
+
 MB_APK = (
     f"{APK['kich_thuoc_byte'] / 1_000_000:.1f}".replace(".", ",")
     if APK.get("co_apk") else None
