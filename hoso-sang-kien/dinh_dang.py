@@ -371,7 +371,9 @@ def chu_ky(doc, trai, phai, dia_danh="……………, ngày ….. tháng ….. 
         q.alignment = WD_ALIGN_PARAGRAPH.CENTER
         q.paragraph_format.first_line_indent = Cm(0)
         _run(q, ghi, italic=True, size=Pt(11.5), colour=GREY)
-        for _ in range(3):
+        # Chừa chỗ ký tay. Ba dòng trống làm bảng cao quá một trang khi khối ký rơi vào cuối
+        # trang, sinh ra một trang trắng thừa; hai dòng vẫn đủ chỗ ký.
+        for _ in range(2):
             c.add_paragraph()
 
 

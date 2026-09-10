@@ -18,3 +18,5 @@ hoso-sang-kien/__pycache__/
 
 # Thư mục làm việc trung gian của chup-giao-dien.py — sinh lại được từ app/frontend
 hoso-sang-kien/hinh-anh/screenshot/_work/
+# Tệp mẫu do đơn vị cung cấp để tham chiếu thể loại, không thuộc bộ hồ sơ nộp.
+hoso-sang-kien/DCSB_HV2_restructured2.docx

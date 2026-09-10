@@ -37,7 +37,7 @@ Thư mục này chứa toàn bộ hồ sơ đề nghị công nhận sáng kiế
 | `docx/01-Don-dang-ky-sang-kien.docx` | Đơn đăng ký sáng kiến cải tiến kỹ thuật | 2 |
 | `docx/02-Thuyet-minh-sang-kien.docx` | **Thuyết minh — bản để hội đồng đọc.** Bám khung mẫu, cô đọng dưới 20 trang | 19 |
 | `docx/03-Du-kien-hieu-qua.docx` | Dự kiến hiệu quả khi đưa vào ứng dụng trong thực tiễn | 4 |
-| `docx/04-De-cuong-so-bo-sang-kien.docx` | **Đề cương sơ bộ.** Lý do, mục tiêu, phạm vi, cách tiếp cận, khối công việc, kế hoạch kiểm chứng, tiến trình và rủi ro | 22 |
+| `docx/04-De-cuong-so-bo-sang-kien.docx` | **Đề cương sơ bộ.** Theo thể loại đề cương nghiên cứu: danh mục chữ viết tắt, Mở đầu tám mục, Chương 1 cơ sở khoa học và thực tiễn, Chương 2 định hướng thực hiện, kết luận, tài liệu tham khảo | 20 |
 | `docx/05-De-cuong-chi-tiet-sang-kien.docx` | **Đề cương chi tiết.** Toàn bộ lập luận thiết kế, mô tả từng chức năng kèm giao diện, kiểm chứng, ảnh chụp 21 màn hình, quy trình nghiệm thu | 60 |
 
 Bản PDF kèm theo trong cùng thư mục chỉ dùng để **kiểm tra bố cục**; bản nộp là tệp DOCX.
@@ -49,12 +49,14 @@ mức, mỗi mức trả lời một câu hỏi:
 | Văn bản | Trả lời câu hỏi | Quy mô |
 |---|---|---|
 | 02 Thuyết minh | *Sáng kiến này là gì và đáng giá ở đâu?* | dưới 20 trang |
-| 04 Đề cương sơ bộ | *Định làm gì, làm theo cách nào, lấy gì để chứng minh là đã làm được?* | khoảng 20 trang |
+| 04 Đề cương sơ bộ | *Căn cứ khoa học nào, định làm những gì?* | tối đa 20 trang |
 | 05 Đề cương chi tiết | *Đã làm như thế nào, ở mức từng cơ chế?* | khoảng 60 trang |
 
-Đề cương sơ bộ **không phải** bản rút gọn của Đề cương chi tiết: nó là tài liệu của giai đoạn đặt
-vấn đề (mục tiêu, phạm vi, khối công việc, kế hoạch kiểm chứng, tiến trình, rủi ro), mỗi phần kèm
-cột đối chiếu với kết quả thực tế. Cả ba dùng chung một nguồn số liệu (`du_lieu_ho_so.py`) và
+Đề cương sơ bộ **không phải** bản rút gọn của Đề cương chi tiết. Nó theo đúng thể loại một đề
+cương nghiên cứu — thể loại và cách tổ chức học từ tệp mẫu `DCSB_HV2_restructured2.docx` do đơn vị
+cung cấp: Mở đầu tám mục chuẩn, một chương cơ sở khoa học và thực tiễn viết đầy đủ (phần mà hai
+văn bản kia không có chỗ trình bày), một chương nêu định hướng thực hiện theo từng nhóm công việc,
+và trích dẫn `[n]` có căn cứ pháp lý. Cả ba dùng chung một nguồn số liệu (`du_lieu_ho_so.py`) và
 chung nội dung tám nhóm chức năng (`noi_dung_chuc_nang.py`), nên không thể lệch nhau.
 
 **`ban-tac-gia-ra-soat/`** giữ nguyên ba tệp DOCX mà tác giả tự rà soát và chỉnh sửa thủ công —
